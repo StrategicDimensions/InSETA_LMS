@@ -10311,11 +10311,27 @@ class provider_assessment(models.Model):
 		if context is None:
 			context = {}
 		self = self.with_context(assessed=True)
+		provider = self.provider_id
 		if self.qual_skill_assessment == 'qual':
 			learner_achieved = []
 			if not self.learner_achieved_ids:
+				text_guy = ''
 				for learner_data in self.learner_achieve_ids:
+					min_qual_creds = learner_data.qual_learner_assessment_achieve_line_id.m_credits
+					min_creds_found = 0
 					if learner_data.achieve:
+						text_guy += learner_data.learner_id.name + '\n'
+						req_units_found = []
+						for us_min in learner_data.unit_standards_learner_assessment_achieve_line_id:
+							dbg(us_min.level3)
+							min_creds_found += int(us_min.level3)
+							dbg('unit--' + str(us_min) + 'type found' + str(us_min.type))
+							if us_min.type in ['Core','Fundamental']:
+								req_units_found.append(us_min.id_no)
+						text_guy += str(req_units_found) + '\n'
+						# raise Warning(
+						# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
+						text_guy += 'min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
 						qual_ids = []
 						unit_ids = []
 						for qual in learner_data.qual_learner_assessment_achieve_line_id:
@@ -10335,10 +10351,22 @@ class provider_assessment(models.Model):
 						# This code is used to assign True value to achieve field of etqe learner qualification line
 						qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
 						for line in qual_line_obj.learner_qualification_ids:
+							min_expected_creds = line.learner_qualification_parent_id.m_credits
+							text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
+							dbg(line)
 							selected_line, achieved_line = 0, 0
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
+								dbg('match prov and quals for id:' + str(line))
+								registration_min_creds = 0
+								req_units = []
 								for u_line in line.learner_registration_line_ids:
+									# text_guy += 'units:' + str(u_line.id_data) + '\n'
+									dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(qual_line_obj))
 									if u_line.selection:
+										# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
+										dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
+										if u_line.type in ['Core', 'Fundamental']:
+											req_units.append(u_line.id_data)
 										selected_line += 1
 										for assessment_unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
 											if u_line.title == assessment_unit.title:
@@ -10346,7 +10374,24 @@ class provider_assessment(models.Model):
 												line.is_complete = True
 									if u_line.achieve:
 										achieved_line += 1
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+								missing_req_units = []
+								for x in req_units:
+									if x not in req_units_found:
+										missing_req_units.append(x)
+								# raise Warning(_(missing_req_units))
+								missing_required = False
+								if missing_req_units == []:
+									missing_required = False
+									text_guy += 'no missing required units\n'
+								else:
+									missing_required = True
+									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
+								# check if the counts are same or if min creds requirement are met
+								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
+									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or\
+										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
@@ -10356,7 +10401,13 @@ class provider_assessment(models.Model):
 									qual_line_obj.state= 'achieved'
 									qual_line_obj.learners_status= 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
+									text_guy += 'learner achieved!!!\n'
+								else:
+									text_guy += '!!!!!!!!!learner NOT achieved\n'
+								# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
 						learner_achieved.append((0, 0, learner_dict))
+				# raise Warning(_(text_guy))
+				self.unit_standard_variance = text_guy
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																  'state':'achieved',
 																  'pro_id':self.id,
