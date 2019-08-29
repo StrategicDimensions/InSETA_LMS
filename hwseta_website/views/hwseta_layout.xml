@@ -314,7 +314,11 @@
                                 <a href="/web/login"
                                     class="moveme458">Stakeholder login</a>
                             </li>
-                            
+
+							<li class="menu-item-458">
+                                <a href="https://helpdesk.hwseta.org.za/portal"
+                                    class="moveme458">HWSETA Helpdesk</a>
+                            </li>                            
                             
                             <li><a class='' style="background: url(/hwseta_website/static/src/img/down.gif) no-repeat left center;"> Application</a>
                                 <ul>
