@@ -9340,8 +9340,12 @@ class provider_assessment(models.Model):
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
+		if self.provider_id == user_data.partner_id:
+			prov_partner = user_data.partner_id
+		else:
+			prov_partner = self.provider_id
 		if qual_skill_assessment:
-			if not user_data.partner_id.provider:
+			if not prov_partner.provider:
 				if qual_skill_assessment == 'qual':
 					all_batch_ids = self.env['batch.master'].search([('qual_skill_batch','=','qual'),('batch_status','=','open')])
 					if all_batch_ids:
@@ -9358,8 +9362,8 @@ class provider_assessment(models.Model):
 					if all_batch_ids:
 						for b_id in all_batch_ids:
 							batch_lst.append(b_id.id)
-			elif user_data.partner_id.provider:
-				for batch in self.env.user.partner_id.provider_batch_ids:
+			elif prov_partner.provider:
+				for batch in prov_partner.provider_batch_ids:
 					if qual_skill_assessment == 'qual':
 						if batch.batch_master_id.qual_skill_batch == 'qual' and batch.batch_status == 'open':
 							batch_lst.append(batch.batch_master_id.id)
@@ -9371,11 +9375,11 @@ class provider_assessment(models.Model):
 						if batch.batch_master_id.qual_skill_batch == 'lp' and batch.batch_status == 'open':
 							batch_lst.append(batch.batch_master_id.id)
 		if batch_id and qual_skill_assessment == 'qual':
-			learner_obj = self.env['hr.employee'].search([('logged_provider_id', '=', self.env.user.partner_id.id)])
+			learner_obj = self.env['hr.employee'].search([('logged_provider_id', '=', prov_partner.id)])
 			if learner_obj:
 				for learner in learner_obj:
 					for learner_qual in learner.learner_qualification_ids:
-						if learner_qual.batch_id.id == batch_id and  learner_qual.is_learner_achieved == False and learner_qual.provider_id.id == self.env.user.partner_id.id:
+						if learner_qual.batch_id.id == batch_id and  learner_qual.is_learner_achieved == False and learner_qual.provider_id.id == prov_partner.id:
 							qual_list, unit_line_list = [], []
 							qual_list.append(learner_qual.learner_qualification_parent_id.id)
 							learners_assessor_id = learner_qual.assessors_id.id
@@ -9393,11 +9397,11 @@ class provider_assessment(models.Model):
 
 		#changes by pradip
 		elif batch_id and qual_skill_assessment == 'skill':
-			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', self.env.user.partner_id.id)])
+			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
 			if learner_obj:
 				for learner in learner_obj:
 					for learner_skill in learner.skills_programme_ids:
-						if  learner_skill.batch_id.id == batch_id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == self.env.user.partner_id.id:
+						if  learner_skill.batch_id.id == batch_id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
 							skill_list, unit_line_list = [], []
 							skill_list.append(learner_skill.skills_programme_id.id)
 							learners_assessor_id = learner_skill.assessors_id.id
@@ -9414,11 +9418,11 @@ class provider_assessment(models.Model):
 									 assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
 		# Changes Added by Ganesh
 		elif batch_id and qual_skill_assessment == 'lp':
-			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', self.env.user.partner_id.id)])
+			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', prov_partner.id)])
 			if learner_obj:
 				for learner in learner_obj:
 					for learner_lp in learner.learning_programme_ids:
-						if learner_lp.batch_id.id == batch_id and  learner_lp.is_learner_achieved == False and learner_lp.provider_id.id == self.env.user.partner_id.id:
+						if learner_lp.batch_id.id == batch_id and  learner_lp.is_learner_achieved == False and learner_lp.provider_id.id == prov_partner.id:
 							lp_list, unit_line_list = [], []
 							lp_list.append(learner_lp.learning_programme_id.id)
 							learners_assessor_id = learner_lp.assessors_id.id
@@ -10325,8 +10329,7 @@ class provider_assessment(models.Model):
 						text_guy += str(req_units_found) + '\n'
 						# raise Warning(
 						# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
-						text_guy += 'min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(
-							min_creds_found) + '\n'
+						text_guy += 'min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
 						qual_ids = []
 						unit_ids = []
 						for qual in learner_data.qual_learner_assessment_achieve_line_id:
@@ -10334,20 +10337,20 @@ class provider_assessment(models.Model):
 						for unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
 							unit_ids.append(unit.id)
 						learner_dict = {
-							'learner_id': learner_data.learner_id and learner_data.learner_id.id,
-							'learner_identity_number': learner_data.learner_identity_number,
-							'identification_id': learner_data.identification_id,
-							'qual_learner_assessment_achieved_line_id': [(6, 0, qual_ids)],
-							'unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
-							'assessors_id': learner_data.assessors_id and learner_data.assessors_id.id,
-							'moderators_id': learner_data.moderators_id and learner_data.moderators_id.id,
-							'timetable_id': learner_data.timetable_id and learner_data.timetable_id.id,
-						}
+								 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+								 'learner_identity_number' : learner_data.learner_identity_number,
+								 'identification_id' : learner_data.identification_id,
+								 'qual_learner_assessment_achieved_line_id': [(6, 0, qual_ids)],
+								 'unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+								 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+								 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+								 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+								}
 						# This code is used to assign True value to achieve field of etqe learner qualification line
 						qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
 						for line in qual_line_obj.learner_qualification_ids:
 							min_expected_creds = line.learner_qualification_parent_id.m_credits
-							text_guy += 'min_expected_creds:' + str(min_expected_creds) + '\n'
+							text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
 							dbg(line)
 							selected_line, achieved_line = 0, 0
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
@@ -10384,8 +10387,8 @@ class provider_assessment(models.Model):
 								# check if the counts are same or if min creds requirement are met
 								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
-								# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or \
+									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or\
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
@@ -10399,18 +10402,16 @@ class provider_assessment(models.Model):
 									text_guy += 'learner achieved!!!\n'
 								else:
 									text_guy += '!!!!!!!!!learner NOT achieved\n'
-							# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
 						learner_achieved.append((0, 0, learner_dict))
 				# raise Warning(_(text_guy))
 				self.unit_standard_variance = text_guy
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
-																		  'state': 'achieved',
-																		  'pro_id': self.id,
-																		  'comment': self.comment,
-																		  'state_title': 'Achieved'
-																		  })
-			self.write(
-				{'state': 'achieved', 'assessed': True, 'learner_achieved_ids': learner_achieved, 'select_all': False})
+																  'state':'achieved',
+																  'pro_id':self.id,
+																  'comment':self.comment,
+																  'state_title':'Achieved'
+																  })
+			self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids':learner_achieved,'select_all':False})
 			# code to check whether any1 learner achieve field checked or not by pradip 5/10/2016
 			achieve_false = 0
 			learner_line = 0
@@ -10510,7 +10511,7 @@ class provider_assessment(models.Model):
 						learner_achieved.append((0, 0, learner_dict))
 						text += str(skill_ids) + '\n'
 
-				raise Warning(_(text))
+				#raise Warning(_(text))
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																		  'state': 'achieved',
 																		  'pro_id': self.id,
@@ -10571,19 +10572,18 @@ class provider_assessment(models.Model):
 									line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.lp_status = 'Achieved'
-									learner_obj.learner_status = 'Achieved'
-									learner_obj.state = 'achieved'
-									learner_obj.learners_status = 'achieved'
+									learner_obj.learner_status= 'Achieved'
+									learner_obj.state= 'achieved'
+									learner_obj.learners_status= 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
 						learner_achieved.append((0, 0, learner_dict))
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
-																		  'state': 'achieved',
-																		  'pro_id': self.id,
-																		  'comment': self.comment,
-																		  'state_title': 'Achieved'
-																		  })
-			self.write({'state': 'achieved', 'assessed': True, 'learner_achieved_ids_for_lp': learner_achieved,
-						'select_all': False})
+																  'state':'achieved',
+																  'pro_id':self.id,
+																  'comment':self.comment,
+																  'state_title':'Achieved'
+																  })
+			self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_lp':learner_achieved,'select_all':False})
 			achieve_false = 0
 			learner_line = 0
 			for learner in self.learner_achieve_ids_for_lp:
