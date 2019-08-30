@@ -12972,24 +12972,24 @@ class hr_employee(models.Model):
 	@api.multi
 	def unlink(self):
 		if self.env.user.has_group('hwseta_etqe.group_seta_administrator'):
-		for achieve in self.env['learner.assessment.achieve.line'].search([('learner_id','=',self.id)]):
-			dbg(achieve)
-			achieve.unlink()
-		for achieved in self.env['learner.assessment.achieved.line'].search([('learner_id','=',self.id)]):
-			dbg(achieved)
-			achieved.unlink()
-		for evaluate in self.env['learner.assessment.evaluate.line'].search([('learner_id','=',self.id)]):
-			dbg(evaluate)
-			evaluate.unlink()
-		for line in self.env['learner.assessment.line'].search([('learner_id','=',self.id)]):
-			dbg(line)
-			line.unlink()
-		for verify in self.env['learner.assessment.verify.line'].search([('learner_id','=',self.id)]):
-			dbg(verify)
-			verify.unlink()
-		return super(hr_employee, self).unlink()
-	else:
-		raise Warning(_("Sorry!! You cannot delete Approved record !"))
+			for achieve in self.env['learner.assessment.achieve.line'].search([('learner_id','=',self.id)]):
+				dbg(achieve)
+				achieve.unlink()
+			for achieved in self.env['learner.assessment.achieved.line'].search([('learner_id','=',self.id)]):
+				dbg(achieved)
+				achieved.unlink()
+			for evaluate in self.env['learner.assessment.evaluate.line'].search([('learner_id','=',self.id)]):
+				dbg(evaluate)
+				evaluate.unlink()
+			for line in self.env['learner.assessment.line'].search([('learner_id','=',self.id)]):
+				dbg(line)
+				line.unlink()
+			for verify in self.env['learner.assessment.verify.line'].search([('learner_id','=',self.id)]):
+				dbg(verify)
+				verify.unlink()
+			return super(hr_employee, self).unlink()
+		else:
+			raise Warning(_("Sorry!! You cannot delete Approved record !"))
 
 
 	@api.multi
