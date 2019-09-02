@@ -10303,14 +10303,8 @@ class provider_assessment(models.Model):
 		self.chatter(self.env.user, 'The "Amend Assessment & LR" button was pressed')
 		# raise Warning(_('done'))
 
-
-
 	@api.multi
-	def action_achieved_button(self):
-		context = self._context
-		if context is None:
-			context = {}
-		self = self.with_context(assessed=True)
+	def achieve_qual(self):
 		provider = self.provider_id
 		if self.qual_skill_assessment == 'qual':
 			learner_achieved = []
@@ -10425,17 +10419,33 @@ class provider_assessment(models.Model):
 			if achieve_false == learner_line:
 				raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
 			return True
-		elif self.qual_skill_assessment == 'skill':
+
+	@api.multi
+	def achieve_skill(self):
+		provider = self.provider_id
+		if self.qual_skill_assessment == 'skill':
 			learner_achieved = []
 			if not self.learner_achieved_ids_for_skills:
+				text = ''
 				for learner_data in self.learner_achieve_ids_for_skills:
 					if learner_data.achieve:
+						# TODO: search for the providers matching SP and append to a list if selection is true, then check if the same SP is in the above loop
+						prov_units = []
+						prov_skills = []
+						for skill in provider.skills_programme_ids:
+							prov_skills.append(skill.skill_saqa_id)
+							for us in skill.unit_standards_line:
+								prov_units.append(us.id_no)
 						skill_ids = []
+						skill_id_nos = []
+						unit_id_nos = []
 						unit_ids = []
 						for skill in learner_data.skill_learner_assessment_achieve_line_id:
 							skill_ids.append(skill.id)
+							skill_id_nos.append(skill.saqa_qual_id)
 						for unit in learner_data.skill_unit_standards_learner_assessment_achieve_line_id:
 							unit_ids.append(unit.id)
+							unit_id_nos.append(unit.id_no)
 						learner_dict = {
 								 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
 								 'learner_identity_number' : learner_data.learner_identity_number,
@@ -10448,18 +10458,37 @@ class provider_assessment(models.Model):
 								}
 						# This code is used to assign True value to achieve field of Skills Programme learner rel
 						qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+						reg_skills_found = []
 						for line in qual_line_obj.skills_programme_ids:
 							selected_line, achieved_line = 0, 0
+							reg_skills_found.append(line.saqa_skill_id)
 							if line.skills_programme_id.id in skill_ids and line.provider_id.id == self.provider_id.id:
+								reg_units_found = []
+								ass_units_found = []
 								for u_line in line.unit_standards_line:
 									if u_line.selection:
 										selected_line += 1
+										reg_units_found.append(u_line.id_no)
 										for assessment_unit in learner_data.skill_unit_standards_learner_assessment_achieve_line_id:
+											if assessment_unit.id_no not in ass_units_found:
+												ass_units_found.append(assessment_unit.id_no)
 											if u_line.title == assessment_unit.title:
 												u_line.achieve = True
 												line.is_complete = True
 									if u_line.achieve:
 										achieved_line += 1
+								text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
+								text += 'reg units:' + '\n' + str(reg_units_found) + '\n' + 'assessment units' + '\n' + str(ass_units_found) + '\n'
+								achieved = False
+								if reg_units_found == ass_units_found:
+									achieved = True
+								text += 'achieved:' + str(achieved) + '\n'
+								if prov_units == unit_id_nos == reg_units_found:
+									text += 'units X3 match!!!\n'
+								else:
+									text += 'units X3 failed :( \n' + str(prov_units) + '\n' + str(unit_id_nos) + '\n' + str(reg_units_found) + '\n'
+
+								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
@@ -10470,7 +10499,15 @@ class provider_assessment(models.Model):
 									qual_line_obj.state= 'achieved'
 									qual_line_obj.learners_status= 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
+						# checking skills and adding to the text warning
+						if prov_skills == reg_skills_found == skill_id_nos:
+							text += 'skills X3 match!!!\n'
+						else:
+							text += 'units X3 failed :( \n' + str(prov_skills) + '\n' + str(skill_id_nos) + '\n' + str(
+								reg_skills_found) + '\n'
 						learner_achieved.append((0, 0, learner_dict))
+						text += str(skill_ids) + '\n'
+				# raise Warning(_(text))
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																  'state':'achieved',
 																  'pro_id':self.id,
@@ -10488,8 +10525,11 @@ class provider_assessment(models.Model):
 			if achieve_false == learner_line:
 				raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
 			return True
-		# Changes Added by Ganesh For Learning Programme
-		elif self.qual_skill_assessment == 'lp':
+
+	@api.multi
+	def achieve_lp(self):
+		provider = self.provider_id
+		if self.qual_skill_assessment == 'lp':
 			learner_achieved = []
 			if not self.learner_achieved_ids_for_lp:
 				for learner_data in self.learner_achieve_ids_for_lp:
@@ -10501,15 +10541,15 @@ class provider_assessment(models.Model):
 						for unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 							unit_ids.append(unit.id)
 						learner_dict = {
-								 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
-								 'learner_identity_number' : learner_data.learner_identity_number,
-								 'identification_id' : learner_data.identification_id,
-								 'lp_learner_assessment_achieved_line_id': [(6, 0, lp_ids)],
-								 'lp_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
-								 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
-								 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
-								 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
-								}
+							'learner_id': learner_data.learner_id and learner_data.learner_id.id,
+							'learner_identity_number': learner_data.learner_identity_number,
+							'identification_id': learner_data.identification_id,
+							'lp_learner_assessment_achieved_line_id': [(6, 0, lp_ids)],
+							'lp_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+							'assessors_id': learner_data.assessors_id and learner_data.assessors_id.id,
+							'moderators_id': learner_data.moderators_id and learner_data.moderators_id.id,
+							'timetable_id': learner_data.timetable_id and learner_data.timetable_id.id,
+						}
 						# This code is used to assign True value to achieve field of learning programme learner rel
 						learner_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
 						for line in learner_obj.learning_programme_ids:
@@ -10530,18 +10570,19 @@ class provider_assessment(models.Model):
 									line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.lp_status = 'Achieved'
-									learner_obj.learner_status= 'Achieved'
-									learner_obj.state= 'achieved'
-									learner_obj.learners_status= 'achieved'
+									learner_obj.learner_status = 'Achieved'
+									learner_obj.state = 'achieved'
+									learner_obj.learners_status = 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
 						learner_achieved.append((0, 0, learner_dict))
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
-																  'state':'achieved',
-																  'pro_id':self.id,
-																  'comment':self.comment,
-																  'state_title':'Achieved'
-																  })
-			self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_lp':learner_achieved,'select_all':False})
+			                                                              'state': 'achieved',
+			                                                              'pro_id': self.id,
+			                                                              'comment': self.comment,
+			                                                              'state_title': 'Achieved'
+			                                                              })
+			self.write(
+				{'state': 'achieved', 'assessed': True, 'learner_achieved_ids_for_lp': learner_achieved, 'select_all': False})
 			achieve_false = 0
 			learner_line = 0
 			for learner in self.learner_achieve_ids_for_lp:
@@ -10550,8 +10591,299 @@ class provider_assessment(models.Model):
 				learner_line += 1
 			if achieve_false == learner_line:
 				raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
-
 			return True
+
+	@api.multi
+	def action_achieved_button(self):
+		context = self._context
+		if context is None:
+			context = {}
+		self = self.with_context(assessed=True)
+		provider = self.provider_id
+		self.achieve_qual()
+		# if self.qual_skill_assessment == 'qual':
+		# 	learner_achieved = []
+		# 	if not self.learner_achieved_ids:
+		# 		text_guy = ''
+		# 		for learner_data in self.learner_achieve_ids:
+		# 			min_qual_creds = learner_data.qual_learner_assessment_achieve_line_id.m_credits
+		# 			min_creds_found = 0
+		# 			if learner_data.achieve:
+		# 				text_guy += learner_data.learner_id.name + '\n'
+		# 				req_units_found = []
+		# 				for us_min in learner_data.unit_standards_learner_assessment_achieve_line_id:
+		# 					dbg(us_min.level3)
+		# 					min_creds_found += int(us_min.level3)
+		# 					dbg('unit--' + str(us_min) + 'type found' + str(us_min.type))
+		# 					if us_min.type in ['Core','Fundamental']:
+		# 						req_units_found.append(us_min.id_no)
+		# 				text_guy += str(req_units_found) + '\n'
+		# 				# raise Warning(
+		# 				# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
+		# 				text_guy += 'min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
+		# 				qual_ids = []
+		# 				unit_ids = []
+		# 				for qual in learner_data.qual_learner_assessment_achieve_line_id:
+		# 					qual_ids.append(qual.id)
+		# 				for unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
+		# 					unit_ids.append(unit.id)
+		# 				learner_dict = {
+		# 						 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+		# 						 'learner_identity_number' : learner_data.learner_identity_number,
+		# 						 'identification_id' : learner_data.identification_id,
+		# 						 'qual_learner_assessment_achieved_line_id': [(6, 0, qual_ids)],
+		# 						 'unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+		# 						 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+		# 						 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+		# 						 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+		# 						}
+		# 				# This code is used to assign True value to achieve field of etqe learner qualification line
+		# 				qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+		# 				for line in qual_line_obj.learner_qualification_ids:
+		# 					min_expected_creds = line.learner_qualification_parent_id.m_credits
+		# 					text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
+		# 					dbg(line)
+		# 					selected_line, achieved_line = 0, 0
+		# 					if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
+		# 						dbg('match prov and quals for id:' + str(line))
+		# 						registration_min_creds = 0
+		# 						req_units = []
+		# 						for u_line in line.learner_registration_line_ids:
+		# 							# text_guy += 'units:' + str(u_line.id_data) + '\n'
+		# 							dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(qual_line_obj))
+		# 							if u_line.selection:
+		# 								# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
+		# 								dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
+		# 								if u_line.type in ['Core', 'Fundamental']:
+		# 									req_units.append(u_line.id_data)
+		# 								selected_line += 1
+		# 								for assessment_unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
+		# 									if u_line.title == assessment_unit.title:
+		# 										u_line.achieve = True
+		# 										line.is_complete = True
+		# 							if u_line.achieve:
+		# 								achieved_line += 1
+		# 						missing_req_units = []
+		# 						for x in req_units:
+		# 							if x not in req_units_found:
+		# 								missing_req_units.append(x)
+		# 						# raise Warning(_(missing_req_units))
+		# 						missing_required = False
+		# 						if missing_req_units == []:
+		# 							missing_required = False
+		# 							text_guy += 'no missing required units\n'
+		# 						else:
+		# 							missing_required = True
+		# 							text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
+		# 						# check if the counts are same or if min creds requirement are met
+		# 						# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+		# 						# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
+		# 							# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
+		# 						if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or\
+		# 								selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+		# 							line.is_learner_achieved = True
+		# 							line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+		# 							line.certificate_date = str(datetime.today().date())
+		# 							line.approval_date = str(datetime.today().date())
+		# 							line.qual_status = 'Achieved'
+		# 							qual_line_obj.learner_status= 'Achieved'
+		# 							qual_line_obj.state= 'achieved'
+		# 							qual_line_obj.learners_status= 'achieved'
+		# 							learner_dict.update({'is_learner_achieved': True})
+		# 							text_guy += 'learner achieved!!!\n'
+		# 						else:
+		# 							text_guy += '!!!!!!!!!learner NOT achieved\n'
+		# 						# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
+		# 				learner_achieved.append((0, 0, learner_dict))
+		# 		# raise Warning(_(text_guy))
+		# 		self.unit_standard_variance = text_guy
+		# 	assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
+		# 														  'state':'achieved',
+		# 														  'pro_id':self.id,
+		# 														  'comment':self.comment,
+		# 														  'state_title':'Achieved'
+		# 														  })
+		# 	self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids':learner_achieved,'select_all':False})
+		# 	# code to check whether any1 learner achieve field checked or not by pradip 5/10/2016
+		# 	achieve_false = 0
+		# 	learner_line = 0
+		# 	for learner in self.learner_achieve_ids:
+		# 		if learner.achieve == False:
+		# 			achieve_false += 1
+		# 		learner_line += 1
+		# 	if achieve_false == learner_line:
+		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
+		# 	return True
+		self.achieve_skill()
+		# elif self.qual_skill_assessment == 'skill':
+		# 	learner_achieved = []
+		# 	if not self.learner_achieved_ids_for_skills:
+		# 		text = ''
+		# 		for learner_data in self.learner_achieve_ids_for_skills:
+		# 			if learner_data.achieve:
+		# 				# TODO: search for the providers matching SP and append to a list if selection is true, then check if the same SP is in the above loop
+		# 				prov_units = []
+		# 				prov_skills = []
+		# 				for skill in provider.skills_programme_ids:
+		# 					prov_skills.append(skill.skill_saqa_id)
+		# 					for us in skill.unit_standards_line:
+		# 						prov_units.append(us.id_no)
+		# 				skill_ids = []
+		# 				skill_id_nos = []
+		# 				unit_id_nos = []
+		# 				unit_ids = []
+		# 				for skill in learner_data.skill_learner_assessment_achieve_line_id:
+		# 					skill_ids.append(skill.id)
+		# 					skill_id_nos.append(skill.saqa_qual_id)
+		# 				for unit in learner_data.skill_unit_standards_learner_assessment_achieve_line_id:
+		# 					unit_ids.append(unit.id)
+		# 					unit_id_nos.append(unit.id_no)
+		# 				learner_dict = {
+		# 						 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+		# 						 'learner_identity_number' : learner_data.learner_identity_number,
+		# 						 'identification_id' : learner_data.identification_id,
+		# 						 'skill_learner_assessment_achieved_line_id': [(6, 0, skill_ids)],
+		# 						 'skill_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+		# 						 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+		# 						 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+		# 						 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+		# 						}
+		# 				# This code is used to assign True value to achieve field of Skills Programme learner rel
+		# 				qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+		# 				reg_skills_found = []
+		# 				for line in qual_line_obj.skills_programme_ids:
+		# 					selected_line, achieved_line = 0, 0
+		# 					reg_skills_found.append(line.saqa_skill_id)
+		# 					if line.skills_programme_id.id in skill_ids and line.provider_id.id == self.provider_id.id:
+		# 						reg_units_found = []
+		# 						ass_units_found = []
+		# 						for u_line in line.unit_standards_line:
+		# 							if u_line.selection:
+		# 								selected_line += 1
+		# 								reg_units_found.append(u_line.id_no)
+		# 								for assessment_unit in learner_data.skill_unit_standards_learner_assessment_achieve_line_id:
+		# 									if assessment_unit.id_no not in ass_units_found:
+		# 										ass_units_found.append(assessment_unit.id_no)
+		# 									if u_line.title == assessment_unit.title:
+		# 										u_line.achieve = True
+		# 										line.is_complete = True
+		# 							if u_line.achieve:
+		# 								achieved_line += 1
+		# 						text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
+		# 						text += 'reg units:' + '\n' + str(reg_units_found) + '\n' + 'assessment units' + '\n' + str(ass_units_found) + '\n'
+		# 						achieved = False
+		# 						if reg_units_found == ass_units_found:
+		# 							achieved = True
+		# 						text += 'achieved:' + str(achieved) + '\n'
+		# 						if prov_units == unit_id_nos == reg_units_found:
+		# 							text += 'units X3 match!!!\n'
+		# 						else:
+		# 							text += 'units X3 failed :( \n' + str(prov_units) + '\n' + str(unit_id_nos) + '\n' + str(reg_units_found) + '\n'
+		#
+		# 						# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
+		# 						if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+		# 							line.is_learner_achieved = True
+		# 							line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+		# 							line.certificate_date = str(datetime.today().date())
+		# 							line.approval_date = str(datetime.today().date())
+		# 							line.skill_status = 'Achieved'
+		# 							qual_line_obj.learner_status= 'Achieved'
+		# 							qual_line_obj.state= 'achieved'
+		# 							qual_line_obj.learners_status= 'achieved'
+		# 							learner_dict.update({'is_learner_achieved': True})
+		# 				# checking skills and adding to the text warning
+		# 				if prov_skills == reg_skills_found == skill_id_nos:
+		# 					text += 'skills X3 match!!!\n'
+		# 				else:
+		# 					text += 'units X3 failed :( \n' + str(prov_skills) + '\n' + str(skill_id_nos) + '\n' + str(
+		# 						reg_skills_found) + '\n'
+		# 				learner_achieved.append((0, 0, learner_dict))
+		# 				text += str(skill_ids) + '\n'
+		#
+		#
+		# 		raise Warning(_(text))
+		# 	assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
+		# 														  'state':'achieved',
+		# 														  'pro_id':self.id,
+		# 														  'comment':self.comment,
+		# 														  'state_title':'Achieved'
+		# 														  })
+		# 	self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_skills':learner_achieved,'select_all':False})
+		# 	# code to check whether any1 learner achieve field checked or not by pradip 5/10/2016
+		# 	achieve_false = 0
+		# 	learner_line = 0
+		# 	for learner in self.learner_achieve_ids_for_skills:
+		# 		if learner.achieve == False:
+		# 			achieve_false += 1
+		# 		learner_line += 1
+		# 	if achieve_false == learner_line:
+		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
+		# 	return True
+		self.achieve_lp()
+		# Changes Added by Ganesh For Learning Programme
+		# elif self.qual_skill_assessment == 'lp':
+		# 	learner_achieved = []
+		# 	if not self.learner_achieved_ids_for_lp:
+		# 		for learner_data in self.learner_achieve_ids_for_lp:
+		# 			if learner_data.achieve:
+		# 				lp_ids = []
+		# 				unit_ids = []
+		# 				for lp in learner_data.lp_learner_assessment_achieve_line_id:
+		# 					lp_ids.append(lp.id)
+		# 				for unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+		# 					unit_ids.append(unit.id)
+		# 				learner_dict = {
+		# 						 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+		# 						 'learner_identity_number' : learner_data.learner_identity_number,
+		# 						 'identification_id' : learner_data.identification_id,
+		# 						 'lp_learner_assessment_achieved_line_id': [(6, 0, lp_ids)],
+		# 						 'lp_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+		# 						 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+		# 						 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+		# 						 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+		# 						}
+		# 				# This code is used to assign True value to achieve field of learning programme learner rel
+		# 				learner_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+		# 				for line in learner_obj.learning_programme_ids:
+		# 					selected_line, achieved_line = 0, 0
+		# 					if line.learning_programme_id.id in lp_ids and line.provider_id.id == self.provider_id.id:
+		# 						for u_line in line.unit_standards_line:
+		# 							if u_line.selection:
+		# 								selected_line += 1
+		# 								for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+		# 									if u_line.title == assessment_unit.title:
+		# 										u_line.achieve = True
+		# 										line.is_complete = True
+		# 							if u_line.achieve:
+		# 								achieved_line += 1
+		# 						if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+		# 							line.is_learner_achieved = True
+		# 							line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+		# 							line.certificate_date = str(datetime.today().date())
+		# 							line.approval_date = str(datetime.today().date())
+		# 							line.lp_status = 'Achieved'
+		# 							learner_obj.learner_status= 'Achieved'
+		# 							learner_obj.state= 'achieved'
+		# 							learner_obj.learners_status= 'achieved'
+		# 							learner_dict.update({'is_learner_achieved': True})
+		# 				learner_achieved.append((0, 0, learner_dict))
+		# 	assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
+		# 														  'state':'achieved',
+		# 														  'pro_id':self.id,
+		# 														  'comment':self.comment,
+		# 														  'state_title':'Achieved'
+		# 														  })
+		# 	self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_lp':learner_achieved,'select_all':False})
+		# 	achieve_false = 0
+		# 	learner_line = 0
+		# 	for learner in self.learner_achieve_ids_for_lp:
+		# 		if learner.achieve == False:
+		# 			achieve_false += 1
+		# 		learner_line += 1
+		# 	if achieve_false == learner_line:
+		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
+		#
+		# 	return True
 
 	@api.multi
 	def onchange_provider(self, provider_id):
@@ -10601,8 +10933,6 @@ class provider_assessment(models.Model):
 #             assessors_list = [assessors_rel.assessors_id and assessors_rel.assessors_id.id for assessors_rel in provider_data.assessors_ids]
 #             moderators_list = [moderators_rel.moderators_id and moderators_rel.moderators_id.id for moderators_rel in provider_data.moderators_ids]
 #             return {'domain': {'assessors_id': [('id', 'in', assessors_list)], 'moderators_id': [('id', 'in', moderators_list)] } ,'value':{'provider_accreditation_num': provider_accreditation_num, 'qualification_id':provider_data.qualification_id and provider_data.qualification_id.id, 'learner_ids':learner_line, 'learner_timetables':learner_line, 'learner_verification_ids':learner_line}}
-
-
 		return {}
 
 	# #  Added  Sequence for Provider Assessment.
