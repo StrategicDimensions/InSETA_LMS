@@ -10433,8 +10433,12 @@ class provider_assessment(models.Model):
 						# TODO: search for the providers matching SP and append to a list if selection is true, then check if the same SP is in the above loop
 						prov_units = []
 						prov_skills = []
+						this_skill_list = []
+						for skill in learner_data.skill_learner_assessment_achieve_line_id:
+							if not skill.code in this_skill_list:
+								this_skill_list.append(skill.code)
 						for skill in provider.skills_programme_ids:
-							if skill.skills_programme_id.code not in prov_skills:
+							if skill.skills_programme_id.code not in prov_skills and skill.skills_programme_id.code in this_skill_list:
 								prov_skills.append(skill.skills_programme_id.code)
 								for us in skill.unit_standards_line:
 									if us.id_no not in prov_units:
