@@ -10508,7 +10508,7 @@ class provider_assessment(models.Model):
 								reg_skills_found) + '\n'
 						learner_achieved.append((0, 0, learner_dict))
 						text += str(skill_ids) + '\n'
-				# raise Warning(_(text))
+				raise Warning(_(text))
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																  'state':'achieved',
 																  'pro_id':self.id,
