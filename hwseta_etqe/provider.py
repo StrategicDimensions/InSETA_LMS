@@ -10422,6 +10422,7 @@ class provider_assessment(models.Model):
 
 	@api.multi
 	def achieve_skill(self):
+		dbg('achieve skill!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 		provider = self.provider_id
 		if self.qual_skill_assessment == 'skill':
 			learner_achieved = []
