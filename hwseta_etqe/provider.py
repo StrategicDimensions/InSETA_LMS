@@ -10436,7 +10436,8 @@ class provider_assessment(models.Model):
 						for skill in provider.skills_programme_ids:
 							prov_skills.append(skill.skill_saqa_id)
 							for us in skill.unit_standards_line:
-								prov_units.append(us.id_no)
+								if us not in prov_units:
+									prov_units.append(us.id_no)
 						skill_ids = []
 						skill_id_nos = []
 						unit_id_nos = []
@@ -10484,11 +10485,13 @@ class provider_assessment(models.Model):
 								if reg_units_found == ass_units_found:
 									achieved = True
 								text += 'achieved:' + str(achieved) + '\n'
+								ach = False
 								for unit in unit_id_nos:
 									if unit in prov_units:
-										text += 'found' + unit
+										text += 'found' + unit + '\n'
 									else:
-										text += 'not found on prov' + unit
+										ach = False
+										text += 'not found on prov' + unit + '\n'
 								if prov_units == unit_id_nos == reg_units_found:
 									text += 'units X3 match!!!\n'
 								else:
