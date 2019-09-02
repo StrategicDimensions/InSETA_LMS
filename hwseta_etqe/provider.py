@@ -10434,10 +10434,11 @@ class provider_assessment(models.Model):
 						prov_units = []
 						prov_skills = []
 						for skill in provider.skills_programme_ids:
-							prov_skills.append(skill.skill_saqa_id)
-							for us in skill.unit_standards_line:
-								if us.id_no not in prov_units:
-									prov_units.append(us.id_no)
+							if skill.skills_programme_id.code not in prov_skills:
+								prov_skills.append(skill.skills_programme_id.code)
+								for us in skill.unit_standards_line:
+									if us.id_no not in prov_units:
+										prov_units.append(us.id_no)
 						skill_ids = []
 						skill_id_nos = []
 						unit_id_nos = []
