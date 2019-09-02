@@ -10484,6 +10484,11 @@ class provider_assessment(models.Model):
 								if reg_units_found == ass_units_found:
 									achieved = True
 								text += 'achieved:' + str(achieved) + '\n'
+								for unit in unit_id_nos:
+									if unit in prov_units:
+										text += 'found' + unit
+									else:
+										text += 'not found on prov' + unit
 								if prov_units == unit_id_nos == reg_units_found:
 									text += 'units X3 match!!!\n'
 								else:
