@@ -9638,6 +9638,8 @@ class provider_assessment(models.Model):
 	achieved_learner_count = fields.Integer('Achieved Learners', compute='_get_achieved_learner_count')
 	partially_achieved_learner_count = fields.Integer('Partially Achieved Learners', compute='_get_partially_achieved_learner_count')
 	is_provider = fields.Boolean("Is Provider", compute='_get_login_user', store = False)
+	unit_standard_variance = fields.Text()
+	unit_standard_library_variance = fields.Text()
 
 	@api.onchange('select_all')
 	def onchange_select_all(self):
