@@ -10443,6 +10443,7 @@ class provider_assessment(models.Model):
 								for us in skill.unit_standards_line:
 									if us.id_no not in prov_units:
 										prov_units.append(us.id_no)
+						dbg('prov units list' + str(prov_units))
 						skill_ids = []
 						skill_id_nos = []
 						unit_id_nos = []
@@ -10484,7 +10485,7 @@ class provider_assessment(models.Model):
 												line.is_complete = True
 									if u_line.achieve:
 										achieved_line += 1
-								text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
+								# text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
 								text += 'reg units:' + '\n' + str(reg_units_found) + '\n' + 'assessment units' + '\n' + str(ass_units_found) + '\n'
 								achieved = False
 								if reg_units_found == ass_units_found:
