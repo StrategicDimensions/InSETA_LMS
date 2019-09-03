@@ -10514,12 +10514,6 @@ class provider_assessment(models.Model):
 									qual_line_obj.state= 'achieved'
 									qual_line_obj.learners_status= 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
-						# checking skills and adding to the text warning
-						if prov_skills == reg_skills_found == skill_id_nos:
-							text += 'skills X3 match!!!\n'
-						else:
-							text += 'units X3 failed :( \n' + str(prov_skills) + '\n' + str(skill_id_nos) + '\n' + str(
-								reg_skills_found) + '\n'
 						learner_achieved.append((0, 0, learner_dict))
 						# text += str(skill_ids) + '\n'
 				raise Warning(_(text))
