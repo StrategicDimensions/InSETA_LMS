@@ -10486,11 +10486,7 @@ class provider_assessment(models.Model):
 									if u_line.achieve:
 										achieved_line += 1
 								# text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
-								text += 'reg units:' + '\n' + str(reg_units_found) + '\n' + 'assessment units' + '\n' + str(ass_units_found) + '\n'
-								achieved = False
-								if reg_units_found == ass_units_found:
-									achieved = True
-								text += 'achieved:' + str(achieved) + '\n'
+								text += 'reg units:\n' + str(reg_units_found) + '\n assessment units' + '\n' + str(ass_units_found) + '\n prov_units \n' + str(prov_units)
 								ach = False
 								for unit in unit_id_nos:
 									if unit in prov_units:
