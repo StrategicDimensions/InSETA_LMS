@@ -9711,8 +9711,7 @@ class provider_assessment(models.Model):
 					s_line.achieve = False
 
 	@api.multi
-	def action_fetch_learners_button(self):
-		''' This method is used to fetch approved learners from learner master to provider assessment based on assessment type and selected batch '''
+	def fetch_learners_qual(self):
 		learners_list = []
 		assessment_line_list = []
 		if self.provider_id == self.env.user.partner_id:
@@ -9737,19 +9736,45 @@ class provider_assessment(models.Model):
 									if unit_line.achieve == False and unit_line.selection:
 										# print "unit_line.id_data====", unit_line.id_data
 										# print "unit_line.Title====", unit_line.title
-										pro_qual_id = self.env['provider.qualification.line'].search(['|',('id_no', '=', 'unit_line.id_data'),('title', '=', unit_line.title),('line_id','=',learner_qual.learner_qualification_parent_id.id)]).id
+										pro_qual_id = self.env['provider.qualification.line'].search(
+											['|', ('id_no', '=', 'unit_line.id_data'), ('title', '=', unit_line.title),
+											 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)]).id
 										print "pro_qual_id==", pro_qual_id
 										if pro_qual_id:
 											unit_line_list.append(pro_qual_id)
-										# print "Unit line list:==========", unit_line_list
+								# print "Unit line list:==========", unit_line_list
 								if qual_list and unit_line_list:
-									if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-									elif learner.citizen_resident_status_code in ['other','unknown']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-			self.write({'learner_ids':assessment_line_list})
+									if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
+										assessment_line_list.append((0, 0, {
+											'identification_id': learner.learner_identification_id or '',
+											'learner_id': learner.id,
+											'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]],
+											'unit_standards_learner_assessment_line_id': [
+												[6, 0, list(set(unit_line_list))]],
+											'assessors_id': learners_assessor_id,
+											'moderators_id': learners_moderator_id}))
+									elif learner.citizen_resident_status_code in ['other', 'unknown']:
+										assessment_line_list.append((0, 0,
+										                             {'identification_id': learner.national_id or '',
+										                              'learner_id': learner.id,
+										                              'qual_learner_assessment_line_id': [
+											                              [6, 0, list(set(qual_list))]],
+										                              'unit_standards_learner_assessment_line_id': [
+											                              [6, 0, list(set(unit_line_list))]],
+										                              'assessors_id': learners_assessor_id,
+										                              'moderators_id': learners_moderator_id}))
+			self.write({'learner_ids': assessment_line_list})
 			return True
-		elif self.batch_id and self.qual_skill_assessment == 'skill':
+
+	@api.multi
+	def fetch_learners_skill(self):
+		learners_list = []
+		assessment_line_list = []
+		if self.provider_id == self.env.user.partner_id:
+			prov_partner = self.env.user.partner_id
+		else:
+			prov_partner = self.provider_id
+		if self.batch_id and self.qual_skill_assessment == 'skill':
 			for record in self.learner_ids_for_skills:
 				learners_list.append(record.learner_id.id)
 			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
@@ -9776,7 +9801,16 @@ class provider_assessment(models.Model):
 
 			self.write({'learner_ids_for_skills':assessment_line_list})
 			return True
-		elif self.batch_id and self.qual_skill_assessment == 'lp':
+
+	@api.multi
+	def fetch_learners_lp(self):
+		learners_list = []
+		assessment_line_list = []
+		if self.provider_id == self.env.user.partner_id:
+			prov_partner = self.env.user.partner_id
+		else:
+			prov_partner = self.provider_id
+		if self.batch_id and self.qual_skill_assessment == 'lp':
 			for record in self.learner_ids_for_lp:
 				learners_list.append(record.learner_id.id)
 			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', prov_partner.id)])
@@ -9792,16 +9826,46 @@ class provider_assessment(models.Model):
 								learners_moderator_id = learner_lp.moderators_id.id
 								for unit_line in learner_lp.unit_standards_line:
 									if unit_line.achieve == False and unit_line.selection:
-										pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search([('title', '=', unit_line.title),('learning_programme_id','=',learner_lp.learning_programme_id.id)]).id
+										pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search(
+											[('title', '=', unit_line.title),
+											 ('learning_programme_id', '=', learner_lp.learning_programme_id.id)]).id
 										if pro_lp_id:
 											unit_line_list.append(pro_lp_id)
 								if lp_list and unit_line_list:
-									if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-									elif learner.citizen_resident_status_code in ['other','unknown']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-			self.write({'learner_ids_for_lp':assessment_line_list})
+									if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
+										assessment_line_list.append((0, 0, {
+											'identification_id': learner.learner_identification_id or '',
+											'learner_id': learner.id,
+											'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]],
+											'lp_unit_standards_learner_assessment_line_id': [
+												[6, 0, list(set(unit_line_list))]],
+											'assessors_id': learners_assessor_id,
+											'moderators_id': learners_moderator_id}))
+									elif learner.citizen_resident_status_code in ['other', 'unknown']:
+										assessment_line_list.append((0, 0,
+										                             {'identification_id': learner.national_id or '',
+										                              'learner_id': learner.id,
+										                              'lp_learner_assessment_line_id': [
+											                              [6, 0, list(set(lp_list))]],
+										                              'lp_unit_standards_learner_assessment_line_id': [
+											                              [6, 0, list(set(unit_line_list))]],
+										                              'assessors_id': learners_assessor_id,
+										                              'moderators_id': learners_moderator_id}))
+			self.write({'learner_ids_for_lp': assessment_line_list})
 			return True
+
+	@api.multi
+	def action_fetch_learners_button(self):
+		''' This method is used to fetch approved learners from learner master to provider assessment based on assessment type and selected batch '''
+		learners_list = []
+		assessment_line_list = []
+		if self.provider_id == self.env.user.partner_id:
+			prov_partner = self.env.user.partner_id
+		else:
+			prov_partner = self.provider_id
+		self.fetch_learners_qual()
+		self.fetch_learners_skill()
+		self.fetch_learners_lp()
 
 	@api.multi
 	def action_submit_button(self):
