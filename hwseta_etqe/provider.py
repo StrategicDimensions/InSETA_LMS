@@ -10500,7 +10500,7 @@ class provider_assessment(models.Model):
 								if prov_units == unit_id_nos == reg_units_found:
 									text += 'units X3 match!!!\n'
 								else:
-									text += 'units X3 failed :( \n' + str(prov_units) + '\n' + str(unit_id_nos) + '\n' + str(reg_units_found) + '\n'
+									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
 
 								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
@@ -10520,7 +10520,7 @@ class provider_assessment(models.Model):
 							text += 'units X3 failed :( \n' + str(prov_skills) + '\n' + str(skill_id_nos) + '\n' + str(
 								reg_skills_found) + '\n'
 						learner_achieved.append((0, 0, learner_dict))
-						text += str(skill_ids) + '\n'
+						# text += str(skill_ids) + '\n'
 				raise Warning(_(text))
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																  'state':'achieved',
