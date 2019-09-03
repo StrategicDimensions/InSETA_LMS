@@ -10430,6 +10430,7 @@ class provider_assessment(models.Model):
 				text = ''
 				for learner_data in self.learner_achieve_ids_for_skills:
 					if learner_data.achieve:
+						text += learner_data.learner_id.name + '\n'
 						# TODO: search for the providers matching SP and append to a list if selection is true, then check if the same SP is in the above loop
 						prov_units = []
 						prov_skills = []
@@ -10486,7 +10487,7 @@ class provider_assessment(models.Model):
 									if u_line.achieve:
 										achieved_line += 1
 								# text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
-								text += 'reg units:\n' + str(reg_units_found) + '\n assessment units' + '\n' + str(ass_units_found) + '\n prov_units \n' + str(prov_units)
+								text += 'reg units:\n' + str(reg_units_found) + '\n assessment units' + '\n' + str(ass_units_found) + '\n prov_units \n' + str(prov_units) + '\n'
 								ach = False
 								for unit in unit_id_nos:
 									if unit in prov_units:
@@ -10500,7 +10501,7 @@ class provider_assessment(models.Model):
 									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
 
 								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line or ach == True:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
@@ -10512,7 +10513,8 @@ class provider_assessment(models.Model):
 									learner_dict.update({'is_learner_achieved': True})
 						learner_achieved.append((0, 0, learner_dict))
 						# text += str(skill_ids) + '\n'
-				raise Warning(_(text))
+				# raise Warning(_(text))
+				self.unit_standard_variance = text
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																  'state':'achieved',
 																  'pro_id':self.id,
