@@ -9433,6 +9433,8 @@ class provider_assessment(models.Model):
 	@api.multi
 	def onchange_batch_id(self, batch_id, qual_skill_assessment):
 		dbg('onchange_batch_id')
+		dbg(batch_id)
+		dbg(qual_skill_assessment)
 		assessment_line_list, batch_lst = [], []
 		user = self._uid
 		user_obj = self.env['res.users']
