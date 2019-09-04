@@ -9336,6 +9336,7 @@ class provider_assessment(models.Model):
 
 	@api.multi
 	def onchange_batch_qual(self,batch_id,qual_skill_assessment):
+		dbg('onchange_batch_qual')
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
@@ -9367,6 +9368,7 @@ class provider_assessment(models.Model):
 
 	@api.multi
 	def onchange_batch_skill(self, batch_id, qual_skill_assessment):
+		dbg('onchange_batch_skill')
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
@@ -9398,6 +9400,7 @@ class provider_assessment(models.Model):
 
 	@api.multi
 	def onchange_batch_lp(self, batch_id, qual_skill_assessment):
+		dbg('onchange_batch_lp')
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
@@ -9530,15 +9533,15 @@ class provider_assessment(models.Model):
 		# 							assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
 		# 						elif learner.citizen_resident_status_code in ['other','unknown']:
 		# 							assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-		self.onchange_batch_qual(batch_id,qual_skill_assessment)
-		self.onchange_batch_skill(batch_id,qual_skill_assessment)
-		self.onchange_batch_lp(batch_id,qual_skill_assessment)
+		# self.onchange_batch_qual(batch_id,qual_skill_assessment)
+		# self.onchange_batch_skill(batch_id,qual_skill_assessment)
+		# self.onchange_batch_lp(batch_id,qual_skill_assessment)
 		if batch_id and qual_skill_assessment == 'qual':
-			return {'value':{'learner_ids':assessment_line_list}}
+			return {'value':{'learner_ids':self.onchange_batch_qual(batch_id,qual_skill_assessment)}}
 		elif batch_id and qual_skill_assessment == 'skill':
-			return {'value':{'learner_ids_for_skills':assessment_line_list}}
+			return {'value':{'learner_ids_for_skills':self.onchange_batch_skill(batch_id,qual_skill_assessment)}}
 		elif batch_id and qual_skill_assessment == 'lp':
-			return {'value':{'learner_ids_for_lp':assessment_line_list}}
+			return {'value':{'learner_ids_for_lp':self.onchange_batch_lp(batch_id,qual_skill_assessment)}}
 		return {'domain':{'batch_id':[('id','in',batch_lst)]}}
 
 	@api.model
