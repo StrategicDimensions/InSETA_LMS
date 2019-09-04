@@ -9366,7 +9366,7 @@ class provider_assessment(models.Model):
 								return assessment_line_list
 
 	@api.multi
-	def onchange_batch_skill(self):
+	def onchange_batch_skill(self, batch_id, qual_skill_assessment):
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
@@ -9397,7 +9397,7 @@ class provider_assessment(models.Model):
 								return assessment_line_list
 
 	@api.multi
-	def onchange_batch_lp(self):
+	def onchange_batch_lp(self, batch_id, qual_skill_assessment):
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
