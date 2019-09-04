@@ -9337,6 +9337,7 @@ class provider_assessment(models.Model):
 	@api.multi
 	def onchange_batch_qual(self,batch_id,qual_skill_assessment):
 		dbg('onchange_batch_qual')
+		assessment_line_list, batch_lst = [], []
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
@@ -9369,6 +9370,7 @@ class provider_assessment(models.Model):
 	@api.multi
 	def onchange_batch_skill(self, batch_id, qual_skill_assessment):
 		dbg('onchange_batch_skill')
+		assessment_line_list, batch_lst = [], []
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
@@ -9401,6 +9403,7 @@ class provider_assessment(models.Model):
 	@api.multi
 	def onchange_batch_lp(self, batch_id, qual_skill_assessment):
 		dbg('onchange_batch_lp')
+		assessment_line_list, batch_lst = [], []
 		user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
