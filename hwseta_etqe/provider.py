@@ -9432,6 +9432,7 @@ class provider_assessment(models.Model):
 
 	@api.multi
 	def onchange_batch_id(self, batch_id, qual_skill_assessment):
+		dbg('onchange_batch_id')
 		assessment_line_list, batch_lst = [], []
 		user = self._uid
 		user_obj = self.env['res.users']
@@ -9537,10 +9538,13 @@ class provider_assessment(models.Model):
 		# self.onchange_batch_skill(batch_id,qual_skill_assessment)
 		# self.onchange_batch_lp(batch_id,qual_skill_assessment)
 		if batch_id and qual_skill_assessment == 'qual':
+			dbg('qualzzzzzz')
 			return {'value':{'learner_ids':self.onchange_batch_qual(batch_id,qual_skill_assessment)}}
 		elif batch_id and qual_skill_assessment == 'skill':
+			dbg('skillsssssss')
 			return {'value':{'learner_ids_for_skills':self.onchange_batch_skill(batch_id,qual_skill_assessment)}}
 		elif batch_id and qual_skill_assessment == 'lp':
+			dbg('lpzzzzzzzzzzzzzzzzzzz')
 			return {'value':{'learner_ids_for_lp':self.onchange_batch_lp(batch_id,qual_skill_assessment)}}
 		return {'domain':{'batch_id':[('id','in',batch_lst)]}}
 
