@@ -10560,10 +10560,10 @@ class provider_assessment(models.Model):
 					# raise Warning(_('done'))
 					# raise Warning(_('matching batch: this reg line should be deleted' + str(reg_qual)))
 					else:
-						reg_qual.unlink()
-				ass_qual_line.unlink()
-			if self.learner_achieved_ids:
-				for achieved in self.learner_achieved_ids:
+						reg_skill.unlink()
+				ass_skill_line.unlink()
+			if self.learner_achieved_ids_for_skills:
+				for achieved in self.learner_achieved_ids_for_skills:
 					achieved.unlink()
 		else:
 			raise Warning(_('The selected provider has no qualifications attached to profile.'))
