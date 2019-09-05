@@ -10495,7 +10495,7 @@ class provider_assessment(models.Model):
 						skill_dict.get(skill.skill_saqa_id).append(us.id_no)
 			for learner_id in self.learner_ids_for_skills:
 				learner_id.unlink()
-			for verify in self.learner_verify_idsfor_skills:
+			for verify in self.learner_verify_ids_for_skills:
 				verify.unlink()
 			for evaluate in self.learner_evaluate_ids_for_skills:
 				evaluate.unlink()
