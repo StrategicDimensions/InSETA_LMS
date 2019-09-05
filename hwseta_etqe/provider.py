@@ -10507,7 +10507,7 @@ class provider_assessment(models.Model):
 				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
 				dbg('--------------------------------------------------')
 				for reg_skill in learner.skills_programme_ids:
-					skill_id = reg_skill.id
+					skillz_id = reg_skill.id
 					if reg_skill.batch_id:
 						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
 						dbg('reg_skill.batch_id' + str(reg_skill.batch_id))
@@ -10524,7 +10524,7 @@ class provider_assessment(models.Model):
 								dbg(unitz)
 								# TODO: carry on from here
 								lib_unit = self.env['skills.programme.unit.standards'].search(
-									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skill_id)])
+									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
 								unit_vals = {
 									# 'provider_id': self.provider_id,
 									'id_no': lib_unit.id_no,
