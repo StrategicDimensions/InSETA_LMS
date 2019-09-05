@@ -10511,9 +10511,9 @@ class provider_assessment(models.Model):
 						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
 						dbg('reg_skill.batch_id' + str(reg_skill.batch_id))
 						dbg('reg_skill.learner_qualification_parent_id.saqa_qual_id' + str(
-							reg_skill.skills_programme_ids.saqa_qual_id))
+							reg_skill.skills_programme_id.saqa_qual_id))
 						dbg('reg_skill.saqa_qual_id' + str(skill_id.saqa_qual_id))
-						if reg_skill.batch_id == batch and reg_skill.skills_programme_ids.saqa_qual_id == skill_id.saqa_qual_id:
+						if reg_skill.batch_id == batch and reg_skill.skills_programme_id.saqa_qual_id == skill_id.saqa_qual_id:
 							start = reg_skill.start_date
 							end = reg_skill.end_date
 							reg_skill.unlink()
