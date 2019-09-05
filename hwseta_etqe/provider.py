@@ -10387,15 +10387,19 @@ class provider_assessment(models.Model):
 			return True
 
 	@api.multi
-	def fix_nic_mpilo(self):
+	def fix_nic_mpilo_quals(self):
 		if self.batch_id:
 			batch = self.batch_id
 		else:
 			raise Warning(_('no batch found, cant correct records from assessment without a batch'))
 		if self.provider_id:
+			provider = self.provider_id
+		else:
+			raise Warning(_('you cant ammend without a provider on this form'))
+		if provider.qualification_ids:
 			qual_dict = {}
-			for qual in self.provider_id.qualification_ids:
-				qual_dict.update({qual.saqa_qual_id:[]})
+			for qual in provider.qualification_ids:
+				qual_dict.update({qual.saqa_qual_id: []})
 				for us in qual.qualification_line:
 					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection:
 						qual_dict.get(qual.saqa_qual_id).append(us.id_data)
@@ -10469,7 +10473,198 @@ class provider_assessment(models.Model):
 			if self.learner_achieved_ids:
 				for achieved in self.learner_achieved_ids:
 					achieved.unlink()
+		else:
+			raise Warning(_('The selected provider has no qualifications attached to profile.'))
 
+	@api.multi
+	def fix_nic_mpilo_skills(self):
+		if self.batch_id:
+			batch = self.batch_id
+		else:
+			raise Warning(_('no batch found, cant correct records from assessment without a batch'))
+		if self.provider_id:
+			provider = self.provider_id
+		else:
+			raise Warning(_('you cant ammend without a provider on this form'))
+		if provider.skills_programme_ids:
+			skill_dict = {}
+			for skill in provider.skills_programme_ids:
+				skill_dict.update({skill.skill_saqa_id: []})
+				for us in skill.unit_standards_line:
+					if us.id_no not in skill_dict.get(skill.skill_saqa_id) and us.selection:
+						skill_dict.get(skill.skill_saqa_id).append(us.id_no)
+			for learner_id in self.learner_ids_for_skills:
+				learner_id.unlink()
+			for verify in self.learner_verify_idsfor_skills:
+				verify.unlink()
+			for evaluate in self.learner_evaluate_ids_for_skills:
+				evaluate.unlink()
+			for ass_skill_line in self.learner_achieve_ids_for_skills:
+				skill_id = ass_skill_line.skill_learner_assessment_achieve_line_id
+				learner = ass_skill_line.learner_id
+				mod = ass_skill_line.moderators_id
+				ass = ass_skill_line.assessors_id
+				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
+				dbg('--------------------------------------------------')
+				for reg_skill in learner.skills_programme_ids:
+					if reg_skill.batch_id:
+						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
+						dbg('reg_skill.batch_id' + str(reg_skill.batch_id))
+						dbg('reg_skill.learner_qualification_parent_id.saqa_qual_id' + str(
+							reg_skill.skills_programme_ids.saqa_qual_id))
+						dbg('reg_skill.saqa_qual_id' + str(skill_id.saqa_qual_id))
+						if reg_skill.batch_id == batch and reg_skill.skills_programme_ids.saqa_qual_id == skill_id.saqa_qual_id:
+							start = reg_skill.start_date
+							end = reg_skill.end_date
+							reg_skill.unlink()
+							units_list = []
+							dbg('-----------------------------!!!!!!!!!!!!!!!!')
+							for unitz in skill_dict.get(skill_id.saqa_qual_id):
+								dbg(unitz)
+								# TODO: carry on from here
+								lib_unit = self.env['skills.programme.unit.standards'].search(
+									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id)])
+								unit_vals = {
+									# 'provider_id': self.provider_id,
+									'id_no': lib_unit.id_no,
+									'title': lib_unit.title,
+									'type': lib_unit.type,
+									'level1': lib_unit.level1,
+									'level3': lib_unit.level3,
+									'selection': True,
+									'level2': lib_unit.level2,
+									# 'learner_reg_id': reg_qual_line,
+								}
+								units_list.append(unit_vals)
+							reg_skill_line = []
+							# raise Warning(_(qual_dict))
+							val = {
+								'batch_id': batch,
+								'provider_id': self.provider_id,
+								'moderators_id': mod,
+								'assessors_id': ass,
+								'start_date': start,
+								'end_date': end,
+								'skills_programme_id': skill_id,
+								'learner_registration_line_ids': units_list,
+							}
+							reg_skill_line.append((0, 0, val))
+							# learner.write({'learner_qualification_ids': reg_qual_line})
+							learner.skills_programme_ids = reg_skill_line
+
+					# self.env['learner.registration.qualification.line'].create(unit_vals)
+					# units_list.append(self.env['provider.qualification.line'].search(
+					#     [('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', qual_id.saqa_qual_id)]))
+
+					# raise Warning(_('done'))
+					# raise Warning(_('matching batch: this reg line should be deleted' + str(reg_qual)))
+					else:
+						reg_qual.unlink()
+				ass_qual_line.unlink()
+			if self.learner_achieved_ids:
+				for achieved in self.learner_achieved_ids:
+					achieved.unlink()
+		else:
+			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+
+	@api.multi
+	def fix_nic_mpilo_lp(self):
+		if self.batch_id:
+			batch = self.batch_id
+		else:
+			raise Warning(_('no batch found, cant correct records from assessment without a batch'))
+		if self.provider_id:
+			provider = self.provider_id
+		else:
+			raise Warning(_('you cant ammend without a provider on this form'))
+		if provider.qualification_ids:
+			qual_dict = {}
+			for qual in provider.qualification_ids:
+				qual_dict.update({qual.saqa_qual_id: []})
+				for us in qual.qualification_line:
+					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection:
+						qual_dict.get(qual.saqa_qual_id).append(us.id_data)
+			for learner_id in self.learner_ids:
+				learner_id.unlink()
+			for verify in self.learner_verify_ids:
+				verify.unlink()
+			for evaluate in self.learner_evaluate_ids:
+				evaluate.unlink()
+			for ass_qual_line in self.learner_achieve_ids:
+				qual_id = ass_qual_line.qual_learner_assessment_achieve_line_id
+				learner = ass_qual_line.learner_id
+				mod = ass_qual_line.moderators_id
+				ass = ass_qual_line.assessors_id
+				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
+				dbg('--------------------------------------------------')
+				for reg_qual in learner.learner_qualification_ids:
+					if reg_qual.batch_id:
+						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
+						dbg('reg_qual.batch_id' + str(reg_qual.batch_id))
+						dbg('reg_qual.learner_qualification_parent_id.saqa_qual_id' + str(
+							reg_qual.learner_qualification_parent_id.saqa_qual_id))
+						dbg('qual_id.saqa_qual_id' + str(qual_id.saqa_qual_id))
+						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
+							start = reg_qual.start_date
+							end = reg_qual.end_date
+							reg_qual.unlink()
+							units_list = []
+							dbg('-----------------------------!!!!!!!!!!!!!!!!')
+							for unitz in qual_dict.get(qual_id.saqa_qual_id):
+								dbg(unitz)
+								lib_unit = self.env['provider.qualification.line'].search(
+									[('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', qual_id.saqa_qual_id)])
+								unit_vals = {
+									'provider_id': self.provider_id,
+									'id_data': lib_unit.id_no,
+									'title': lib_unit.title,
+									'type': lib_unit.type,
+									'level1': lib_unit.level1,
+									'level3': lib_unit.level3,
+									'selection': True,
+									'level2': lib_unit.level2,
+									# 'learner_reg_id': reg_qual_line,
+								}
+								units_list.append(unit_vals)
+							reg_qual_line = []
+							# raise Warning(_(qual_dict))
+							val = {
+								'batch_id': batch,
+								'provider_id': self.provider_id,
+								'moderators_id': mod,
+								'assessors_id': ass,
+								'start_date': start,
+								'end_date': end,
+								'learner_qualification_parent_id': qual_id,
+								'learner_registration_line_ids': units_list,
+							}
+							reg_qual_line.append((0, 0, val))
+							# learner.write({'learner_qualification_ids': reg_qual_line})
+							learner.learner_qualification_ids = reg_qual_line
+
+					# self.env['learner.registration.qualification.line'].create(unit_vals)
+					# units_list.append(self.env['provider.qualification.line'].search(
+					#     [('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', qual_id.saqa_qual_id)]))
+
+					# raise Warning(_('done'))
+					# raise Warning(_('matching batch: this reg line should be deleted' + str(reg_qual)))
+					else:
+						reg_qual.unlink()
+				ass_qual_line.unlink()
+			if self.learner_achieved_ids:
+				for achieved in self.learner_achieved_ids:
+					achieved.unlink()
+		else:
+			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+
+	@api.multi
+	def fix_nic_mpilo(self):
+		if self.qual_skill_assessment == 'qual':
+			self.fix_nic_mpilo_quals()
+		if self.qual_skill_assessment == 'skill':
+			self.fix_nic_mpilo_skills()
+		if self.qual_skill_assessment == 'lp':
+			self.fix_nic_mpilo_lp()
 
 		self.submited = False
 		self.state = 'draft'
