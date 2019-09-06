@@ -9882,16 +9882,20 @@ class provider_assessment(models.Model):
 			prov_partner = self.env.user.partner_id
 		else:
 			prov_partner = self.provider_id
+		dbg(prov_partner.name)
 		if self.batch_id and self.qual_skill_assessment == 'skill':
+			dbg('found batch and skill type')
 			for record in self.learner_ids_for_skills:
 				learners_list.append(record.learner_id.id)
 			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
 			new_learner_list = [learner.id for learner in learner_obj]
 			if learner_obj:
+				dbg(learner_obj)
 				for learner in learner_obj:
+					dbg(learner)
 					if learner.id not in learners_list:
 						for learner_skill in learner.skills_programme_ids:
-							if learner_skill.batch_id.id == self.batch_id.id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
+							if learner_skill.batch_id.id == self.batch_id.id and learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
 								skill_list, unit_line_list = [], []
 								skill_list.append(learner_skill.skills_programme_id.id)
 								learners_assessor_id = learner_skill.assessors_id.id
@@ -9969,12 +9973,6 @@ class provider_assessment(models.Model):
 	@api.multi
 	def action_fetch_learners_button(self):
 		''' This method is used to fetch approved learners from learner master to provider assessment based on assessment type and selected batch '''
-		learners_list = []
-		assessment_line_list = []
-		if self.provider_id == self.env.user.partner_id:
-			prov_partner = self.env.user.partner_id
-		else:
-			prov_partner = self.provider_id
 		self.fetch_learners_qual()
 		self.fetch_learners_skill()
 		self.fetch_learners_lp()
