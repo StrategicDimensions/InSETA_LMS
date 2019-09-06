@@ -9906,7 +9906,7 @@ class provider_assessment(models.Model):
 										assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
 									elif learner.citizen_resident_status_code in ['other','unknown']:
 										assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-
+			dbg(assessment_line_list)
 			self.write({'learner_ids_for_skills':assessment_line_list})
 			return True
 
