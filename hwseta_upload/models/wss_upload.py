@@ -404,8 +404,30 @@ class wss_draft(models.Model):
             matching_emp_rel = self.env['sdf.employer.rel'].search([('employer_sdl_no','=',self.sdl_number)])
             matching_sdf = self.env['hr.employee'].search([('sdf_id','in',matching_emp_rel)])
             # if matching_sdf:
+    
+    @api.one
+    def back_status(self):
+        field_dict = self.read()[0]
+        field_list = sorted(list(field_dict))
+        
 
-
+        ds = "WSSMAN: |"
+        dbg(ds+str(field_list))
+        dbg(ds + " back status started - state" + str(self.status))
+        status_map = {
+            "submitted": "draft",
+            "assessed": "submitted",
+            "evaluated": "assessed",
+            "accepted": "evaluated",
+            "rejected": "evaluated",
+        }
+        if self.chatterbox:
+            for k in status_map.keys():
+                if self.status == k:
+                    self.status = status_map[k]
+                    self.chatter(self.env.user, "Moved this transaction to status from "+str(k)+ "  to "+ str(status_map[k])  +" for reason: "+ self.chatterbox)
+        else:
+            raise except_orm(_('Missing values!'), _('Please fill in a reason.' ))
 
 wss_draft()
 

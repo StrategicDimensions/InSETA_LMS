@@ -13,6 +13,13 @@
 								attrs="{'invisible':[('status','=','draft')]}"
 								groups="hwseta_upload.group_wss_approval"
 						/>
+						<button
+								name="back_status"
+								type="object"
+								groups="hwseta_upload.group_wss_approval"
+								string="Move WSS to Previous Status"
+						/>
+
 						<button type="object"
 								name="assessed"
 								string="Assessed WSS"
@@ -117,6 +124,7 @@
 							/>
 							<field name="rejected_check" attrs="{'invisible':[('status','=','draft')]}" groups="hwseta_upload.group_wss_approval"/>
 							<field name="chatterbox" string="Reason" attrs="{'invisible':[('status','=','draft')]}" groups="hwseta_upload.group_wss_approval"/>
+							<!-- <field name="chatterbox" string="Reason"/> -->
 							<field name="extension_reason"
 								   string="Reason"
 								   attrs="{'invisible':['|','|',('extension_status','in',['rejected','approved']),('status','=','submitted'),('extendable','!=',True)]}"
@@ -132,6 +140,12 @@
 									type="object"
 									string="back"
 									attrs="{'invisible':[('page','not in',['org','staff_db','training','signatories'])]}"/></span>
+
+							
+							
+									
+							
+
 							<span>
 								<button
 									name="next_page"
