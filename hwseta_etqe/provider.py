@@ -10582,7 +10582,7 @@ class provider_assessment(models.Model):
 			for evaluate in self.learner_evaluate_ids_for_lp:
 				evaluate.unlink()
 			for ass_lp_line in self.learner_achieve_ids_for_lp:
-				lp_id = ass_lp_line.learning_programme_id
+				lp_id = ass_lp_line.lp_learner_assessment_achieve_line_id
 				learner = ass_lp_line.learner_id
 				mod = ass_lp_line.moderators_id
 				ass = ass_lp_line.assessors_id
