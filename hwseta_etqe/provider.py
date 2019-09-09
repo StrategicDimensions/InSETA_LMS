@@ -10568,13 +10568,13 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
-		if provider.qualification_ids:
+		if provider.learning_programme_ids:
 			lp_dict = {}
 			for lp in provider.learning_programme_ids:
-				lp_dict.update({lp.saqa_qual_id: []})
+				lp_dict.update({lp.lp_saqa_id: []})
 				for us in lp.unit_standards_line:
-					if us.id_data not in lp_dict.get(lp.saqa_qual_id) and us.selection:
-						lp_dict.get(lp.saqa_qual_id).append(us.id_data)
+					if us.id_data not in lp_dict.get(lp.lp_saqa_id) and us.selection:
+						lp_dict.get(lp.lp_saqa_id).append(us.id_data)
 			for learner_id in self.learner_ids_for_lp:
 				learner_id.unlink()
 			for verify in self.learner_verify_ids_for_lp:
