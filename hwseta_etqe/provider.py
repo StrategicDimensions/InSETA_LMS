@@ -10514,11 +10514,6 @@ class provider_assessment(models.Model):
 							units_list = []
 							dbg('-----------------------------!!!!!!!!!!!!!!!!')
 							for unitz in skill_dict.get(skill_id.saqa_qual_id):
-								dbg(unitz)
-								# TODO: carry on from here
-								dbg(reg_skill)
-								dbg(self.env['skills.programme.unit.standards'].search(
-									[('skills_programme_id','=',skillz_id)]))
 								lib_unit = self.env['skills.programme.unit.standards'].search(
 									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
 								dbg(lib_unit)
@@ -10536,9 +10531,11 @@ class provider_assessment(models.Model):
 									# 'learner_reg_id': reg_qual_line,
 								}
 								units_list.append(unit_vals)
+								dbg(unit_vals)
 							# raise Warning(_(unit_vals))
 							reg_skill_line = []
 							# raise Warning(_(qual_dict))
+							dbg('unit_list' + str(units_list))
 							val = {
 								'batch_id': batch,
 								'provider_id': self.provider_id,
@@ -10547,7 +10544,7 @@ class provider_assessment(models.Model):
 								'start_date': start,
 								'end_date': end,
 								'skills_programme_id': skill_id,
-								'learner_registration_line_ids': units_list,
+								'unit_standards_line': units_list,
 							}
 							reg_skill_line.append((0, 0, val))
 							# learner.write({'learner_qualification_ids': reg_qual_line})
