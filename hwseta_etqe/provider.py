@@ -10522,7 +10522,7 @@ class provider_assessment(models.Model):
 								dbg(unitz)
 								# TODO: carry on from here
 								dbg(self.env['skills.programme.unit.standards'].search(
-									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)]))
+									[('skills_programme_id','=',skillz_id)]))
 								lib_unit = self.env['skills.programme.unit.standards'].search(
 									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
 								if not lib_unit:
