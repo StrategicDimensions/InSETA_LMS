@@ -10599,7 +10599,7 @@ class provider_assessment(models.Model):
 							for unitz in lp_dict.get(lp_id.saqa_qual_id):
 								dbg(unitz)
 								lib_unit = self.env['etqe.learning.programme.unit.standards'].search(
-									[('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', lp_id.saqa_qual_id)])
+									[('id_no', '=', unitz), ('learning_programme_id.saqa_qual_id', '=', lp_id.saqa_qual_id)])
 								unit_vals = {
 									'provider_id': self.provider_id,
 									'id_data': lib_unit.id_no,
