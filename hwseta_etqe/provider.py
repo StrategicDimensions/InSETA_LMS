@@ -10507,11 +10507,6 @@ class provider_assessment(models.Model):
 				for reg_skill in learner.skills_programme_ids:
 					skillz_id = reg_skill.skills_programme_id.id
 					if reg_skill.batch_id:
-						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
-						dbg('reg_skill.batch_id' + str(reg_skill.batch_id))
-						dbg('reg_skill.learner_qualification_parent_id.saqa_qual_id' + str(
-							reg_skill.skills_programme_id.saqa_qual_id))
-						dbg('reg_skill.saqa_qual_id' + str(skill_id.saqa_qual_id))
 						if reg_skill.batch_id == batch and reg_skill.skills_programme_id.saqa_qual_id == skill_id.saqa_qual_id:
 							start = reg_skill.start_date
 							end = reg_skill.end_date
@@ -10526,8 +10521,8 @@ class provider_assessment(models.Model):
 									[('skills_programme_id','=',skillz_id)]))
 								lib_unit = self.env['skills.programme.unit.standards'].search(
 									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
-								if not lib_unit:
-									raise Warning(_('missing unit!!!!!'))
+								# if not lib_unit:
+								# 	raise Warning(_('missing unit!!!!!'))
 								unit_vals = {
 									# 'provider_id': self.provider_id,
 									'id_no': lib_unit.id_no,
@@ -10540,7 +10535,7 @@ class provider_assessment(models.Model):
 									# 'learner_reg_id': reg_qual_line,
 								}
 								units_list.append(unit_vals)
-							raise Warning(_(unit_vals))
+							# raise Warning(_(unit_vals))
 							reg_skill_line = []
 							# raise Warning(_(qual_dict))
 							val = {
@@ -10556,13 +10551,6 @@ class provider_assessment(models.Model):
 							reg_skill_line.append((0, 0, val))
 							# learner.write({'learner_qualification_ids': reg_qual_line})
 							learner.skills_programme_ids = reg_skill_line
-
-					# self.env['learner.registration.qualification.line'].create(unit_vals)
-					# units_list.append(self.env['provider.qualification.line'].search(
-					#     [('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', qual_id.saqa_qual_id)]))
-
-					# raise Warning(_('done'))
-					# raise Warning(_('matching batch: this reg line should be deleted' + str(reg_qual)))
 					else:
 						reg_skill.unlink()
 				ass_skill_line.unlink()
