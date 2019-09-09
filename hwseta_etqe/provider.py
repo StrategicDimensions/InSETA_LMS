@@ -10503,7 +10503,7 @@ class provider_assessment(models.Model):
 				mod = ass_skill_line.moderators_id
 				ass = ass_skill_line.assessors_id
 				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
-				dbg('--------------------------------------------------')
+				dbg('--------------------------------------------------' + str(ass_skill_line))
 				for reg_skill in learner.skills_programme_ids:
 					skillz_id = reg_skill.id
 					if reg_skill.batch_id:
@@ -10535,6 +10535,7 @@ class provider_assessment(models.Model):
 									# 'learner_reg_id': reg_qual_line,
 								}
 								units_list.append(unit_vals)
+							raise Warning(_(unit_vals))
 							reg_skill_line = []
 							# raise Warning(_(qual_dict))
 							val = {
