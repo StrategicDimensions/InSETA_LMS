@@ -10505,7 +10505,7 @@ class provider_assessment(models.Model):
 				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
 				dbg('--------------------------------------------------' + str(ass_skill_line))
 				for reg_skill in learner.skills_programme_ids:
-					skillz_id = reg_skill.id
+					skillz_id = reg_skill.skills_programme_ids.id
 					if reg_skill.batch_id:
 						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
 						dbg('reg_skill.batch_id' + str(reg_skill.batch_id))
