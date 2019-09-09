@@ -2951,7 +2951,7 @@ class assessors_moderators_register(models.Model):
 			if self.existing_assessor_number:
 				assessors_ids = self.env['hr.employee'].search([('is_assessors', '=', True), ('assessor_seq_no', '=', self.existing_assessor_number)])
 			elif self.existing_assessor_id or self.existing_moderator_id:
-				assessors_ids = self.env['hr.employee'].search(['|','|'('is_assessors', '=', True), ('assessor_moderator_identification_id', '=', self.existing_assessor_id),('assessor_moderator_identification_id', '=', self.existing_moderator_id)])
+				assessors_ids = self.env['hr.employee'].search(['|','|',('is_assessors', '=', True), ('assessor_moderator_identification_id', '=', self.existing_assessor_id),('assessor_moderator_identification_id', '=', self.existing_moderator_id)])
 			if self.already_registered:
 				ase_lst = []
 				for ase_obj in assessors_ids:
