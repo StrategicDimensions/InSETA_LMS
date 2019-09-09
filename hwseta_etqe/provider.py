@@ -10521,6 +10521,7 @@ class provider_assessment(models.Model):
 									[('skills_programme_id','=',skillz_id)]))
 								lib_unit = self.env['skills.programme.unit.standards'].search(
 									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
+								dbg(lib_unit)
 								if not lib_unit:
 									raise Warning(_('missing unit!!!!!'))
 								unit_vals = {
