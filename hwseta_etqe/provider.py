@@ -10521,6 +10521,7 @@ class provider_assessment(models.Model):
 							for unitz in skill_dict.get(skill_id.saqa_qual_id):
 								dbg(unitz)
 								# TODO: carry on from here
+								dbg(reg_skill)
 								dbg(self.env['skills.programme.unit.standards'].search(
 									[('skills_programme_id','=',skillz_id)]))
 								lib_unit = self.env['skills.programme.unit.standards'].search(
