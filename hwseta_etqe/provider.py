@@ -11217,7 +11217,7 @@ class provider_assessment(models.Model):
 						text_guy += str(req_units_found) + '\n'
 						# raise Warning(
 						# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
-						text_guy += 'min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
+						text_guy += 'min_qual_creds:' + str(min_lp_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
 						lp_ids = []
 						unit_ids = []
 						for lp in learner_data.lp_learner_assessment_achieve_line_id:
