@@ -11252,7 +11252,7 @@ class provider_assessment(models.Model):
 										# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
 										dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
 										if u_line.type in ['Core', 'Fundamental']:
-											req_units.append(u_line.id_data)
+											req_units.append(u_line.id_no)
 										selected_line += 1
 										for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 											if u_line.title == assessment_unit.title:
