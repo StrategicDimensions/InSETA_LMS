@@ -529,9 +529,9 @@ class learner_registration_qualification(models.Model):
 				dbg(qualification_obj)
 				for line in self.env.user.partner_id.qualification_ids:
 					if qualification_obj.id == line.qualification_id.id:
-						qualification_master_obj = self.env['provider.qualification'].search([('id', '=', qualification_ids)])
+						# qualification_master_obj = self.env['provider.qualification'].search([('id', '=', line.qualification_id)])
 						elo = False
-						if qualification_master_obj.is_exit_level_outcomes:
+						if line.qualification_id.is_exit_level_outcomes:
 							elo = True
 						for u_line in line.qualification_line:
 							if u_line.selection == True:
