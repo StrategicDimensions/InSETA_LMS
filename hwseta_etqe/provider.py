@@ -529,6 +529,7 @@ class learner_registration_qualification(models.Model):
 				for line in self.env.user.partner_id.qualification_ids:
 					if qualification_obj.id == line.qualification_id.id:
 						elo = False
+						dbg(qualification_obj.qualification_id)
 						if qualification_obj.qualification_id.is_exit_level_outcomes:
 							elo = True
 						for u_line in line.qualification_line:
