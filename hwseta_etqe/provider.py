@@ -526,7 +526,7 @@ class learner_registration_qualification(models.Model):
 		if learner_qualification_parent_id:
 			if user_data.partner_id.provider:
 				qualification_obj = self.env['provider.master.qualification'].browse(learner_qualification_parent_id)
-				qualification_obj2 = self.env['provider.master.qualification'].search([('id','=',learner_qualification_parent_id.id)])
+				qualification_obj2 = self.env['provider.master.qualification'].search([('id','=',learner_qualification_parent_id)])
 				dbg(qualification_obj)
 				dbg(qualification_obj2)
 				for line in self.env.user.partner_id.qualification_ids:
