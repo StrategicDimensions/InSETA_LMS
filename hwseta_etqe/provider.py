@@ -9364,10 +9364,13 @@ class provider_assessment(models.Model):
 							learners_assessor_id = learner_qual.assessors_id.id
 							learners_moderator_id = learner_qual.moderators_id.id
 							for unit_line in learner_qual.learner_registration_line_ids:
+								dbg('learner unit' + str(unit_line))
 								if unit_line.achieve == False and unit_line.selection:
 									pro_qual_id = self.env['provider.qualification.line'].search(['|',('id_no', '=', 'unit_line.id_data'),('title', '=', unit_line.title),('line_id','=',learner_qual.learner_qualification_parent_id.id)]).id
 									if pro_qual_id:
+										dbg('pro_qual' + str(pro_qual_id))
 										unit_line_list.append(pro_qual_id)
+							dbg(unit_line_list)
 							if qual_list and unit_line_list:
 								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
 									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
