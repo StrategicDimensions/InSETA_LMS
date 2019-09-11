@@ -10406,8 +10406,11 @@ class provider_assessment(models.Model):
 			qual_dict = {}
 			for qual in provider.qualification_ids:
 				qual_dict.update({qual.saqa_qual_id: []})
+				elo = False
+				if qual.qualification_id.is_exit_level_outcomes:
+					elo = True
 				for us in qual.qualification_line:
-					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection:
+					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection or elo and us.id_data not in qual_dict.get(qual.saqa_qual_id):
 						qual_dict.get(qual.saqa_qual_id).append(us.id_data)
 			for learner_id in self.learner_ids:
 				learner_id.unlink()
@@ -10424,11 +10427,6 @@ class provider_assessment(models.Model):
 				dbg('--------------------------------------------------')
 				for reg_qual in learner.learner_qualification_ids:
 					if reg_qual.batch_id:
-						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
-						dbg('reg_qual.batch_id' + str(reg_qual.batch_id))
-						dbg('reg_qual.learner_qualification_parent_id.saqa_qual_id' + str(
-							reg_qual.learner_qualification_parent_id.saqa_qual_id))
-						dbg('qual_id.saqa_qual_id' + str(qual_id.saqa_qual_id))
 						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
 							start = reg_qual.start_date
 							end = reg_qual.end_date
@@ -10464,15 +10462,7 @@ class provider_assessment(models.Model):
 								'learner_registration_line_ids': units_list,
 							}
 							reg_qual_line.append((0, 0, val))
-							# learner.write({'learner_qualification_ids': reg_qual_line})
 							learner.learner_qualification_ids = reg_qual_line
-
-					# self.env['learner.registration.qualification.line'].create(unit_vals)
-					# units_list.append(self.env['provider.qualification.line'].search(
-					#     [('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', qual_id.saqa_qual_id)]))
-
-					# raise Warning(_('done'))
-					# raise Warning(_('matching batch: this reg line should be deleted' + str(reg_qual)))
 					else:
 						reg_qual.unlink()
 				ass_qual_line.unlink()
