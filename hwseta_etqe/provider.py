@@ -10475,7 +10475,9 @@ class provider_assessment(models.Model):
 									 ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
 								for x in self.env['learner.registration.qualification'].search(
 									[('batch_id','=',self.batch_id.id)]):
-									if x.learner_qualification_id.identification_id == learner.learner_identification_id:
+									dbg(x)
+									dbg(x.learner_id)
+									if x.learner_id.learner_identification_id == learner.learner_identification_id:
 										dbg('fuck yesss!!!!!!!' + str(x.learner_qualification_id.identification_id))
 									else:
 										dbg('fuck no!!!!!!!!!1' + str(x.learner_qualification_id))
