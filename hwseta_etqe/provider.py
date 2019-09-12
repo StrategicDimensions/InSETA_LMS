@@ -10469,24 +10469,17 @@ class provider_assessment(models.Model):
 							}
 							reg_qual_line.append((0, 0, val))
 							learner.learner_qualification_ids = reg_qual_line
-							if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
-								learner_reg = self.env['learner.registration'].search(
-									[('identification_id', '=', learner.learner_identification_id),
-									 ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
-								for x in self.env['learner.registration.qualification'].search(
-									[('batch_id','=',self.batch_id.id)]):
-									dbg(x)
-									dbg(x.learner_id)
+							for x in self.env['learner.registration.qualification'].search(
+									[('batch_id', '=', self.batch_id.id)]):
+								if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
 									if x.learner_id.learner_identification_id == learner.learner_identification_id:
-										dbg('fuck yesss!!!!!!!' + str(x.learner_qualification_id.identification_id))
-									else:
-										dbg('fuck no!!!!!!!!!1' + str(x.learner_qualification_id))
-										dbg('hhhhhhhhhhhhhhh')
-							elif learner.citizen_resident_status_code in ['other', 'unknown']:
-								learner_reg = self.env['learner.registration'].search(['|',('national_id', '=', learner.national_id),
-								                                                       ('passport_id', '=', learner.passport_id),
-								                                                       ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
-								dbg(learner_reg)
+										learner_reg = x.learner_qualification_id
+								elif learner.citizen_resident_status_code in ['other', 'unknown']:
+									if x.learner_id.national_id == learner.national_id or x.learner_id.passport_id == learner.passport_id:
+										learner_reg = x.learner_qualification_id
+								else:
+									raise Warning(_('couldnt find matching learner registration to ammend'))
+								learner_reg.learner_qualification_ids = reg_qual_line
 							else:
 								raise Warning(_('found no match!!!!!!!!!!!!!!!!'))
 							raise Warning(_(learner_reg))
