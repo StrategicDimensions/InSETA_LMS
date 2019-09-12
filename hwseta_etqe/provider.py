@@ -10481,6 +10481,14 @@ class provider_assessment(models.Model):
 									[('identification_id', '=', learner.learner_identification_id)]))
 								dbg(self.env['learner.registration'].search(
 									[('learner_qualification_ids.batch_id','=',self.batch_id.id)]))
+								dbg(self.env['learner.registration.qualification'].search(
+									[('batch_id','=',self.batch_id.id)]))
+								for x in self.env['learner.registration.qualification'].search(
+									[('batch_id','=',self.batch_id.id)]):
+									if x.learner_qualification_id.identification_id == learner.learner_identification_id:
+										dbg('fuck yesss!!!!!!!' + str(x))
+									else:
+										dbg('fuck no!!!!!!!!!1' + str(x))
 							elif learner.citizen_resident_status_code in ['other', 'unknown']:
 								learner_reg = self.env['learner.registration'].search(['|',('national_id', '=', learner.national_id),
 								                                                       ('passport_id', '=', learner.passport_id),
