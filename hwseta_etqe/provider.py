@@ -10488,6 +10488,7 @@ class provider_assessment(models.Model):
 										dbg('fuck yesss!!!!!!!' + str(x))
 									else:
 										dbg('fuck no!!!!!!!!!1' + str(x))
+										dbg('hhhhhhhhhhhhhhh')
 							elif learner.citizen_resident_status_code in ['other', 'unknown']:
 								learner_reg = self.env['learner.registration'].search(['|',('national_id', '=', learner.national_id),
 								                                                       ('passport_id', '=', learner.passport_id),
