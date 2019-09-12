@@ -10416,10 +10416,13 @@ class provider_assessment(models.Model):
 					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection or elo and us.id_data not in qual_dict.get(qual.saqa_qual_id):
 						qual_dict.get(qual.saqa_qual_id).append(us.id_data)
 			for learner_id in self.learner_ids:
+				dbg(learner_id)
 				learner_id.unlink()
 			for verify in self.learner_verify_ids:
+				dbg(verify)
 				verify.unlink()
 			for evaluate in self.learner_evaluate_ids:
+				dbg(evaluate)
 				evaluate.unlink()
 			for ass_qual_line in self.learner_achieve_ids:
 				qual_id = ass_qual_line.qual_learner_assessment_achieve_line_id
@@ -10427,7 +10430,7 @@ class provider_assessment(models.Model):
 				mod = ass_qual_line.moderators_id
 				ass = ass_qual_line.assessors_id
 				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
-				dbg('--------------------------------------------------')
+				dbg(ass_qual_line)
 				for reg_qual in learner.learner_qualification_ids:
 					if reg_qual.batch_id:
 						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
@@ -10466,11 +10469,26 @@ class provider_assessment(models.Model):
 							}
 							reg_qual_line.append((0, 0, val))
 							learner.learner_qualification_ids = reg_qual_line
+							if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
+								learner_reg = self.env['learner.registration'].search(
+									[('learner_identification_id', '=', learner.identification_id),
+									 ('provider_learner', '=', True),('learner_qualification_ids.batch_id','=',self.batch_id.id)])
+							elif learner.citizen_resident_status_code in ['other', 'unknown']:
+								learner_reg = self.env['learner.registration'].search(['|',('national_id', '=', learner.national_id),
+								                                                       ('passport_id', '=', learner.passport_id),
+								                                                       ('provider_learner', '=', True),
+								                                                       ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
+							else:
+								raise Warning(_('found no match!!!!!!!!!!!!!!!!'))
+							raise Warning(_(learner_reg))
+
+
 					else:
 						reg_qual.unlink()
 				ass_qual_line.unlink()
 			if self.learner_achieved_ids:
 				for achieved in self.learner_achieved_ids:
+					dbg(achieved)
 					achieved.unlink()
 		else:
 			raise Warning(_('The selected provider has no qualifications attached to profile.'))
