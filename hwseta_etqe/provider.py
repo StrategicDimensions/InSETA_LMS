@@ -10485,7 +10485,7 @@ class provider_assessment(models.Model):
 										learner_reg = x.learner_qualification_id
 								else:
 									raise Warning(_('couldnt find matching learner registration to ammend'))
-								learner_reg.learner_qualification_ids = reg_qual_line
+								# learner_reg.learner_qualification_ids = reg_qual_line
 							else:
 								raise Warning(_('found no match!!!!!!!!!!!!!!!!'))
 							raise Warning(_(learner_reg))
