@@ -10471,13 +10471,13 @@ class provider_assessment(models.Model):
 							learner.learner_qualification_ids = reg_qual_line
 							if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
 								learner_reg = self.env['learner.registration'].search(
-									[('identification_id', '=', learner.identification_id),
+									[('identification_id', '=', learner.learner_identification_id),
 									 ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
 								dbg(learner_reg)
-								dbg(learner.identification_id)
+								dbg(learner.learner_identification_id)
 								dbg(self.batch_id)
 								dbg(self.env['learner.registration'].search(
-									[('identification_id', '=', learner.identification_id)]))
+									[('identification_id', '=', learner.learner_identification_id)]))
 								dbg(self.env['learner.registration'].search(
 									[('learner_qualification_ids.batch_id','=',self.batch_id.id)]))
 							elif learner.citizen_resident_status_code in ['other', 'unknown']:
