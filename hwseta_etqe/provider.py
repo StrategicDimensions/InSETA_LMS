@@ -10473,21 +10473,12 @@ class provider_assessment(models.Model):
 								learner_reg = self.env['learner.registration'].search(
 									[('identification_id', '=', learner.learner_identification_id),
 									 ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
-								dbg(learner_reg)
-								dbg(learner.learner_identification_id)
-								dbg(self.batch_id)
-								dbg(self.env['learner.registration'].search(
-									[('identification_id', '=', learner.learner_identification_id)]))
-								dbg(self.env['learner.registration'].search(
-									[('learner_qualification_ids.batch_id','=',self.batch_id.id)]))
-								dbg(self.env['learner.registration.qualification'].search(
-									[('batch_id','=',self.batch_id.id)]))
 								for x in self.env['learner.registration.qualification'].search(
 									[('batch_id','=',self.batch_id.id)]):
 									if x.learner_qualification_id.identification_id == learner.learner_identification_id:
 										dbg('fuck yesss!!!!!!!' + str(x.learner_qualification_id.identification_id))
 									else:
-										dbg('fuck no!!!!!!!!!1' + str(x.learner_qualification_id.identification_id))
+										dbg('fuck no!!!!!!!!!1' + str(x.learner_qualification_id))
 										dbg('hhhhhhhhhhhhhhh')
 							elif learner.citizen_resident_status_code in ['other', 'unknown']:
 								learner_reg = self.env['learner.registration'].search(['|',('national_id', '=', learner.national_id),
