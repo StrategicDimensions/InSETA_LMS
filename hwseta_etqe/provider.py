@@ -10474,6 +10474,7 @@ class provider_assessment(models.Model):
 									[('identification_id', '=', learner.learner_identification_id),
 									 ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
 								dbg(learner_reg)
+								dbg('fuuuuck!')
 								dbg(learner.learner_identification_id)
 								dbg(self.batch_id)
 								dbg(self.env['learner.registration'].search(
