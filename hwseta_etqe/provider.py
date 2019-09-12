@@ -10472,12 +10472,18 @@ class provider_assessment(models.Model):
 							if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
 								learner_reg = self.env['learner.registration'].search(
 									[('identification_id', '=', learner.identification_id),
-									 ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
+									 ('learner_qualification_ids.batch_id','=',self.batch_id)])
 								dbg(learner_reg)
+								dbg(learner.identification_id)
+								dbg(self.batch_id)
+								dbg(self.env['learner.registration'].search(
+									[('identification_id', '=', learner.identification_id)]))
+								dbg(self.env['learner.registration'].search(
+									[('learner_qualification_ids.batch_id','=',self.batch_id)]))
 							elif learner.citizen_resident_status_code in ['other', 'unknown']:
 								learner_reg = self.env['learner.registration'].search(['|',('national_id', '=', learner.national_id),
 								                                                       ('passport_id', '=', learner.passport_id),
-								                                                       ('learner_qualification_ids.batch_id','=',self.batch_id.id)])
+								                                                       ('learner_qualification_ids.batch_id','=',self.batch_id)])
 								dbg(learner_reg)
 							else:
 								raise Warning(_('found no match!!!!!!!!!!!!!!!!'))
