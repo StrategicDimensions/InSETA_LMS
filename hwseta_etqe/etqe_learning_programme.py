@@ -578,6 +578,8 @@ class learning_programme_learner_rel(models.Model):
 		if learning_programme_id:
 			if user_data.partner_id.provider:
 				learning_programme_obj = self.env['learning.programme.master.rel'].browse(learning_programme_id)
+				dbg(learning_programme_id)
+				dbg(learning_programme_obj)
 				for line in self.env.user.partner_id.learning_programme_ids:
 					if learning_programme_obj.id == line.learning_programme_id.id:
 						for u_line in line.unit_standards_line:
@@ -598,7 +600,7 @@ class learning_programme_learner_rel(models.Model):
 								'provider_approved_lp': u_line.provider_approved_lp,
 							}
 							unit_standards.append((0, 0, val))
-				dbg(unit_standards)
+				dbg(learning_programme_obj)
 				dbg(learning_programme_obj.lp_saqa_id)
 				dbg(learning_programme_obj.learning_programme_id.qualification_id.id)
 				return {'value': {'unit_standards_line': unit_standards, 'lp_saqa_id': learning_programme_obj.lp_saqa_id, 'qualification_id': learning_programme_obj.learning_programme_id.qualification_id.id}}
