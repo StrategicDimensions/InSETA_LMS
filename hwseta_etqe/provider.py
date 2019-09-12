@@ -10477,12 +10477,14 @@ class provider_assessment(models.Model):
 										dbg(x)
 										dbg(x.learner_qualification_id)
 										learner_reg = x.learner_qualification_id
+										learner_reg.learner_qualification_ids = reg_qual_line
 								elif learner.citizen_resident_status_code in ['other', 'unknown']:
 									if x.learner_id.national_id == learner.national_id or x.learner_id.passport_id == learner.passport_id:
 										dbg('found foreign match')
 										dbg(x)
 										dbg(x.learner_qualification_id)
 										learner_reg = x.learner_qualification_id
+										learner_reg.learner_qualification_ids = reg_qual_line
 								else:
 									raise Warning(_('couldnt find matching learner registration to ammend'))
 								# learner_reg.learner_qualification_ids = reg_qual_line
