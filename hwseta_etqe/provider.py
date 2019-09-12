@@ -10474,11 +10474,13 @@ class provider_assessment(models.Model):
 								if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
 									if x.learner_id.learner_identification_id == learner.learner_identification_id:
 										dbg('found sa citizen match')
+										dbg(x)
 										dbg(x.learner_qualification_id)
 										learner_reg = x.learner_qualification_id
 								elif learner.citizen_resident_status_code in ['other', 'unknown']:
 									if x.learner_id.national_id == learner.national_id or x.learner_id.passport_id == learner.passport_id:
 										dbg('found foreign match')
+										dbg(x)
 										dbg(x.learner_qualification_id)
 										learner_reg = x.learner_qualification_id
 								else:
