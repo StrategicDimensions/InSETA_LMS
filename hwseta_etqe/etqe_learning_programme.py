@@ -1,5 +1,18 @@
 from openerp.exceptions import Warning
 from openerp import models, fields, tools, api, _
+DEBUG = True
+
+if DEBUG:
+	import logging
+
+	logger = logging.getLogger(__name__)
+
+
+	def dbg(msg):
+		logger.info(msg)
+else:
+	def dbg(msg):
+		pass
 
 ###############################
 ## LEARNING PROGRAMME MASTER ##
