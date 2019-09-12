@@ -10473,9 +10473,13 @@ class provider_assessment(models.Model):
 									[('batch_id', '=', self.batch_id.id)]):
 								if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
 									if x.learner_id.learner_identification_id == learner.learner_identification_id:
+										dbg('found sa citizen match')
+										dbg(x.learner_qualification_id)
 										learner_reg = x.learner_qualification_id
 								elif learner.citizen_resident_status_code in ['other', 'unknown']:
 									if x.learner_id.national_id == learner.national_id or x.learner_id.passport_id == learner.passport_id:
+										dbg('found foreign match')
+										dbg(x.learner_qualification_id)
 										learner_reg = x.learner_qualification_id
 								else:
 									raise Warning(_('couldnt find matching learner registration to ammend'))
