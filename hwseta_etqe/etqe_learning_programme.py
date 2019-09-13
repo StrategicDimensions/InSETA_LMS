@@ -578,8 +578,10 @@ class learning_programme_learner_rel(models.Model):
 		if learning_programme_id:
 			if user_data.partner_id.provider:
 				learning_programme_obj = self.env['learning.programme.master.rel'].browse(learning_programme_id)
+				learning_programme_obj2 = self.env['learning.programme.master.rel'].search([('id','=',learning_programme_id)])
 				dbg(learning_programme_id)
 				dbg(learning_programme_obj)
+				dbg(learning_programme_obj2)
 				for line in self.env.user.partner_id.learning_programme_ids:
 					if learning_programme_obj.id == line.learning_programme_id.id:
 						for u_line in line.unit_standards_line:
