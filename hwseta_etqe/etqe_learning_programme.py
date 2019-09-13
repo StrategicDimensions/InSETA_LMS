@@ -580,8 +580,8 @@ class learning_programme_learner_rel(models.Model):
 				learning_programme_obj = self.env['learning.programme.master.rel'].browse(learning_programme_id)
 				learning_programme_obj2 = self.env['learning.programme.master.rel'].search([('id','=',learning_programme_id)])
 				dbg(learning_programme_id)
-				dbg(learning_programme_obj.lp_saqa_id)
-				dbg(learning_programme_obj2.lp_saqa_id)
+				# dbg(learning_programme_obj.lp_saqa_id)
+				# dbg(learning_programme_obj2.lp_saqa_id)
 				dbg(learning_programme_obj2.read())
 				for line in self.env.user.partner_id.learning_programme_ids:
 					if learning_programme_obj.id == line.learning_programme_id.id:
