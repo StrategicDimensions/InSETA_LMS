@@ -577,12 +577,7 @@ class learning_programme_learner_rel(models.Model):
 							lp_id.remove(master_lp.learning_programme_id.id)
 		if learning_programme_id:
 			if user_data.partner_id.provider:
-				learning_programme_obj = self.env['learning.programme.master.rel'].browse(learning_programme_id)
-				learning_programme_obj2 = self.env['learning.programme.master.rel'].browse(learning_programme_id)
-				learning_programme_obj3 = self.env['etqe.learning.programme'].search([('id','=',learning_programme_id)])
-				dbg(learning_programme_obj2)
-				dbg(learning_programme_obj3)
-				dbg(learning_programme_obj3.read())
+				learning_programme_obj = self.env['etqe.learning.programme'].search([('id','=',learning_programme_id)])
 				for line in self.env.user.partner_id.learning_programme_ids:
 					if learning_programme_obj.id == line.learning_programme_id.id:
 						for u_line in line.unit_standards_line:
@@ -606,7 +601,7 @@ class learning_programme_learner_rel(models.Model):
 				dbg(learning_programme_obj.learning_programme_id.saqa_qual_id)
 				dbg(learning_programme_obj.lp_saqa_id)
 				dbg(learning_programme_obj.learning_programme_id.qualification_id.id)
-				return {'value': {'unit_standards_line': unit_standards, 'lp_saqa_id': learning_programme_obj.learning_programme_id.saqa_qual_id, 'qualification_id': learning_programme_obj.learning_programme_id.qualification_id.id}}
+				return {'value': {'unit_standards_line': unit_standards, 'lp_saqa_id': learning_programme_obj.saqa_qual_id, 'qualification_id': learning_programme_obj.qualification_id.id}}
 		elif lp_id:
 			return {'domain': {'learning_programme_id': [('id', 'in', lp_id)], 'batch_id': [('id', 'in', batch_lst)], 'assessors_id': [('id', 'in', assessors_lst)], 'moderators_id': [('id', 'in', moderators_lst)]}}
 		elif not learning_programme_id and not user_data.partner_id.provider:
