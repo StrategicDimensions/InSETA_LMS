@@ -578,12 +578,11 @@ class learning_programme_learner_rel(models.Model):
 		if learning_programme_id:
 			if user_data.partner_id.provider:
 				learning_programme_obj = self.env['learning.programme.master.rel'].browse(learning_programme_id)
-				learning_programme_obj2 = self.env['learning.programme.master.rel'].search([('id','=',learning_programme_id)])
-				dbg(learning_programme_id)
-				dbg(learning_programme_obj)
+				learning_programme_obj2 = self.env['learning.programme.master.rel'].browse(learning_programme_id)
+				learning_programme_obj3 = self.env['etqe.learning.programme'].search([('id','=',learning_programme_id)])
 				dbg(learning_programme_obj2)
-				dbg(learning_programme_obj.read())
-				dbg(learning_programme_obj2.read())
+				dbg(learning_programme_obj3)
+				dbg(learning_programme_obj3.read())
 				for line in self.env.user.partner_id.learning_programme_ids:
 					if learning_programme_obj.id == line.learning_programme_id.id:
 						for u_line in line.unit_standards_line:
