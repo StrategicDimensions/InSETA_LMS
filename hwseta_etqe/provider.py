@@ -6156,21 +6156,29 @@ class skills_programme_learner_rel(models.Model):
 						if master_skill.skills_programme_id.id in skills_id:
 							skills_id.remove(master_skill.skills_programme_id.id)
 		if skills_programme_id:
-			skills_programme_obj = self.env['skills.programme'].search([('seta_branch_id','=','11'),('id','=',skills_programme_id)])
-			if skills_programme_obj:
-				for unit_standards_lines in skills_programme_obj.unit_standards_line:
-					if unit_standards_lines.selection == True:
-						val = {
-								 'name':unit_standards_lines.name,
-								 'type':unit_standards_lines.type,
-								 'id_no':unit_standards_lines.id_no,
-								 'title':unit_standards_lines.title,
-								 'level1':unit_standards_lines.level1,
-								 'level2':unit_standards_lines.level2,
-								 'level3': unit_standards_lines.level3,
-								 'selection':True,
-								}
-						unit_standards.append((0, 0, val))
+			if user_data.partner_id.provider:
+				skills_programme_obj = self.env['skills.programme'].search([('seta_branch_id','=','11'),('id','=',skills_programme_id)])
+				for line in self.env.user.partner_id.skills_programme_ids:
+					# if skills_programme_obj:
+					if skills_programme_obj.id == line.skills_programme_id.id:
+						for u_line in line.unit_standards_line:
+						# for unit_standards_lines in skills_programme_obj.unit_standards_line:
+							if u_line.selection:
+								select = True
+							else:
+								select = False
+							# if unit_standards_lines.selection == True:
+							val = {
+									 'name':u_line.name,
+									 'type':u_line.type,
+									 'id_no':u_line.id_no,
+									 'title':u_line.title,
+									 'level1':u_line.level1,
+									 'level2':u_line.level2,
+									 'level3': u_line.level3,
+									 'selection':select,
+									}
+							unit_standards.append((0, 0, val))
 				return {'value':{'unit_standards_line':unit_standards, 'saqa_skill_id':skills_programme_obj.saqa_qual_id, 'qualification_id':skills_programme_obj.qualification_id.id}}
 		elif skills_id:
 			return {'domain': {'skills_programme_id': [('id', 'in', skills_id)],'batch_id':[('id','in',batch_lst)],'assessors_id': [('id', 'in', assessors_lst)], 'moderators_id':[('id', 'in', moderators_lst)]}}
