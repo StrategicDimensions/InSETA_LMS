@@ -4232,7 +4232,7 @@ class res_partner(models.Model):
 			if group.name == "Providers":
 				provider = True
 #                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)    
-			if group.name == "ETQE Manager":
+			if group.name in  ["ETQE Manager", "ETQE Administrator"]:
 				if args:
 					if args[0][0] == 'provider':
 						self._cr.execute("select id from res_partner where is_visible = True and provider = True")
