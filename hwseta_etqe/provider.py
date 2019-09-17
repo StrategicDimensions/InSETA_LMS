@@ -11052,10 +11052,10 @@ class provider_assessment(models.Model):
 							registration_units = []
 							elo = False
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
-								master_obj = self.env['provider.qualification'].search([('id','=',line.learner_qualification_parent_id.id)])
+								master_obj = self.env['provider.master.qualification'].search([('learner_qualification_parent_id','=',line.learner_qualification_parent_id.id),('accreditation_qualification_id','=',provider.id)])
 								master_us_list = []
 								for master_us in master_obj.qualification_line:
-									master_us_list.append(master_us.id_no)
+									master_us_list.append(master_us.id_data)
 								if line.learner_qualification_parent_id.is_exit_level_outcomes:
 									elo = True
 								dbg('match prov and quals for id:' + str(line))
@@ -11085,7 +11085,7 @@ class provider_assessment(models.Model):
 										missing_req_units.append(x)
 								# raise Warning(_(missing_req_units))
 								missing_required = False
-								if missing_req_units == []:
+								if missing_req_units == [] and not elo:
 									missing_required = False
 									text_guy += 'no missing required units\n'
 								else:
@@ -11093,6 +11093,8 @@ class provider_assessment(models.Model):
 									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
 								if master_us_list == registration_units and elo:
 									text_guy += 'all elo units from registration match the current assessment'
+								else:
+									text_guy += 'the learner registration is missing a required unit standard based on Exit Level Outcomes\' rules'
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
 										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo and master_us_list == registration_units or \
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
