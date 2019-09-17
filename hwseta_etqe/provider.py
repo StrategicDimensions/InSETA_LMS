@@ -11051,12 +11051,18 @@ class provider_assessment(models.Model):
 							selected_line, achieved_line = 0, 0
 							elo = False
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
+								master_obj = self.env['provider.qualification'].search([('id','=',line.learner_qualification_parent_id.id)])
+								master_us_list = []
+								for master_us in master_obj.qualification_line:
+									master_us_list.append(master_us.id_no)
 								if line.learner_qualification_parent_id.is_exit_level_outcomes:
 									elo = True
 								dbg('match prov and quals for id:' + str(line))
 								registration_min_creds = 0
 								req_units = []
 								for u_line in line.learner_registration_line_ids:
+									if u_line.id_data not in master_us_list and elo:
+										raise Warning(_('learner is missing a unit standard from the registration: ' + str(u_line.id_data) ))
 									# text_guy += 'units:' + str(u_line.id_data) + '\n'
 									dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(qual_line_obj))
 									if u_line.selection:
@@ -11087,9 +11093,9 @@ class provider_assessment(models.Model):
 								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
 									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or \
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
 										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo or \
-										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
