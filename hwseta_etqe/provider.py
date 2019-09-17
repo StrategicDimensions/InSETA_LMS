@@ -11091,6 +11091,8 @@ class provider_assessment(models.Model):
 								else:
 									missing_required = True
 									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
+								if master_us_list == registration_units and elo:
+									text_guy += 'all elo units from registration match the current assessment'
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
 										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo and master_us_list == registration_units or \
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
