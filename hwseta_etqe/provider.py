@@ -11091,14 +11091,8 @@ class provider_assessment(models.Model):
 								else:
 									missing_required = True
 									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
-								# check if the counts are same or if min creds requirement are met
-								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
-								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
-									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo:
-									raise Warning(_('right one \n' + str(master_us_list) + '\n' + str(registration_units)))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
-										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo or \
+										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo and master_us_list == registration_units or \
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
