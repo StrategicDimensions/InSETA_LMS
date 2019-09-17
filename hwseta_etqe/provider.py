@@ -11049,6 +11049,7 @@ class provider_assessment(models.Model):
 							text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
 							dbg(line)
 							selected_line, achieved_line = 0, 0
+							registration_units = []
 							elo = False
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
 								master_obj = self.env['provider.qualification'].search([('id','=',line.learner_qualification_parent_id.id)])
@@ -11066,6 +11067,7 @@ class provider_assessment(models.Model):
 									# text_guy += 'units:' + str(u_line.id_data) + '\n'
 									dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(qual_line_obj))
 									if u_line.selection:
+										registration_units.append(u_line.id_data)
 										# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
 										dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
 										if u_line.type in ['Core', 'Fundamental','Exit Level Outcomes']:
@@ -11093,12 +11095,8 @@ class provider_assessment(models.Model):
 								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
 									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo:
-									raise Warning(_('selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo'))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo:
-									raise Warning(_('selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo'))
-								if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
-									raise Warning(_('selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo'))
+									raise Warning(_('right one \n' + str(master_us_list) + '\n' + str(registration_units)))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
 										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo or \
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
