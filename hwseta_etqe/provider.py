@@ -11052,7 +11052,7 @@ class provider_assessment(models.Model):
 							registration_units = []
 							elo = False
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
-								master_obj = self.env['provider.master.qualification'].search([('learner_qualification_parent_id','=',line.learner_qualification_parent_id.id),('accreditation_qualification_id','=',provider.id)])
+								master_obj = self.env['provider.master.qualification'].search([('qualification_id','=',line.learner_qualification_parent_id.id),('accreditation_qualification_id','=',provider.id)])
 								master_us_list = []
 								for master_us in master_obj.qualification_line:
 									master_us_list.append(master_us.id_data)
