@@ -11068,7 +11068,7 @@ class provider_assessment(models.Model):
 									if u_line.selection:
 										# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
 										dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
-										if u_line.type in ['Core', 'Fundamental']:
+										if u_line.type in ['Core', 'Fundamental','']:
 											req_units.append(u_line.id_data)
 										selected_line += 1
 										for assessment_unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
@@ -11093,6 +11093,12 @@ class provider_assessment(models.Model):
 								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
 									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo:
+									raise Warning(_('selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo'))
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo:
+									raise Warning(_('selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo'))
+								if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
+									raise Warning(_('selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo'))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
 										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo or \
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
