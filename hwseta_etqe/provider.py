@@ -10571,7 +10571,7 @@ class provider_assessment(models.Model):
 								}
 								units_list.append(unit_vals)
 								dbg(unit_vals)
-							raise Warning(_(unit_vals))
+							raise Warning(_(units_list))
 							reg_skill_line = []
 							# raise Warning(_(qual_dict))
 							dbg('unit_list' + str(units_list))
