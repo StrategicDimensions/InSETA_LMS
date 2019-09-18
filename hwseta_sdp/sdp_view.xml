@@ -495,16 +495,14 @@
 					<field name="work_email" />
 					<!--<field name="category_ids" groups="base.group_hr_user"/> -->
 					<group expand="0" string="Group By">
-						<filter string="Manager" icon="terp-personal" domain="[]"
-							context="{'group_by':'parent_id'}" />
-						<filter string="Coach" icon="terp-personal" domain="[]"
-							context="{'group_by':'coach_id'}" />
-						<filter string="Department" icon="terp-personal+" domain="[]"
-							context="{'group_by':'department_id'}" />
-						<filter string="Job" icon="terp-gtk-select-all" domain="[]"
-							context="{'group_by':'job_id'}" />
-						<filter string="Company" icon="terp-go-home" domain="[]"
-							context="{'group_by':'company_id'}" groups="base.group_multi_company" />
+						<filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+						<filter string="Work Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+						<filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
+						<filter string="Coach" icon="terp-personal" domain="[]" context="{'group_by':'coach_id'}"/>
+						<filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+						<filter string="Job" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'job_id'}"/>
+						<filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
 					</group>
 				</search>
 			</field>
