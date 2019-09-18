@@ -10551,7 +10551,7 @@ class provider_assessment(models.Model):
 							end = reg_skill.end_date
 							reg_skill.unlink()
 							units_list = []
-							dbg('-----------------------------!!!!!!!!!!!!!!!!')
+							raise Warning(_(skill_dict.get(skill_id.saqa_qual_id)))
 							for unitz in skill_dict.get(skill_id.saqa_qual_id):
 								lib_unit = self.env['skills.programme.unit.standards'].search(
 									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
