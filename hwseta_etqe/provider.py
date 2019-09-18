@@ -4205,6 +4205,7 @@ class res_partner(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+		# class = res.partner
 		user = self._uid
 		user_data = self.env['res.users'].browse(user)
 		user_groups = user_data.groups_id
@@ -10570,7 +10571,7 @@ class provider_assessment(models.Model):
 								}
 								units_list.append(unit_vals)
 								dbg(unit_vals)
-							# raise Warning(_(unit_vals))
+							raise Warning(_(unit_vals))
 							reg_skill_line = []
 							# raise Warning(_(qual_dict))
 							dbg('unit_list' + str(units_list))
