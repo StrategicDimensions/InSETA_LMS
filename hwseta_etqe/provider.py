@@ -11216,7 +11216,7 @@ class provider_assessment(models.Model):
 									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
 
 								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line or ach == True:
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and ach == True:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
