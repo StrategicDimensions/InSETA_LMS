@@ -11209,8 +11209,10 @@ class provider_assessment(models.Model):
 										ach = False
 										text += 'not found on prov' + unit + '\n'
 								if prov_units == unit_id_nos == reg_units_found:
+									ach = True
 									text += 'units X3 match!!!\n'
 								else:
+									ach = False
 									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
 
 								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
