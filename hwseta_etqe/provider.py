@@ -10526,10 +10526,10 @@ class provider_assessment(models.Model):
 		if provider.skills_programme_ids:
 			skill_dict = {}
 			for skill in provider.skills_programme_ids:
-				skill_dict.update({skill.skill_saqa_id: []})
+				skill_dict.update({skill.skills_programme_id.code: []})
 				for us in skill.unit_standards_line:
-					if us.id_no not in skill_dict.get(skill.skill_saqa_id) and us.selection:
-						skill_dict.get(skill.skill_saqa_id).append(us.id_no)
+					if us.id_no not in skill_dict.get(skill.skills_programme_id.code) and us.selection:
+						skill_dict.get(skill.skills_programme_id.code).append(us.id_no)
 			for learner_id in self.learner_ids_for_skills:
 				learner_id.unlink()
 			for verify in self.learner_verify_ids_for_skills:
@@ -10551,10 +10551,10 @@ class provider_assessment(models.Model):
 							end = reg_skill.end_date
 							reg_skill.unlink()
 							units_list = []
-							raise Warning(_(skill_dict.get(skill_id.saqa_qual_id)))
-							for unitz in skill_dict.get(skill_id.saqa_qual_id):
+							dbg(skill_dict.get(skill_id.skills_programme_id.code))
+							for unitz in skill_dict.get(skill_id.skills_programme_id.code):
 								lib_unit = self.env['skills.programme.unit.standards'].search(
-									[('id_no', '=', unitz), ('skills_programme_id.saqa_qual_id', '=', skill_id.saqa_qual_id),('skills_programme_id','=',skillz_id)])
+									[('id_no', '=', unitz), ('skills_programme_id.code', '=', skill_id.skills_programme_id.code),('skills_programme_id','=',skillz_id)])
 								dbg(lib_unit)
 								if not lib_unit:
 									raise Warning(_('missing unit!!!!!'))
