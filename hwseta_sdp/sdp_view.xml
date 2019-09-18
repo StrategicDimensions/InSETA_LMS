@@ -975,8 +975,10 @@ e', 'image_medium', record.id.value)"
 					<field name="name" />
 					<field name="work_email" />
 					<group expand="0" string="Group By">
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'final_state'}" />
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'final_state'}"/>
+						<filter string="Work Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+						<filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
 					</group>
 				</search>
 			</field>
