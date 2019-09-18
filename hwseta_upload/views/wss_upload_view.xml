@@ -421,8 +421,9 @@
 					<field name="org_type" />
 					<field name="sdl_number" />
 					<group expand="0" string="Group By">
-						<filter string="Status" icon="terp-personal"
-							context="{'group_by':'status'}"/>
+						<filter string="Status" icon="terp-personal" context="{'group_by':'status'}"/>
+						<filter string="Province" icon="terp-personal" context="{'group_by':'state_id'}"/>
+						<filter string="Postal Province" icon="terp-personal" context="{'group_by':'postal_state_id'}"/>
 					</group>
 				</search>
 			</field>
