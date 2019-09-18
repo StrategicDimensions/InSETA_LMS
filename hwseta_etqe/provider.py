@@ -10551,10 +10551,10 @@ class provider_assessment(models.Model):
 							end = reg_skill.end_date
 							reg_skill.unlink()
 							units_list = []
-							dbg(skill_dict.get(skill_id.skills_programme_id.code))
-							for unitz in skill_dict.get(skill_id.skills_programme_id.code):
+							dbg(skill_dict.get(skill_id.code))
+							for unitz in skill_dict.get(skill_id.code):
 								lib_unit = self.env['skills.programme.unit.standards'].search(
-									[('id_no', '=', unitz), ('skills_programme_id.code', '=', skill_id.skills_programme_id.code),('skills_programme_id','=',skillz_id)])
+									[('id_no', '=', unitz), ('skills_programme_id.code', '=', skill_id.code),('skills_programme_id','=',skillz_id)])
 								dbg(lib_unit)
 								if not lib_unit:
 									raise Warning(_('missing unit!!!!!'))
