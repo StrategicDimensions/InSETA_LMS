@@ -11261,6 +11261,9 @@ class provider_assessment(models.Model):
 					if learner_data.achieve:
 						text_guy += learner_data.learner_id.name + '\n'
 						req_units_found = []
+						prov_units = []
+						prov_lps = []
+						this_lp_list = []
 						for us_min in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 							dbg(us_min.level3)
 							min_creds_found += int(us_min.level3)
@@ -11271,6 +11274,12 @@ class provider_assessment(models.Model):
 						# raise Warning(
 						# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
 						text_guy += 'min_qual_creds:' + str(min_lp_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
+						for learning_programme in provider.learning_programme_ids:
+							if learning_programme.learning_programme_id.code not in prov_lps and learning_programme.learning_programme_id.code in this_lp_list:
+								prov_lps.append(learning_programme.learning_programme_id.code)
+								for us in learning_programme.unit_standards_line:
+									if us.id_no not in prov_lps:
+										prov_units.append(us.id_no)
 						lp_ids = []
 						unit_ids = []
 						for lp in learner_data.lp_learner_assessment_achieve_line_id:
@@ -11289,30 +11298,44 @@ class provider_assessment(models.Model):
 						}
 						# This code is used to assign True value to achieve field of learning programme learner rel
 						learner_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+						reg_lps_found = []
 						for line in learner_obj.learning_programme_ids:
 							min_expected_creds = line.learning_programme_id.total_credit
 							text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
 							dbg(line)
 							selected_line, achieved_line = 0, 0
+							reg_lps_found.append(line.lp_saqa_id)
 							if line.learning_programme_id.id in lp_ids and line.provider_id.id == self.provider_id.id:
-								dbg('match prov and lps for id:' + str(line))
 								registration_min_creds = 0
 								req_units = []
+								ass_units_found = []
 								for u_line in line.unit_standards_line:
-									# text_guy += 'units:' + str(u_line.id_data) + '\n'
-									dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(learner_obj))
 									if u_line.selection:
-										# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
-										dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
 										if u_line.type in ['Core', 'Fundamental']:
 											req_units.append(u_line.id_no)
 										selected_line += 1
 										for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+											if assessment_unit.id_no not in ass_units_found:
+												ass_units_found.append(assessment_unit.id_no)
 											if u_line.title == assessment_unit.title:
 												u_line.achieve = True
 												line.is_complete = True
 									if u_line.achieve:
 										achieved_line += 1
+								ach = False
+								for unit in unit_id_nos:
+									if unit in prov_units:
+										text += 'found' + unit + '\n'
+									else:
+										ach = False
+										text += 'not found on prov' + unit + '\n'
+								if prov_units == unit_id_nos == reg_units_found:
+									ach = True
+									text += 'units X3 match!!!\n'
+								else:
+									ach = False
+									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
+
 								missing_req_units = []
 								for x in req_units:
 									if x not in req_units_found:
