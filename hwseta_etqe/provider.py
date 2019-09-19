@@ -11281,11 +11281,12 @@ class provider_assessment(models.Model):
 									if us.id_no not in prov_units:
 										prov_units.append(us.id_no)
 						lp_ids = []
+						lp_id_nos = []
 						unit_id_nos = []
 						unit_ids = []
 						for lp in learner_data.lp_learner_assessment_achieve_line_id:
 							lp_ids.append(lp.id)
-							skill_id_nos.append(lp.saqa_qual_id)
+							lp_id_nos.append(lp.saqa_qual_id)
 						for unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 							unit_ids.append(unit.id)
 							unit_id_nos.append(unit.id_no)
