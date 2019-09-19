@@ -11285,8 +11285,10 @@ class provider_assessment(models.Model):
 						unit_ids = []
 						for lp in learner_data.lp_learner_assessment_achieve_line_id:
 							lp_ids.append(lp.id)
+							skill_id_nos.append(lp.saqa_qual_id)
 						for unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 							unit_ids.append(unit.id)
+							unit_id_nos.append(unit.id_no)
 						learner_dict = {
 							'learner_id': learner_data.learner_id and learner_data.learner_id.id,
 							'learner_identity_number': learner_data.learner_identity_number,
