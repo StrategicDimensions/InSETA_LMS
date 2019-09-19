@@ -11323,7 +11323,6 @@ class provider_assessment(models.Model):
 											req_units.append(u_line.id_no)
 										selected_line += 1
 										dbg('reg_units object' + str(u_line))
-										raise Warning(_(u_line.read()))
 										dbg('found reg_units' + str(u_line.id_no))
 										reg_units_found.append(u_line.id_no)
 										for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
