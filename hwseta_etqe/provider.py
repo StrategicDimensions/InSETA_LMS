@@ -11309,12 +11309,14 @@ class provider_assessment(models.Model):
 							if line.learning_programme_id.id in lp_ids and line.provider_id.id == self.provider_id.id:
 								registration_min_creds = 0
 								req_units = []
+								reg_units_found = []
 								ass_units_found = []
 								for u_line in line.unit_standards_line:
 									if u_line.selection:
 										if u_line.type in ['Core', 'Fundamental']:
 											req_units.append(u_line.id_no)
 										selected_line += 1
+										reg_units_found.append(u_line.id_no)
 										for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 											if assessment_unit.id_no not in ass_units_found:
 												ass_units_found.append(assessment_unit.id_no)
