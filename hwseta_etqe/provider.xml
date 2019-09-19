@@ -5213,6 +5213,7 @@
 					<field name="fiscal_year" />
 					<field name="start_date" />
 					<field name="state" />
+					<field name="provider_province" />
 				</tree>
 			</field>
 		</record>
@@ -5227,6 +5228,8 @@
 				 <field name="qual_skill_assessment" />
 					
 					<group expand="0" string="Group By">
+						<filter string="Province" icon="terp-personal" domain="[]"
+							context="{'group_by':'provider_province'}" />
 						<filter string="Status" icon="terp-personal" domain="[]"
 							context="{'group_by':'state'}" />
 						<filter string="Provider" icon="terp-personal" domain="[]"

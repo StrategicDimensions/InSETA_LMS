@@ -1187,6 +1187,7 @@
 					<field name="fiscal_year" />
 					<field name="sdf_id" />
 					<field name="employer_id" />
+					<field name="emp_province" />
 					<field name="sdl_no" />
 					<field name="wsp_submission_date" />
 					<field name="request_extension_date" />
@@ -1202,6 +1203,7 @@
 			<field name="arch" type="xml">
 				<tree string="WSP">
 					<field name="employer_id" />
+					<field name="emp_province" />
 					<field name="org_size" />
 					<field name="sdl_no" />
 					<field name="wsp_submission_date" />
@@ -1223,6 +1225,8 @@
 					<group expand="0" string="Group By">
 						<filter string="Financial Year" icon="terp-personal"
 							context="{'group_by':'fiscal_year'}" groups="hwseta_sdp.group_sdp_manager" />
+						<filter string="Employer Province" icon="terp-personal"
+							context="{'group_by':'emp_province'}" />
 						<filter string="Submitted By" icon="terp-personal" context="{'group_by':'sdf_id'}"
 							groups="hwseta_sdp.group_sdp_manager" />
 						<filter string="Evaluated By" icon="terp-personal"
