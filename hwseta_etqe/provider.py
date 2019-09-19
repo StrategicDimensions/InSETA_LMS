@@ -11334,19 +11334,20 @@ class provider_assessment(models.Model):
 									if u_line.achieve:
 										achieved_line += 1
 								ach = False
-								for unit in unit_id_nos:
-									if unit in prov_units:
-										text_guy += 'found' + unit + '\n'
-									else:
-										ach = False
-										text_guy += 'not found on prov' + unit + '\n'
-								if prov_units == unit_id_nos == reg_units_found:
+
+								if unit_id_nos == reg_units_found:
 									ach = True
 									text_guy += 'units X3 match!!!\n'
 								else:
 									ach = False
 									text_guy += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
-
+								for unit in unit_id_nos:
+									if unit in prov_units:
+										text_guy += 'found' + unit + '\n'
+										ach = True
+									else:
+										ach = False
+										text_guy += 'not found on prov' + unit + '\n'
 								missing_req_units = []
 								for x in req_units:
 									if x not in req_units_found:
