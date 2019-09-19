@@ -11281,6 +11281,7 @@ class provider_assessment(models.Model):
 									if us.id_no not in prov_lps:
 										prov_units.append(us.id_no)
 						lp_ids = []
+						unit_id_nos = []
 						unit_ids = []
 						for lp in learner_data.lp_learner_assessment_achieve_line_id:
 							lp_ids.append(lp.id)
@@ -11325,16 +11326,16 @@ class provider_assessment(models.Model):
 								ach = False
 								for unit in unit_id_nos:
 									if unit in prov_units:
-										text += 'found' + unit + '\n'
+										text_guy += 'found' + unit + '\n'
 									else:
 										ach = False
-										text += 'not found on prov' + unit + '\n'
+										text_guy += 'not found on prov' + unit + '\n'
 								if prov_units == unit_id_nos == reg_units_found:
 									ach = True
-									text += 'units X3 match!!!\n'
+									text_guy += 'units X3 match!!!\n'
 								else:
 									ach = False
-									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
+									text_guy += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
 
 								missing_req_units = []
 								for x in req_units:
@@ -11352,8 +11353,8 @@ class provider_assessment(models.Model):
 								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
 								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
 									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or\
-										selected_line > 0 and achieved_line > 0 and min_lp_creds <= min_creds_found and not missing_required:
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach or\
+										selected_line > 0 and achieved_line > 0 and min_lp_creds <= min_creds_found and not missing_required and ach:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
