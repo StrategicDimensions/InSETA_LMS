@@ -1059,6 +1059,7 @@ class wsp_plan(models.Model):
         'hr.employee', string='SDF', domain="[('is_sdf','=',True)]", default=_get_default_sdf)
     employer_id = fields.Many2one(
         'res.partner', string='Employer', domain="[('employer','=',True)]")
+    emp_province = fields.Many2one(related="employer_id.state_id", store=True)
     wsp_details_type = fields.Selection([('actual', 'Annual Training Report'), ('planned', 'Workplace Skills Plan'),
                                          #                                          ('planned_current','Workplace Skills Plan 2015-2016')
                                          ], string="WSP ATR Details Type", default='actual')
