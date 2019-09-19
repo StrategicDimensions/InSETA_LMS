@@ -11278,7 +11278,7 @@ class provider_assessment(models.Model):
 							if learning_programme.learning_programme_id.code not in prov_lps and learning_programme.learning_programme_id.code in this_lp_list:
 								prov_lps.append(learning_programme.learning_programme_id.code)
 								for us in learning_programme.unit_standards_line:
-									if us.id_no not in prov_lps:
+									if us.id_no not in prov_units:
 										prov_units.append(us.id_no)
 						lp_ids = []
 						unit_id_nos = []
@@ -11371,7 +11371,7 @@ class provider_assessment(models.Model):
 									text_guy += '!!!!!!!!!learner NOT achieved\n'
 								# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
 						learner_achieved.append((0, 0, learner_dict))
-				# raise Warning(_(text_guy))
+				raise Warning(_(text_guy))
 				self.unit_standard_variance = text_guy
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 			                                                              'state': 'achieved',
