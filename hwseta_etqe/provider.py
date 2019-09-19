@@ -11322,6 +11322,8 @@ class provider_assessment(models.Model):
 										if u_line.type in ['Core', 'Fundamental']:
 											req_units.append(u_line.id_no)
 										selected_line += 1
+										dbg('found reg_units' + str(u_line.id_no))
+										dbg('found reg_units' + str(u_line.id_data))
 										reg_units_found.append(u_line.id_no)
 										for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 											if assessment_unit.id_no not in ass_units_found:
