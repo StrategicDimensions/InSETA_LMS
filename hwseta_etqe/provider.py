@@ -11264,6 +11264,9 @@ class provider_assessment(models.Model):
 						prov_units = []
 						prov_lps = []
 						this_lp_list = []
+						for lp in learner_data.lp_learner_assessment_achieve_line_id:
+							if not lp.code in this_lp_list:
+								this_lp_list.append(lp.code)
 						for us_min in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 							dbg(us_min.level3)
 							min_creds_found += int(us_min.level3)
