@@ -11361,8 +11361,18 @@ class provider_assessment(models.Model):
 									missing_required = True
 									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
 								# check if the counts are same or if min creds requirement are met
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach or\
-										selected_line > 0 and achieved_line > 0 and min_expected_creds <= min_creds_found and not missing_required and ach:
+								if min_expected_creds <= min_creds_found:
+									below = True
+									text_guy += 'below the minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
+								else:
+									below = False
+									text_guy += 'not below minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below:
+									raise Warning(_('111111 if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below'))
+								if selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
+									raise Warning(_('22222 selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below'))
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below or\
+										selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
