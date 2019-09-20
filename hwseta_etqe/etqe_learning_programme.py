@@ -597,7 +597,10 @@ class learning_programme_learner_rel(models.Model):
 								'seta_approved_lp': u_line.seta_approved_lp,
 								'provider_approved_lp': u_line.provider_approved_lp,
 							}
-							unit_standards.append((0, 0, val))
+							if select:
+								unit_standards.append((0, 0, val))
+							else:
+								pass
 				return {'value': {'unit_standards_line': unit_standards, 'lp_saqa_id': learning_programme_obj.saqa_qual_id, 'qualification_id': learning_programme_obj.qualification_id.id}}
 		elif lp_id:
 			return {'domain': {'learning_programme_id': [('id', 'in', lp_id)], 'batch_id': [('id', 'in', batch_lst)], 'assessors_id': [('id', 'in', assessors_lst)], 'moderators_id': [('id', 'in', moderators_lst)]}}
