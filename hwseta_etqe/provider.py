@@ -11363,11 +11363,12 @@ class provider_assessment(models.Model):
 									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
 								# check if the counts are same or if min creds requirement are met
 								if min_expected_creds <= min_creds_found:
-									below = True
-									text_guy += 'below the minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
-								else:
 									below = False
 									text_guy += 'not below minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
+								else:
+									below = True
+									text_guy += 'below the minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
+
 								# if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below:
 								# 	raise Warning(_('111111 if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below'))
 								# if selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
