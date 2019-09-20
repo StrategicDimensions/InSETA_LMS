@@ -10641,7 +10641,8 @@ class provider_assessment(models.Model):
 									[('id_no', '=', unitz), ('learning_programme_id.saqa_qual_id', '=', lp_id.saqa_qual_id)])
 								unit_vals = {
 									'provider_id': self.provider_id,
-									'id_data': lib_unit.id_no,
+									# 'id_data': lib_unit.id_no,
+									'id_data': unitz,
 									'title': lib_unit.title,
 									'type': lib_unit.type,
 									'level1': lib_unit.level1,
@@ -11367,10 +11368,10 @@ class provider_assessment(models.Model):
 								else:
 									below = False
 									text_guy += 'not below minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below:
-									raise Warning(_('111111 if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below'))
-								if selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
-									raise Warning(_('22222 selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below'))
+								# if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below:
+								# 	raise Warning(_('111111 if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below'))
+								# if selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
+								# 	raise Warning(_('22222 selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below'))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below or\
 										selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
 									line.is_learner_achieved = True
