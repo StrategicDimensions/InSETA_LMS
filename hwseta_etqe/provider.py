@@ -10652,6 +10652,7 @@ class provider_assessment(models.Model):
 									# 'learner_reg_id': reg_qual_line,
 								}
 								units_list.append(unit_vals)
+								dbg(unit_vals)
 							reg_lp_line = []
 							# raise Warning(_(qual_dict))
 							val = {
