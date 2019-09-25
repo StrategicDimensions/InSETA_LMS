@@ -5191,6 +5191,20 @@
 									<field name= "total_learner_count"/>
 								</group>
 							</page>
+                            <page string="Unit Standard Variance" groups="hwseta_etqe.group_etqe_manager">
+                                <button name="check_unit_standard_upline" type="object" string="Check Unit Standards"/>
+								<group>
+
+									<field name= "unit_standard_variance" widget="html"/>
+								</group>
+							</page>
+                            <page string="Unit Standard Library Variance" groups="hwseta_etqe.group_etqe_manager">
+								<button name="check_unit_standard_library" type="object" string="Check Unit Standards Library"/>
+                                <group>
+
+									<field name= "unit_standard_library_variance" widget="html"/>
+								</group>
+							</page>
 						</notebook>
 					<div class="oe_chatter">
 						<field name="message_follower_ids" widget="mail_followers" />

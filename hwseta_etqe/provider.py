@@ -526,8 +526,13 @@ class learner_registration_qualification(models.Model):
 		if learner_qualification_parent_id:
 			if user_data.partner_id.provider:
 				qualification_obj = self.env['provider.master.qualification'].browse(learner_qualification_parent_id)
+				dbg(qualification_obj)
 				for line in self.env.user.partner_id.qualification_ids:
 					if qualification_obj.id == line.qualification_id.id:
+						# qualification_master_obj = self.env['provider.qualification'].search([('id', '=', line.qualification_id)])
+						elo = False
+						if line.qualification_id.is_exit_level_outcomes:
+							elo = True
 						for u_line in line.qualification_line:
 							if u_line.selection == True:
 								select = True
@@ -545,6 +550,7 @@ class learner_registration_qualification(models.Model):
 													if u_line.title == unit_line.title:
 														is_achieve = unit_line.achieve
 											break
+
 							val = {
 									'name':u_line.name,
 									'type':u_line.type,
@@ -553,16 +559,18 @@ class learner_registration_qualification(models.Model):
 									'level1':u_line.level1,
 									'level2':u_line.level2,
 									'level3': u_line.level3,
-									'selection':select,
+									# 'selection':select,
+									'selection':(True if elo else select),
 									'is_seta_approved': u_line.is_seta_approved,
 									'is_provider_approved': u_line.is_provider_approved,
 									'achieve':is_achieve,
 									}
-							if select == True:
+							if select == True or elo:
 								learner_qualification_line.append((0, 0, val))
 							else:
 								pass
 			elif not user_data.partner_id.provider:
+				# todo: check for context if if users report that they want to add quals themselves(for this we will set a global prov_id rather than check self.env.user each time
 				qualification_obj = self.env['provider.qualification'].search([('seta_branch_id','=','11'),('id','=',learner_qualification_parent_id)])
 				for qualification_lines in qualification_obj.qualification_line:
 					if qualification_lines.type == 'Core' :
@@ -4197,6 +4205,7 @@ class res_partner(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+		# class = res.partner
 		user = self._uid
 		user_data = self.env['res.users'].browse(user)
 		user_groups = user_data.groups_id
@@ -6148,21 +6157,29 @@ class skills_programme_learner_rel(models.Model):
 						if master_skill.skills_programme_id.id in skills_id:
 							skills_id.remove(master_skill.skills_programme_id.id)
 		if skills_programme_id:
-			skills_programme_obj = self.env['skills.programme'].search([('seta_branch_id','=','11'),('id','=',skills_programme_id)])
-			if skills_programme_obj:
-				for unit_standards_lines in skills_programme_obj.unit_standards_line:
-					if unit_standards_lines.selection == True:
-						val = {
-								 'name':unit_standards_lines.name,
-								 'type':unit_standards_lines.type,
-								 'id_no':unit_standards_lines.id_no,
-								 'title':unit_standards_lines.title,
-								 'level1':unit_standards_lines.level1,
-								 'level2':unit_standards_lines.level2,
-								 'level3': unit_standards_lines.level3,
-								 'selection':True,
-								}
-						unit_standards.append((0, 0, val))
+			if user_data.partner_id.provider:
+				skills_programme_obj = self.env['skills.programme'].search([('seta_branch_id','=','11'),('id','=',skills_programme_id)])
+				for line in self.env.user.partner_id.skills_programme_ids:
+					# if skills_programme_obj:
+					if skills_programme_obj.id == line.skills_programme_id.id:
+						for u_line in line.unit_standards_line:
+						# for unit_standards_lines in skills_programme_obj.unit_standards_line:
+							if u_line.selection:
+								select = True
+							else:
+								select = False
+							# if unit_standards_lines.selection == True:
+							val = {
+									 'name':u_line.name,
+									 'type':u_line.type,
+									 'id_no':u_line.id_no,
+									 'title':u_line.title,
+									 'level1':u_line.level1,
+									 'level2':u_line.level2,
+									 'level3': u_line.level3,
+									 'selection':select,
+									}
+							unit_standards.append((0, 0, val))
 				return {'value':{'unit_standards_line':unit_standards, 'saqa_skill_id':skills_programme_obj.saqa_qual_id, 'qualification_id':skills_programme_obj.qualification_id.id}}
 		elif skills_id:
 			return {'domain': {'skills_programme_id': [('id', 'in', skills_id)],'batch_id':[('id','in',batch_lst)],'assessors_id': [('id', 'in', assessors_lst)], 'moderators_id':[('id', 'in', moderators_lst)]}}
@@ -9335,7 +9352,112 @@ class provider_assessment(models.Model):
 			self.partially_achieved_learner_count = count
 
 	@api.multi
+	def onchange_batch_qual(self,batch_id,qual_skill_assessment):
+		dbg('onchange_batch_qual')
+		assessment_line_list, batch_lst = [], []
+		user = self._uid
+		user_obj = self.env['res.users']
+		user_data = user_obj.browse(user)
+		if self.provider_id == user_data.partner_id:
+			prov_partner = user_data.partner_id
+		else:
+			prov_partner = self.provider_id
+		if batch_id and qual_skill_assessment == 'qual':
+			learner_obj = self.env['hr.employee'].search([('logged_provider_id', '=', prov_partner.id)])
+			if learner_obj:
+				for learner in learner_obj:
+					for learner_qual in learner.learner_qualification_ids:
+						if learner_qual.batch_id.id == batch_id and  learner_qual.is_learner_achieved == False and learner_qual.provider_id.id == prov_partner.id:
+							qual_list, unit_line_list = [], []
+							qual_list.append(learner_qual.learner_qualification_parent_id.id)
+							learners_assessor_id = learner_qual.assessors_id.id
+							learners_moderator_id = learner_qual.moderators_id.id
+							for unit_line in learner_qual.learner_registration_line_ids:
+								dbg('learner unit' + str(unit_line))
+								if unit_line.achieve == False and unit_line.selection:
+									pro_qual_id = self.env['provider.qualification.line'].search(['|',('id_no', '=', 'unit_line.id_data'),('title', '=', unit_line.title),('line_id','=',learner_qual.learner_qualification_parent_id.id)]).id
+									if pro_qual_id:
+										dbg('pro_qual' + str(pro_qual_id))
+										unit_line_list.append(pro_qual_id)
+							dbg(unit_line_list)
+							if qual_list and unit_line_list:
+								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
+									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+								elif learner.citizen_resident_status_code in ['other','unknown']:
+									assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+				return assessment_line_list
+
+	@api.multi
+	def onchange_batch_skill(self, batch_id, qual_skill_assessment):
+		dbg('onchange_batch_skill')
+		assessment_line_list, batch_lst = [], []
+		user = self._uid
+		user_obj = self.env['res.users']
+		user_data = user_obj.browse(user)
+		if self.provider_id == user_data.partner_id:
+			prov_partner = user_data.partner_id
+		else:
+			prov_partner = self.provider_id
+		if batch_id and qual_skill_assessment == 'skill':
+			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
+			if learner_obj:
+				for learner in learner_obj:
+					for learner_skill in learner.skills_programme_ids:
+						if learner_skill.batch_id.id == batch_id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
+							skill_list, unit_line_list = [], []
+							skill_list.append(learner_skill.skills_programme_id.id)
+							learners_assessor_id = learner_skill.assessors_id.id
+							learners_moderator_id = learner_skill.moderators_id.id
+							for unit_line in learner_skill.unit_standards_line:
+								if unit_line.achieve == False and unit_line.selection:
+									pro_skill_id = self.env['skills.programme.unit.standards'].search([('title', '=', unit_line.title),('skills_programme_id','=',learner_skill.skills_programme_id.id)]).id
+									if pro_skill_id:
+										unit_line_list.append(pro_skill_id)
+							if skill_list and unit_line_list:
+								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
+									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+								elif learner.citizen_resident_status_code in ['other','unknown']:
+									assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+				return assessment_line_list
+
+	@api.multi
+	def onchange_batch_lp(self, batch_id, qual_skill_assessment):
+		dbg('onchange_batch_lp')
+		assessment_line_list, batch_lst = [], []
+		user = self._uid
+		user_obj = self.env['res.users']
+		user_data = user_obj.browse(user)
+		if self.provider_id == user_data.partner_id:
+			prov_partner = user_data.partner_id
+		else:
+			prov_partner = self.provider_id
+		if batch_id and qual_skill_assessment == 'lp':
+			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', prov_partner.id)])
+			if learner_obj:
+				for learner in learner_obj:
+					for learner_lp in learner.learning_programme_ids:
+						if learner_lp.batch_id.id == batch_id and  learner_lp.is_learner_achieved == False and learner_lp.provider_id.id == prov_partner.id:
+							lp_list, unit_line_list = [], []
+							lp_list.append(learner_lp.learning_programme_id.id)
+							learners_assessor_id = learner_lp.assessors_id.id
+							learners_moderator_id = learner_lp.moderators_id.id
+							for unit_line in learner_lp.unit_standards_line:
+								if unit_line.achieve == False and unit_line.selection:
+									pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search([('title', '=', unit_line.title),('learning_programme_id','=',learner_lp.learning_programme_id.id)]).id
+									if pro_lp_id:
+										unit_line_list.append(pro_lp_id)
+							if lp_list and unit_line_list:
+								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
+									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+								elif learner.citizen_resident_status_code in ['other','unknown']:
+									assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+				return assessment_line_list
+
+	@api.multi
 	def onchange_batch_id(self, batch_id, qual_skill_assessment):
+		dbg('onchange_batch_id')
+		dbg(batch_id)
+		dbg(qual_skill_assessment)
 		assessment_line_list, batch_lst = [], []
 		user = self._uid
 		user_obj = self.env['res.users']
@@ -9374,75 +9496,81 @@ class provider_assessment(models.Model):
 					elif qual_skill_assessment == 'lp':
 						if batch.batch_master_id.qual_skill_batch == 'lp' and batch.batch_status == 'open':
 							batch_lst.append(batch.batch_master_id.id)
-		if batch_id and qual_skill_assessment == 'qual':
-			learner_obj = self.env['hr.employee'].search([('logged_provider_id', '=', prov_partner.id)])
-			if learner_obj:
-				for learner in learner_obj:
-					for learner_qual in learner.learner_qualification_ids:
-						if learner_qual.batch_id.id == batch_id and  learner_qual.is_learner_achieved == False and learner_qual.provider_id.id == prov_partner.id:
-							qual_list, unit_line_list = [], []
-							qual_list.append(learner_qual.learner_qualification_parent_id.id)
-							learners_assessor_id = learner_qual.assessors_id.id
-							learners_moderator_id = learner_qual.moderators_id.id
-							for unit_line in learner_qual.learner_registration_line_ids:
-								if unit_line.achieve == False and unit_line.selection:
-									pro_qual_id = self.env['provider.qualification.line'].search(['|',('id_no', '=', 'unit_line.id_data'),('title', '=', unit_line.title),('line_id','=',learner_qual.learner_qualification_parent_id.id)]).id
-									if pro_qual_id:
-										unit_line_list.append(pro_qual_id)
-							if qual_list and unit_line_list:
-								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-								elif learner.citizen_resident_status_code in ['other','unknown']:
-									assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# if batch_id and qual_skill_assessment == 'qual':
+		# 	learner_obj = self.env['hr.employee'].search([('logged_provider_id', '=', prov_partner.id)])
+		# 	if learner_obj:
+		# 		for learner in learner_obj:
+		# 			for learner_qual in learner.learner_qualification_ids:
+		# 				if learner_qual.batch_id.id == batch_id and  learner_qual.is_learner_achieved == False and learner_qual.provider_id.id == prov_partner.id:
+		# 					qual_list, unit_line_list = [], []
+		# 					qual_list.append(learner_qual.learner_qualification_parent_id.id)
+		# 					learners_assessor_id = learner_qual.assessors_id.id
+		# 					learners_moderator_id = learner_qual.moderators_id.id
+		# 					for unit_line in learner_qual.learner_registration_line_ids:
+		# 						if unit_line.achieve == False and unit_line.selection:
+		# 							pro_qual_id = self.env['provider.qualification.line'].search(['|',('id_no', '=', 'unit_line.id_data'),('title', '=', unit_line.title),('line_id','=',learner_qual.learner_qualification_parent_id.id)]).id
+		# 							if pro_qual_id:
+		# 								unit_line_list.append(pro_qual_id)
+		# 					if qual_list and unit_line_list:
+		# 						if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
+		# 							assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# 						elif learner.citizen_resident_status_code in ['other','unknown']:
+		# 							assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'skill_learner_assessment_line_id':'', 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
 
 		#changes by pradip
-		elif batch_id and qual_skill_assessment == 'skill':
-			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
-			if learner_obj:
-				for learner in learner_obj:
-					for learner_skill in learner.skills_programme_ids:
-						if  learner_skill.batch_id.id == batch_id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
-							skill_list, unit_line_list = [], []
-							skill_list.append(learner_skill.skills_programme_id.id)
-							learners_assessor_id = learner_skill.assessors_id.id
-							learners_moderator_id = learner_skill.moderators_id.id
-							for unit_line in learner_skill.unit_standards_line:
-								if unit_line.achieve == False and unit_line.selection:
-									pro_skill_id = self.env['skills.programme.unit.standards'].search([('title', '=', unit_line.title),('skills_programme_id','=',learner_skill.skills_programme_id.id)]).id
-									if pro_skill_id:
-										unit_line_list.append(pro_skill_id)
-							if skill_list and unit_line_list:
-								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-								elif learner.citizen_resident_status_code in ['other','unknown']:
-									 assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# elif batch_id and qual_skill_assessment == 'skill':
+		# 	learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
+		# 	if learner_obj:
+		# 		for learner in learner_obj:
+		# 			for learner_skill in learner.skills_programme_ids:
+		# 				if  learner_skill.batch_id.id == batch_id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
+		# 					skill_list, unit_line_list = [], []
+		# 					skill_list.append(learner_skill.skills_programme_id.id)
+		# 					learners_assessor_id = learner_skill.assessors_id.id
+		# 					learners_moderator_id = learner_skill.moderators_id.id
+		# 					for unit_line in learner_skill.unit_standards_line:
+		# 						if unit_line.achieve == False and unit_line.selection:
+		# 							pro_skill_id = self.env['skills.programme.unit.standards'].search([('title', '=', unit_line.title),('skills_programme_id','=',learner_skill.skills_programme_id.id)]).id
+		# 							if pro_skill_id:
+		# 								unit_line_list.append(pro_skill_id)
+		# 					if skill_list and unit_line_list:
+		# 						if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
+		# 							assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# 						elif learner.citizen_resident_status_code in ['other','unknown']:
+		# 							 assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
 		# Changes Added by Ganesh
-		elif batch_id and qual_skill_assessment == 'lp':
-			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', prov_partner.id)])
-			if learner_obj:
-				for learner in learner_obj:
-					for learner_lp in learner.learning_programme_ids:
-						if learner_lp.batch_id.id == batch_id and  learner_lp.is_learner_achieved == False and learner_lp.provider_id.id == prov_partner.id:
-							lp_list, unit_line_list = [], []
-							lp_list.append(learner_lp.learning_programme_id.id)
-							learners_assessor_id = learner_lp.assessors_id.id
-							learners_moderator_id = learner_lp.moderators_id.id
-							for unit_line in learner_lp.unit_standards_line:
-								if unit_line.achieve == False and unit_line.selection:
-									pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search([('title', '=', unit_line.title),('learning_programme_id','=',learner_lp.learning_programme_id.id)]).id
-									if pro_lp_id:
-										unit_line_list.append(pro_lp_id)
-							if lp_list and unit_line_list:
-								if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-									assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-								elif learner.citizen_resident_status_code in ['other','unknown']:
-									assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# elif batch_id and qual_skill_assessment == 'lp':
+		# 	learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', prov_partner.id)])
+		# 	if learner_obj:
+		# 		for learner in learner_obj:
+		# 			for learner_lp in learner.learning_programme_ids:
+		# 				if learner_lp.batch_id.id == batch_id and  learner_lp.is_learner_achieved == False and learner_lp.provider_id.id == prov_partner.id:
+		# 					lp_list, unit_line_list = [], []
+		# 					lp_list.append(learner_lp.learning_programme_id.id)
+		# 					learners_assessor_id = learner_lp.assessors_id.id
+		# 					learners_moderator_id = learner_lp.moderators_id.id
+		# 					for unit_line in learner_lp.unit_standards_line:
+		# 						if unit_line.achieve == False and unit_line.selection:
+		# 							pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search([('title', '=', unit_line.title),('learning_programme_id','=',learner_lp.learning_programme_id.id)]).id
+		# 							if pro_lp_id:
+		# 								unit_line_list.append(pro_lp_id)
+		# 					if lp_list and unit_line_list:
+		# 						if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
+		# 							assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# 						elif learner.citizen_resident_status_code in ['other','unknown']:
+		# 							assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
+		# self.onchange_batch_qual(batch_id,qual_skill_assessment)
+		# self.onchange_batch_skill(batch_id,qual_skill_assessment)
+		# self.onchange_batch_lp(batch_id,qual_skill_assessment)
 		if batch_id and qual_skill_assessment == 'qual':
-			return {'value':{'learner_ids':assessment_line_list}}
+			dbg('qualzzzzzz')
+			return {'value':{'learner_ids':self.onchange_batch_qual(batch_id,qual_skill_assessment)}}
 		elif batch_id and qual_skill_assessment == 'skill':
-			return {'value':{'learner_ids_for_skills':assessment_line_list}}
+			dbg('skillsssssss')
+			return {'value':{'learner_ids_for_skills':self.onchange_batch_skill(batch_id,qual_skill_assessment)}}
 		elif batch_id and qual_skill_assessment == 'lp':
-			return {'value':{'learner_ids_for_lp':assessment_line_list}}
+			dbg('lpzzzzzzzzzzzzzzzzzzz')
+			return {'value':{'learner_ids_for_lp':self.onchange_batch_lp(batch_id,qual_skill_assessment)}}
 		return {'domain':{'batch_id':[('id','in',batch_lst)]}}
 
 	@api.model
@@ -9638,6 +9766,8 @@ class provider_assessment(models.Model):
 	achieved_learner_count = fields.Integer('Achieved Learners', compute='_get_achieved_learner_count')
 	partially_achieved_learner_count = fields.Integer('Partially Achieved Learners', compute='_get_partially_achieved_learner_count')
 	is_provider = fields.Boolean("Is Provider", compute='_get_login_user', store = False)
+	unit_standard_variance = fields.Text()
+	unit_standard_library_variance = fields.Text()
 
 	provider_province = fields.Many2one(related="provider_id.state_id", store=True)
 
@@ -9713,8 +9843,7 @@ class provider_assessment(models.Model):
 					s_line.achieve = False
 
 	@api.multi
-	def action_fetch_learners_button(self):
-		''' This method is used to fetch approved learners from learner master to provider assessment based on assessment type and selected batch '''
+	def fetch_learners_qual(self):
 		learners_list = []
 		assessment_line_list = []
 		if self.provider_id == self.env.user.partner_id:
@@ -9739,28 +9868,58 @@ class provider_assessment(models.Model):
 									if unit_line.achieve == False and unit_line.selection:
 										# print "unit_line.id_data====", unit_line.id_data
 										# print "unit_line.Title====", unit_line.title
-										pro_qual_id = self.env['provider.qualification.line'].search(['|',('id_no', '=', 'unit_line.id_data'),('title', '=', unit_line.title),('line_id','=',learner_qual.learner_qualification_parent_id.id)]).id
+										pro_qual_id = self.env['provider.qualification.line'].search(
+											['|', ('id_no', '=', 'unit_line.id_data'), ('title', '=', unit_line.title),
+											 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)]).id
 										print "pro_qual_id==", pro_qual_id
 										if pro_qual_id:
 											unit_line_list.append(pro_qual_id)
-										# print "Unit line list:==========", unit_line_list
+								# print "Unit line list:==========", unit_line_list
 								if qual_list and unit_line_list:
-									if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-									elif learner.citizen_resident_status_code in ['other','unknown']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]], 'unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-			self.write({'learner_ids':assessment_line_list})
+									if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
+										assessment_line_list.append((0, 0, {
+											'identification_id': learner.learner_identification_id or '',
+											'learner_id': learner.id,
+											'qual_learner_assessment_line_id': [[6, 0, list(set(qual_list))]],
+											'unit_standards_learner_assessment_line_id': [
+												[6, 0, list(set(unit_line_list))]],
+											'assessors_id': learners_assessor_id,
+											'moderators_id': learners_moderator_id}))
+									elif learner.citizen_resident_status_code in ['other', 'unknown']:
+										assessment_line_list.append((0, 0,
+										                             {'identification_id': learner.national_id or '',
+										                              'learner_id': learner.id,
+										                              'qual_learner_assessment_line_id': [
+											                              [6, 0, list(set(qual_list))]],
+										                              'unit_standards_learner_assessment_line_id': [
+											                              [6, 0, list(set(unit_line_list))]],
+										                              'assessors_id': learners_assessor_id,
+										                              'moderators_id': learners_moderator_id}))
+			self.write({'learner_ids': assessment_line_list})
 			return True
-		elif self.batch_id and self.qual_skill_assessment == 'skill':
+
+	@api.multi
+	def fetch_learners_skill(self):
+		learners_list = []
+		assessment_line_list = []
+		if self.provider_id == self.env.user.partner_id:
+			prov_partner = self.env.user.partner_id
+		else:
+			prov_partner = self.provider_id
+		dbg(prov_partner.name)
+		if self.batch_id and self.qual_skill_assessment == 'skill':
+			dbg('found batch and skill type')
 			for record in self.learner_ids_for_skills:
 				learners_list.append(record.learner_id.id)
 			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_skills', '=', prov_partner.id)])
 			new_learner_list = [learner.id for learner in learner_obj]
 			if learner_obj:
+				dbg(learner_obj)
 				for learner in learner_obj:
+					dbg(learner)
 					if learner.id not in learners_list:
 						for learner_skill in learner.skills_programme_ids:
-							if learner_skill.batch_id.id == self.batch_id.id and  learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
+							if learner_skill.batch_id.id == self.batch_id.id and learner_skill.is_learner_achieved == False and learner_skill.provider_id.id == prov_partner.id:
 								skill_list, unit_line_list = [], []
 								skill_list.append(learner_skill.skills_programme_id.id)
 								learners_assessor_id = learner_skill.assessors_id.id
@@ -9775,10 +9934,19 @@ class provider_assessment(models.Model):
 										assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
 									elif learner.citizen_resident_status_code in ['other','unknown']:
 										assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'skill_learner_assessment_line_id': [[6, 0, list(set(skill_list))]], 'skill_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-
+			dbg(assessment_line_list)
 			self.write({'learner_ids_for_skills':assessment_line_list})
 			return True
-		elif self.batch_id and self.qual_skill_assessment == 'lp':
+
+	@api.multi
+	def fetch_learners_lp(self):
+		learners_list = []
+		assessment_line_list = []
+		if self.provider_id == self.env.user.partner_id:
+			prov_partner = self.env.user.partner_id
+		else:
+			prov_partner = self.provider_id
+		if self.batch_id and self.qual_skill_assessment == 'lp':
 			for record in self.learner_ids_for_lp:
 				learners_list.append(record.learner_id.id)
 			learner_obj = self.env['hr.employee'].search([('logged_provider_id_for_lp', '=', prov_partner.id)])
@@ -9794,16 +9962,44 @@ class provider_assessment(models.Model):
 								learners_moderator_id = learner_lp.moderators_id.id
 								for unit_line in learner_lp.unit_standards_line:
 									if unit_line.achieve == False and unit_line.selection:
-										pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search([('title', '=', unit_line.title),('learning_programme_id','=',learner_lp.learning_programme_id.id)]).id
+										# print "unit_line.id_data====", unit_line.id_data
+										# print "unit_line.Title====", unit_line.title
+										pro_lp_id = self.env['etqe.learning.programme.unit.standards'].search(
+											[('title', '=', unit_line.title),
+											 ('learning_programme_id', '=', learner_lp.learning_programme_id.id)]).id
+										print "pro_lp_id==", pro_lp_id
 										if pro_lp_id:
 											unit_line_list.append(pro_lp_id)
+								# print "Unit line list:==========", unit_line_list
 								if lp_list and unit_line_list:
-									if learner.citizen_resident_status_code in ['dual','PR', 'sa']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.learner_identification_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-									elif learner.citizen_resident_status_code in ['other','unknown']:
-										assessment_line_list.append((0, 0, {'identification_id':learner.national_id or '', 'learner_id':learner.id, 'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]], 'lp_unit_standards_learner_assessment_line_id':[[6, 0, list(set(unit_line_list))]], 'assessors_id':learners_assessor_id, 'moderators_id':learners_moderator_id}))
-			self.write({'learner_ids_for_lp':assessment_line_list})
+									if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
+										assessment_line_list.append((0, 0, {
+											'identification_id': learner.learner_identification_id or '',
+											'learner_id': learner.id,
+											'lp_learner_assessment_line_id': [[6, 0, list(set(lp_list))]],
+											'lp_unit_standards_learner_assessment_line_id': [
+												[6, 0, list(set(unit_line_list))]],
+											'assessors_id': learners_assessor_id,
+											'moderators_id': learners_moderator_id}))
+									elif learner.citizen_resident_status_code in ['other', 'unknown']:
+										assessment_line_list.append((0, 0,
+										                             {'identification_id': learner.national_id or '',
+										                              'learner_id': learner.id,
+										                              'lp_learner_assessment_line_id': [
+											                              [6, 0, list(set(lp_list))]],
+										                              'lp_unit_standards_learner_assessment_line_id': [
+											                              [6, 0, list(set(unit_line_list))]],
+										                              'assessors_id': learners_assessor_id,
+										                              'moderators_id': learners_moderator_id}))
+			self.write({'learner_ids_for_lp': assessment_line_list})
 			return True
+
+	@api.multi
+	def action_fetch_learners_button(self):
+		''' This method is used to fetch approved learners from learner master to provider assessment based on assessment type and selected batch '''
+		self.fetch_learners_qual()
+		self.fetch_learners_skill()
+		self.fetch_learners_lp()
 
 	@api.multi
 	def action_submit_button(self):
@@ -10213,23 +10409,33 @@ class provider_assessment(models.Model):
 			return True
 
 	@api.multi
-	def fix_nic_mpilo(self):
+	def fix_nic_mpilo_quals(self):
 		if self.batch_id:
 			batch = self.batch_id
 		else:
 			raise Warning(_('no batch found, cant correct records from assessment without a batch'))
 		if self.provider_id:
+			provider = self.provider_id
+		else:
+			raise Warning(_('you cant ammend without a provider on this form'))
+		if provider.qualification_ids:
 			qual_dict = {}
-			for qual in self.provider_id.qualification_ids:
-				qual_dict.update({qual.saqa_qual_id:[]})
+			for qual in provider.qualification_ids:
+				qual_dict.update({qual.saqa_qual_id: []})
+				elo = False
+				if qual.qualification_id.is_exit_level_outcomes:
+					elo = True
 				for us in qual.qualification_line:
-					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection:
+					if us.id_data not in qual_dict.get(qual.saqa_qual_id) and us.selection or elo and us.id_data not in qual_dict.get(qual.saqa_qual_id):
 						qual_dict.get(qual.saqa_qual_id).append(us.id_data)
 			for learner_id in self.learner_ids:
+				dbg(learner_id)
 				learner_id.unlink()
 			for verify in self.learner_verify_ids:
+				dbg(verify)
 				verify.unlink()
 			for evaluate in self.learner_evaluate_ids:
+				dbg(evaluate)
 				evaluate.unlink()
 			for ass_qual_line in self.learner_achieve_ids:
 				qual_id = ass_qual_line.qual_learner_assessment_achieve_line_id
@@ -10237,14 +10443,9 @@ class provider_assessment(models.Model):
 				mod = ass_qual_line.moderators_id
 				ass = ass_qual_line.assessors_id
 				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
-				dbg('--------------------------------------------------')
+				dbg(ass_qual_line)
 				for reg_qual in learner.learner_qualification_ids:
 					if reg_qual.batch_id:
-						# raise Warning(_(str(reg_qual.learner_qualification_parent_id.saqa_qual_id) + '\n' + str(qual_id)))
-						dbg('reg_qual.batch_id' + str(reg_qual.batch_id))
-						dbg('reg_qual.learner_qualification_parent_id.saqa_qual_id' + str(
-							reg_qual.learner_qualification_parent_id.saqa_qual_id))
-						dbg('qual_id.saqa_qual_id' + str(qual_id.saqa_qual_id))
 						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
 							start = reg_qual.start_date
 							end = reg_qual.end_date
@@ -10280,22 +10481,215 @@ class provider_assessment(models.Model):
 								'learner_registration_line_ids': units_list,
 							}
 							reg_qual_line.append((0, 0, val))
-							# learner.write({'learner_qualification_ids': reg_qual_line})
 							learner.learner_qualification_ids = reg_qual_line
 
-					# self.env['learner.registration.qualification.line'].create(unit_vals)
-					# units_list.append(self.env['provider.qualification.line'].search(
-					#     [('id_no', '=', unitz), ('line_id.saqa_qual_id', '=', qual_id.saqa_qual_id)]))
+							# for x in self.env['learner.registration.qualification'].search(
+							# 		[('batch_id', '=', self.batch_id.id)]):
+							# 	if learner.citizen_resident_status_code in ['dual', 'PR', 'sa']:
+							# 		if x.learner_id.learner_identification_id == learner.learner_identification_id:
+							# 			dbg('found sa citizen match')
+							# 			dbg(x)
+							# 			dbg(x.learner_qualification_id)
+							# 			learner_reg = x.learner_qualification_id
+							# 			learner_reg.learner_qualification_ids = reg_qual_line
+							# 	elif learner.citizen_resident_status_code in ['other', 'unknown']:
+							# 		if x.learner_id.national_id == learner.national_id or x.learner_id.passport_id == learner.passport_id:
+							# 			dbg('found foreign match')
+							# 			dbg(x)
+							# 			dbg(x.learner_qualification_id)
+							# 			learner_reg = x.learner_qualification_id
+							# 			learner_reg.learner_qualification_ids = reg_qual_line
+							# 	else:
+							# 		raise Warning(_('couldnt find matching learner registration to ammend'))
+							# 	 learner_reg.learner_qualification_ids = reg_qual_line
+							# else:
+							# 	raise Warning(_('found no match!!!!!!!!!!!!!!!!'))
+							# raise Warning(_(learner_reg))
 
-					# raise Warning(_('done'))
-					# raise Warning(_('matching batch: this reg line should be deleted' + str(reg_qual)))
+
 					else:
 						reg_qual.unlink()
 				ass_qual_line.unlink()
 			if self.learner_achieved_ids:
 				for achieved in self.learner_achieved_ids:
+					dbg(achieved)
 					achieved.unlink()
+		else:
+			raise Warning(_('The selected provider has no qualifications attached to profile.'))
 
+	@api.multi
+	def fix_nic_mpilo_skills(self):
+		if self.batch_id:
+			batch = self.batch_id
+		else:
+			raise Warning(_('no batch found, cant correct records from assessment without a batch'))
+		if self.provider_id:
+			provider = self.provider_id
+		else:
+			raise Warning(_('you cant ammend without a provider on this form'))
+		if provider.skills_programme_ids:
+			skill_dict = {}
+			for skill in provider.skills_programme_ids:
+				skill_dict.update({skill.skills_programme_id.code: []})
+				for us in skill.unit_standards_line:
+					if us.id_no not in skill_dict.get(skill.skills_programme_id.code) and us.selection:
+						skill_dict.get(skill.skills_programme_id.code).append(us.id_no)
+			for learner_id in self.learner_ids_for_skills:
+				learner_id.unlink()
+			for verify in self.learner_verify_ids_for_skills:
+				verify.unlink()
+			for evaluate in self.learner_evaluate_ids_for_skills:
+				evaluate.unlink()
+			for ass_skill_line in self.learner_achieve_ids_for_skills:
+				skill_id = ass_skill_line.skill_learner_assessment_achieve_line_id
+				learner = ass_skill_line.learner_id
+				mod = ass_skill_line.moderators_id
+				ass = ass_skill_line.assessors_id
+				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
+				dbg('--------------------------------------------------' + str(ass_skill_line))
+				for reg_skill in learner.skills_programme_ids:
+					skillz_id = reg_skill.skills_programme_id.id
+					if reg_skill.batch_id:
+						if reg_skill.batch_id == batch and reg_skill.skills_programme_id.saqa_qual_id == skill_id.saqa_qual_id:
+							start = reg_skill.start_date
+							end = reg_skill.end_date
+							reg_skill.unlink()
+							units_list = []
+							dbg(skill_dict.get(skill_id.code))
+							for unitz in skill_dict.get(skill_id.code):
+								lib_unit = self.env['skills.programme.unit.standards'].search(
+									[('id_no', '=', unitz), ('skills_programme_id.code', '=', skill_id.code),('skills_programme_id','=',skillz_id)])
+								dbg(lib_unit)
+								if not lib_unit:
+									raise Warning(_('missing unit!!!!!'))
+								unit_vals = {
+									# 'provider_id': self.provider_id,
+									'id_no': lib_unit.id_no,
+									'title': lib_unit.title,
+									'type': lib_unit.type,
+									'level1': lib_unit.level1,
+									'level3': lib_unit.level3,
+									'selection': True,
+									'level2': lib_unit.level2,
+									# 'learner_reg_id': reg_qual_line,
+								}
+								units_list.append(unit_vals)
+								dbg(unit_vals)
+							# raise Warning(_(units_list))
+							reg_skill_line = []
+							# raise Warning(_(qual_dict))
+							dbg('unit_list' + str(units_list))
+							val = {
+								'batch_id': batch,
+								'provider_id': self.provider_id,
+								'moderators_id': mod,
+								'assessors_id': ass,
+								'start_date': start,
+								'end_date': end,
+								'skills_programme_id': skill_id,
+								'unit_standards_line': units_list,
+							}
+							reg_skill_line.append((0, 0, val))
+							# learner.write({'learner_qualification_ids': reg_qual_line})
+							learner.skills_programme_ids = reg_skill_line
+					else:
+						reg_skill.unlink()
+				ass_skill_line.unlink()
+			if self.learner_achieved_ids_for_skills:
+				for achieved in self.learner_achieved_ids_for_skills:
+					achieved.unlink()
+		else:
+			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+
+	@api.multi
+	def fix_nic_mpilo_lp(self):
+		if self.batch_id:
+			batch = self.batch_id
+		else:
+			raise Warning(_('no batch found, cant correct records from assessment without a batch'))
+		if self.provider_id:
+			provider = self.provider_id
+		else:
+			raise Warning(_('you cant ammend without a provider on this form'))
+		if provider.learning_programme_ids:
+			lp_dict = {}
+			for lp in provider.learning_programme_ids:
+				lp_dict.update({lp.lp_saqa_id: []})
+				for us in lp.unit_standards_line:
+					if us.id_no not in lp_dict.get(lp.lp_saqa_id) and us.selection:
+						lp_dict.get(lp.lp_saqa_id).append(us.id_no)
+			for learner_id in self.learner_ids_for_lp:
+				learner_id.unlink()
+			for verify in self.learner_verify_ids_for_lp:
+				verify.unlink()
+			for evaluate in self.learner_evaluate_ids_for_lp:
+				evaluate.unlink()
+			for ass_lp_line in self.learner_achieve_ids_for_lp:
+				lp_id = ass_lp_line.lp_learner_assessment_achieve_line_id
+				learner = ass_lp_line.learner_id
+				mod = ass_lp_line.moderators_id
+				ass = ass_lp_line.assessors_id
+				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
+				dbg('--------------------------------------------------')
+				for reg_lp in learner.learning_programme_ids:
+					if reg_lp.batch_id:
+						if reg_lp.batch_id == batch and reg_lp.learning_programme_id.saqa_qual_id == lp_id.saqa_qual_id:
+							start = reg_lp.start_date
+							end = reg_lp.end_date
+							reg_lp.unlink()
+							units_list = []
+							dbg('-----------------------------!!!!!!!!!!!!!!!!')
+							for unitz in lp_dict.get(lp_id.saqa_qual_id):
+								dbg(unitz)
+								lib_unit = self.env['etqe.learning.programme.unit.standards'].search(
+									[('id_no', '=', unitz), ('learning_programme_id.saqa_qual_id', '=', lp_id.saqa_qual_id)])
+								unit_vals = {
+									'provider_id': self.provider_id,
+									# 'id_data': lib_unit.id_no,
+									'id_data': unitz,
+									'id_no': unitz,
+									'title': lib_unit.title,
+									'type': lib_unit.type,
+									'level1': lib_unit.level1,
+									'level3': lib_unit.level3,
+									'selection': True,
+									'level2': lib_unit.level2,
+									# 'learner_reg_id': reg_qual_line,
+								}
+								units_list.append(unit_vals)
+								dbg(unit_vals)
+							reg_lp_line = []
+							# raise Warning(_(qual_dict))
+							val = {
+								'batch_id': batch,
+								'provider_id': self.provider_id,
+								'moderators_id': mod,
+								'assessors_id': ass,
+								'start_date': start,
+								'end_date': end,
+								'learning_programme_id': lp_id,
+								'unit_standards_line': units_list,
+							}
+							reg_lp_line.append((0, 0, val))
+							# learner.write({'learner_qualification_ids': reg_qual_line})
+							learner.learning_programme_ids = reg_lp_line
+					else:
+						reg_lp.unlink()
+				ass_lp_line.unlink()
+			if self.learner_achieved_ids_for_lp:
+				for achieved in self.learner_achieved_ids_for_lp:
+					achieved.unlink()
+		else:
+			raise Warning(_('The selected provider has no Learning Programmes attached to profile.'))
+
+	@api.multi
+	def fix_nic_mpilo(self):
+		if self.qual_skill_assessment == 'qual':
+			self.fix_nic_mpilo_quals()
+		if self.qual_skill_assessment == 'skill':
+			self.fix_nic_mpilo_skills()
+		if self.qual_skill_assessment == 'lp':
+			self.fix_nic_mpilo_lp()
 
 		self.submited = False
 		self.state = 'draft'
@@ -10307,12 +10701,318 @@ class provider_assessment(models.Model):
 		self.chatter(self.env.user, 'The "Amend Assessment & LR" button was pressed')
 		# raise Warning(_('done'))
 
+	@api.one
+	def check_unit_standard_library(self):
+		dbg("check_unit_standard_library")
+		this_us_id_list = []
+		this_mod_us_id_list = []
+		this_prov_us_id_list = []
+		this_ass_us_id_list = []
+		list_of_dict = []
+		quals_list = []
+		lib_quals = []
+		big_dic = {}
+		text_guy = ""
+		moderator_name = ""
+		assessor_name = ""
+		provider_name = self.provider_id.name
+		for x in self.env['provider.qualification'].search([]):
+			lib_quals.append(x.saqa_qual_id)
+		lib_us_list = [x.id_no for x in self.env['provider.qualification.line'].search([])]
+		lib_us_id_list = [x for x in self.env['provider.qualification.line'].search([])]
+		if self.learner_achieved_ids:
+			for prov_quals in self.provider_id.qualification_ids:
+				for prov_us in prov_quals.qualification_line:
+					if prov_us not in this_prov_us_id_list and prov_us.selection:
+						# this_prov_us_list.append([x.id_data for x in prov_us])
+						this_prov_us_id_list.append(prov_us)
+			for achieved_ids in self.learner_achieved_ids:
+				# build qualifications list from assessment
+				for qualz in achieved_ids.qual_learner_assessment_achieved_line_id:
+					if qualz.saqa_qual_id not in quals_list:
+						quals_list.append(qualz.saqa_qual_id)
+				# build assessment US list
+				for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
+					# build list of US db ids to compare US in specific qualification
+					if us not in this_us_id_list:
+						this_us_id_list.append(us)
+				if achieved_ids.moderators_id:
+					moderator_name = achieved_ids.moderators_id.name
+					# build moderator US list
+					for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
+						for mod_us in mod_qualifications.qualification_line_hr:
+							if mod_us not in this_mod_us_id_list:
+								this_mod_us_id_list.append(mod_us)
+				if achieved_ids.assessors_id:
+					assessor_name = achieved_ids.assessors_id.name
+					for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
+						for ass_us in ass_qualifications.qualification_line_hr:
+							if ass_us not in this_ass_us_id_list:
+								this_ass_us_id_list.append(ass_us)
+			rows = ''
+			style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
+			start_table = '<table id="lib_units">'
+			header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
+			header2 = '<tr><th>Assessment</th><th>library</th><th>' + provider_name + '</th><th>' + moderator_name + '</th><th>' + assessor_name + '</th></tr>'
+			for x in this_us_id_list:
+				dbg(x)
+				if x in this_prov_us_id_list:
+					prov_x = 'x'
+				else:
+					prov_x = x.id_no
+				if x in this_ass_us_id_list:
+					ass_x = 'x'
+				else:
+					ass_x = x.id_no
+				if x in this_mod_us_id_list:
+					mod_x = 'x'
+				else:
+					mod_x = x.id_no
+				if x in lib_us_id_list:
+					lib_x = 'x'
+				else:
+					lib_x = x.id_no
+				# dbg(prov_x)
+				# dbg(mod_x)
+				rows += '<tr><td>' + x.id_no + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
+				dbg(
+					'<tr><td>' + x.id_no + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>')
+			# dbg(rows)
+			end_table = '</table>'
+			whole_table = style + start_table + header + header2 + rows + end_table
+			dbg(whole_table)
+			self.unit_standard_library_variance = whole_table
+
+	@api.one
+	def check_unit_upline_lp(self):
+		if self.qual_skill_assessment == 'lp':
+			dbg("check_unit_standard_upline")
+			# for this in self:
+			this_us_list = []
+			this_us_id_list = []
+			this_mod_us_list = []
+			this_mod_us_id_list = []
+			this_prov_us_list = []
+			this_ass_us_list = []
+			list_of_dict = []
+			lps_list = []
+			lib_lps = []
+			big_dic = {}
+			text_guy = ""
+			moderator_name = ""
+			assessor_name = ""
+			provider_name = self.provider_id.name
+			for x in self.env['etqe.learning.programme'].search([]):
+				list_of_dict.append({'name': x.name,
+				                     'code': x.saqa_qual_id,
+				                     'skill_code': x.code,
+				                     'list_of_us': [z.id_no for z in x.unit_standards_line]
+				                     })
+				lib_quals.append(x.saqa_qual_id)
+			lib_us_list = [x.id_no for x in self.env['etqe.learning.programme.unit.standards'].search([])]
+			big_dic.update({'lib_lps': lib_lps, 'lib_us': lib_us_list})
+			if self.learner_achieved_ids_for_lp:
+				for prov_lps in self.provider_id.learning_programme_ids:
+					for prov_us in prov_lps.unit_standards_line:
+						if prov_us.id_no not in this_prov_us_list and prov_us.selection:
+							# this_prov_us_list.append([x.id_data for x in prov_us])
+							this_prov_us_list.append(prov_us.id_no)
+				big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
+				for achieved_ids in self.learner_achieved_ids_for_lp:
+					# build qualifications list from assessment
+					for lpz in achieved_ids.qual_learner_assessment_achieved_line_id:
+						if lpz.saqa_qual_id not in lps_list:
+							lps_list.append(lpz.saqa_qual_id)
+					# build assessment US list
+					for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
+						# build list of US db ids to compare US in specific qualification
+						if us not in this_us_id_list:
+							this_us_id_list.append(us)
+						if us.id_no not in this_us_list:
+							this_us_list.append(us.id_no)
+					if achieved_ids.moderators_id:
+						moderator_name = achieved_ids.moderators_id.name
+						# build moderator US list
+						for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
+							for mod_us in mod_qualifications.qualification_line_hr:
+								if mod_us not in this_mod_us_id_list:
+									this_mod_us_id_list.append(mod_us)
+								if mod_us.id_no not in this_mod_us_list:
+									this_mod_us_list.append(mod_us.id_no)
+					if achieved_ids.assessors_id:
+						assessor_name = achieved_ids.assessors_id.name
+						for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
+							for ass_us in ass_qualifications.qualification_line_hr:
+								if ass_us.id_no not in this_ass_us_list:
+									this_ass_us_list.append(ass_us.id_no)
+				big_dic.update({'assessment_quals': quals_list,
+				                'assessment_unit_standards': this_us_list,
+				                'moderator_unit_standards': this_mod_us_list,
+				                'assessor_unit_standards': this_ass_us_list,
+				                'assessor_name': assessor_name,
+				                'moderator_name': moderator_name,
+				                })
+				mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
+				ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
+				prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
+				rows = ''
+				style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
+				start_table = '<table id="lib_units">'
+				header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
+				for x in this_us_list:
+					if x in this_prov_us_list:
+						prov_x = 'x'
+					else:
+						prov_x = x
+					if x in this_ass_us_list:
+						ass_x = 'x'
+					else:
+						ass_x = x
+					if x in this_mod_us_list:
+						mod_x = 'x'
+					else:
+						mod_x = x
+					if x in lib_us_list:
+						lib_x = 'x'
+					else:
+						lib_x = x
+					# dbg(prov_x)
+					# dbg(mod_x)
+					rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
+				# dbg(rows)
+				end_table = '</table>'
+				whole_table = style + start_table + header + rows + end_table
+				dbg(whole_table)
+				self.unit_standard_library_variance = whole_table
+				text_guy += "<h1>Provider:" + provider_name + "</h1>"
+				text_guy += "<h3>In assessment, not in Provider:</h3>"
+				for x in prov_diff:
+					text_guy += "<div>" + str(x) + "</div>"
+				text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
+				text_guy += "<h3>In assessment, not in Moderator:</h3>"
+				for x in mod_diff:
+					text_guy += "<div>" + str(x) + "</div>"
+				text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
+				text_guy += "<h3>In assessment, not in Assessor:</h3>"
+				for x in ass_diff:
+					text_guy += "<div>" + str(x) + "</div>"
+				self.unit_standard_variance = text_guy
+
+	@api.one
+	def check_unit_standard_upline(self):
+		dbg("check_unit_standard_upline")
+		# for this in self:
+		this_us_list = []
+		this_us_id_list = []
+		this_mod_us_list = []
+		this_mod_us_id_list = []
+		this_prov_us_list = []
+		this_ass_us_list = []
+		list_of_dict = []
+		quals_list = []
+		lib_quals = []
+		big_dic = {}
+		text_guy = ""
+		moderator_name = ""
+		assessor_name = ""
+		provider_name = self.provider_id.name
+		for x in self.env['provider.qualification'].search([]):
+			list_of_dict.append({'name': x.name,
+			                     'code': x.saqa_qual_id,
+			                     'list_of_us': [z.id_no for z in x.qualification_line]
+			                     })
+			lib_quals.append(x.saqa_qual_id)
+		lib_us_list = [x.id_no for x in self.env['provider.qualification.line'].search([])]
+		big_dic.update({'lib_quals': lib_quals, 'lib_us': lib_us_list})
+		if self.learner_achieved_ids:
+			for prov_quals in self.provider_id.qualification_ids:
+				for prov_us in prov_quals.qualification_line:
+					if prov_us.id_data not in this_prov_us_list and prov_us.selection:
+						# this_prov_us_list.append([x.id_data for x in prov_us])
+						this_prov_us_list.append(prov_us.id_data)
+			big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
+			for achieved_ids in self.learner_achieved_ids:
+				# build qualifications list from assessment
+				for qualz in achieved_ids.qual_learner_assessment_achieved_line_id:
+					if qualz.saqa_qual_id not in quals_list:
+						quals_list.append(qualz.saqa_qual_id)
+				# build assessment US list
+				for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
+					# build list of US db ids to compare US in specific qualification
+					if us not in this_us_id_list:
+						this_us_id_list.append(us)
+					if us.id_no not in this_us_list:
+						this_us_list.append(us.id_no)
+				if achieved_ids.moderators_id:
+					moderator_name = achieved_ids.moderators_id.name
+					# build moderator US list
+					for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
+						for mod_us in mod_qualifications.qualification_line_hr:
+							if mod_us not in this_mod_us_id_list:
+								this_mod_us_id_list.append(mod_us)
+							if mod_us.id_no not in this_mod_us_list:
+								this_mod_us_list.append(mod_us.id_no)
+				if achieved_ids.assessors_id:
+					assessor_name = achieved_ids.assessors_id.name
+					for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
+						for ass_us in ass_qualifications.qualification_line_hr:
+							if ass_us.id_no not in this_ass_us_list:
+								this_ass_us_list.append(ass_us.id_no)
+			big_dic.update({'assessment_quals': quals_list,
+			                'assessment_unit_standards': this_us_list,
+			                'moderator_unit_standards': this_mod_us_list,
+			                'assessor_unit_standards': this_ass_us_list,
+			                'assessor_name': assessor_name,
+			                'moderator_name': moderator_name,
+			                })
+			mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
+			ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
+			prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
+			rows = ''
+			style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
+			start_table = '<table id="lib_units">'
+			header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
+			for x in this_us_list:
+				if x in this_prov_us_list:
+					prov_x = 'x'
+				else:
+					prov_x = x
+				if x in this_ass_us_list:
+					ass_x = 'x'
+				else:
+					ass_x = x
+				if x in this_mod_us_list:
+					mod_x = 'x'
+				else:
+					mod_x = x
+				if x in lib_us_list:
+					lib_x = 'x'
+				else:
+					lib_x = x
+				# dbg(prov_x)
+				# dbg(mod_x)
+				rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
+			# dbg(rows)
+			end_table = '</table>'
+			whole_table = style + start_table + header + rows + end_table
+			dbg(whole_table)
+			self.unit_standard_library_variance = whole_table
+			text_guy += "<h1>Provider:" + provider_name + "</h1>"
+			text_guy += "<h3>In assessment, not in Provider:</h3>"
+			for x in prov_diff:
+				text_guy += "<div>" + str(x) + "</div>"
+			text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
+			text_guy += "<h3>In assessment, not in Moderator:</h3>"
+			for x in mod_diff:
+				text_guy += "<div>" + str(x) + "</div>"
+			text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
+			text_guy += "<h3>In assessment, not in Assessor:</h3>"
+			for x in ass_diff:
+				text_guy += "<div>" + str(x) + "</div>"
+			self.unit_standard_variance = text_guy
+
 	@api.multi
-	def action_achieved_button(self):
-		context = self._context
-		if context is None:
-			context = {}
-		self = self.with_context(assessed=True)
+	def achieve_qual(self):
 		provider = self.provider_id
 		if self.qual_skill_assessment == 'qual':
 			learner_achieved = []
@@ -10357,17 +11057,28 @@ class provider_assessment(models.Model):
 							text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
 							dbg(line)
 							selected_line, achieved_line = 0, 0
+							registration_units = []
+							elo = False
 							if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
+								master_obj = self.env['provider.master.qualification'].search([('qualification_id','=',line.learner_qualification_parent_id.id),('accreditation_qualification_id','=',provider.id)])
+								master_us_list = []
+								for master_us in master_obj.qualification_line:
+									master_us_list.append(master_us.id_data)
+								if line.learner_qualification_parent_id.is_exit_level_outcomes:
+									elo = True
 								dbg('match prov and quals for id:' + str(line))
 								registration_min_creds = 0
 								req_units = []
 								for u_line in line.learner_registration_line_ids:
+									if u_line.id_data not in master_us_list and elo:
+										raise Warning(_('learner is missing a unit standard from the registration: ' + str(u_line.id_data) ))
 									# text_guy += 'units:' + str(u_line.id_data) + '\n'
 									dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(qual_line_obj))
 									if u_line.selection:
+										registration_units.append(u_line.id_data)
 										# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
 										dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
-										if u_line.type in ['Core', 'Fundamental']:
+										if u_line.type in ['Core', 'Fundamental','Exit Level Outcomes']:
 											req_units.append(u_line.id_data)
 										selected_line += 1
 										for assessment_unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
@@ -10382,18 +11093,19 @@ class provider_assessment(models.Model):
 										missing_req_units.append(x)
 								# raise Warning(_(missing_req_units))
 								missing_required = False
-								if missing_req_units == []:
+								if missing_req_units == [] and not elo:
 									missing_required = False
 									text_guy += 'no missing required units\n'
 								else:
 									missing_required = True
 									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
-								# check if the counts are same or if min creds requirement are met
-								# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
-								# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
-									# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or\
-										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+								if master_us_list == registration_units and elo:
+									text_guy += 'all elo units from registration match the current assessment'
+								else:
+									text_guy += 'the learner registration is missing a required unit standard based on Exit Level Outcomes\' rules'
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and not elo or \
+										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo and master_us_list == registration_units or \
+										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
@@ -10426,19 +11138,32 @@ class provider_assessment(models.Model):
 			if achieve_false == learner_line:
 				raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
 			return True
-		elif self.qual_skill_assessment == 'skill':
+
+	@api.multi
+	def achieve_skill(self):
+		dbg('achieve skill!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+		provider = self.provider_id
+		if self.qual_skill_assessment == 'skill':
 			learner_achieved = []
 			if not self.learner_achieved_ids_for_skills:
 				text = ''
 				for learner_data in self.learner_achieve_ids_for_skills:
 					if learner_data.achieve:
+						text += learner_data.learner_id.name + '\n'
 						# TODO: search for the providers matching SP and append to a list if selection is true, then check if the same SP is in the above loop
 						prov_units = []
 						prov_skills = []
+						this_skill_list = []
+						for skill in learner_data.skill_learner_assessment_achieve_line_id:
+							if not skill.code in this_skill_list:
+								this_skill_list.append(skill.code)
 						for skill in provider.skills_programme_ids:
-							prov_skills.append(skill.skill_saqa_id)
-							for us in skill.unit_standards_line:
-								prov_units.append(us.id_no)
+							if skill.skills_programme_id.code not in prov_skills and skill.skills_programme_id.code in this_skill_list:
+								prov_skills.append(skill.skills_programme_id.code)
+								for us in skill.unit_standards_line:
+									if us.id_no not in prov_units:
+										prov_units.append(us.id_no)
+						dbg('prov units list' + str(prov_units))
 						skill_ids = []
 						skill_id_nos = []
 						unit_id_nos = []
@@ -10480,23 +11205,24 @@ class provider_assessment(models.Model):
 												line.is_complete = True
 									if u_line.achieve:
 										achieved_line += 1
-								text += 'line:' + str(line) + '-found skill:' + str(
-									line.skills_programme_id.id) + 'selected lines:' + str(
-									selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
-								text += 'reg units:' + '\n' + str(
-									reg_units_found) + '\n' + 'assessment units' + '\n' + str(ass_units_found) + '\n'
-								achieved = False
-								if reg_units_found == ass_units_found:
-									achieved = True
-								text += 'achieved:' + str(achieved) + '\n'
+								# text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
+								text += 'reg units:\n' + str(reg_units_found) + '\n assessment units' + '\n' + str(ass_units_found) + '\n prov_units \n' + str(prov_units) + '\n'
+								ach = False
+								for unit in unit_id_nos:
+									if unit in prov_units:
+										text += 'found' + unit + '\n'
+									else:
+										ach = False
+										text += 'not found on prov' + unit + '\n'
 								if prov_units == unit_id_nos == reg_units_found:
+									ach = True
 									text += 'units X3 match!!!\n'
 								else:
-									text += 'units X3 failed :( \n' + str(prov_units) + '\n' + str(
-										unit_id_nos) + '\n' + str(reg_units_found) + '\n'
+									ach = False
+									text += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
 
 								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and ach == True:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
@@ -10513,9 +11239,9 @@ class provider_assessment(models.Model):
 							text += 'units X3 failed :( \n' + str(prov_skills) + '\n' + str(skill_id_nos) + '\n' + str(
 								reg_skills_found) + '\n'
 						learner_achieved.append((0, 0, learner_dict))
-						text += str(skill_ids) + '\n'
-
-				#raise Warning(_(text))
+						# text += str(skill_ids) + '\n'
+				# raise Warning(_(text))
+				self.unit_standard_variance = text
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
 																		  'state': 'achieved',
 																		  'pro_id': self.id,
@@ -10534,18 +11260,52 @@ class provider_assessment(models.Model):
 			if achieve_false == learner_line:
 				raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
 			return True
-		# Changes Added by Ganesh For Learning Programme
-		elif self.qual_skill_assessment == 'lp':
+
+	@api.multi
+	def achieve_lp(self):
+		provider = self.provider_id
+		if self.qual_skill_assessment == 'lp':
 			learner_achieved = []
 			if not self.learner_achieved_ids_for_lp:
+				text_guy = ''
 				for learner_data in self.learner_achieve_ids_for_lp:
+					min_lp_creds = learner_data.lp_learner_assessment_achieve_line_id.qualification_id.m_credits
+					min_creds_found = 0
 					if learner_data.achieve:
+						text_guy += learner_data.learner_id.name + '\n'
+						req_units_found = []
+						prov_units = []
+						prov_lps = []
+						this_lp_list = []
+						for lp in learner_data.lp_learner_assessment_achieve_line_id:
+							if not lp.code in this_lp_list:
+								this_lp_list.append(lp.code)
+						for us_min in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+							dbg(us_min.level3)
+							min_creds_found += int(us_min.level3)
+							dbg('unit--' + str(us_min) + 'type found' + str(us_min.type))
+							if us_min.type in ['Core','Fundamental']:
+								req_units_found.append(us_min.id_no)
+						text_guy += str(req_units_found) + '\n'
+						# raise Warning(
+						# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
+						text_guy += 'min_qual_creds:' + str(min_lp_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
+						for learning_programme in provider.learning_programme_ids:
+							if learning_programme.learning_programme_id.code not in prov_lps and learning_programme.learning_programme_id.code in this_lp_list:
+								prov_lps.append(learning_programme.learning_programme_id.code)
+								for us in learning_programme.unit_standards_line:
+									if us.id_no not in prov_units:
+										prov_units.append(us.id_no)
 						lp_ids = []
+						lp_id_nos = []
+						unit_id_nos = []
 						unit_ids = []
 						for lp in learner_data.lp_learner_assessment_achieve_line_id:
 							lp_ids.append(lp.id)
+							lp_id_nos.append(lp.saqa_qual_id)
 						for unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
 							unit_ids.append(unit.id)
+							unit_id_nos.append(unit.id_no)
 						learner_dict = {
 							'learner_id': learner_data.learner_id and learner_data.learner_id.id,
 							'learner_identity_number': learner_data.learner_identity_number,
@@ -10558,36 +11318,99 @@ class provider_assessment(models.Model):
 						}
 						# This code is used to assign True value to achieve field of learning programme learner rel
 						learner_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+						reg_lps_found = []
 						for line in learner_obj.learning_programme_ids:
+							min_expected_creds = line.learning_programme_id.total_credit
+							text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
+							dbg(line)
 							selected_line, achieved_line = 0, 0
+							reg_lps_found.append(line.lp_saqa_id)
 							if line.learning_programme_id.id in lp_ids and line.provider_id.id == self.provider_id.id:
+								registration_min_creds = 0
+								req_units = []
+								reg_units_found = []
+								ass_units_found = []
 								for u_line in line.unit_standards_line:
 									if u_line.selection:
+										if u_line.type in ['Core', 'Fundamental']:
+											req_units.append(u_line.id_no)
 										selected_line += 1
+										dbg('reg_units object' + str(u_line))
+										dbg('found reg_units' + str(u_line.id_no))
+										reg_units_found.append(u_line.id_no)
 										for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+											if assessment_unit.id_no not in ass_units_found:
+												ass_units_found.append(assessment_unit.id_no)
 											if u_line.title == assessment_unit.title:
 												u_line.achieve = True
 												line.is_complete = True
 									if u_line.achieve:
 										achieved_line += 1
-								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+								ach = False
+
+								if unit_id_nos == reg_units_found:
+									ach = True
+									text_guy += 'units X3 match!!!\n'
+								else:
+									ach = False
+									text_guy += 'units X3 failed :( \n' + 'prov:' + str(prov_units) + '\n' + 'unit_id_nos:' + str(unit_id_nos) + '\n' + 'reg:' + str(reg_units_found) + '\n'
+								for unit in unit_id_nos:
+									if unit in prov_units:
+										text_guy += 'found' + unit + '\n'
+										ach = True
+									else:
+										ach = False
+										text_guy += 'not found on prov' + unit + '\n'
+								missing_req_units = []
+								for x in req_units:
+									if x not in req_units_found:
+										missing_req_units.append(x)
+								# raise Warning(_(missing_req_units))
+								missing_required = False
+								if missing_req_units == []:
+									missing_required = False
+									text_guy += 'no missing required units\n'
+								else:
+									missing_required = True
+									text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
+								# check if the counts are same or if min creds requirement are met
+								if min_expected_creds <= min_creds_found:
+									below = False
+									text_guy += 'not below minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
+								else:
+									below = True
+									text_guy += 'below the minimum credits:' + str(min_expected_creds) + 'vs' + str(min_creds_found)
+
+								# if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below:
+								# 	raise Warning(_('111111 if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below'))
+								# if selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
+								# 	raise Warning(_('22222 selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below'))
+								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below or\
+										selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
 									line.is_learner_achieved = True
 									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
 									line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.lp_status = 'Achieved'
-									learner_obj.learner_status= 'Achieved'
-									learner_obj.state= 'achieved'
-									learner_obj.learners_status= 'achieved'
+									learner_obj.learner_status = 'Achieved'
+									learner_obj.state = 'achieved'
+									learner_obj.learners_status = 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
+									text_guy += 'learner achieved!!!\n'
+								else:
+									text_guy += '!!!!!!!!!learner NOT achieved\n'
+								# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
 						learner_achieved.append((0, 0, learner_dict))
+				# raise Warning(_(text_guy))
+				self.unit_standard_variance = text_guy
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
-																  'state':'achieved',
-																  'pro_id':self.id,
-																  'comment':self.comment,
-																  'state_title':'Achieved'
-																  })
-			self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_lp':learner_achieved,'select_all':False})
+			                                                              'state': 'achieved',
+			                                                              'pro_id': self.id,
+			                                                              'comment': self.comment,
+			                                                              'state_title': 'Achieved'
+			                                                              })
+			self.write(
+				{'state': 'achieved', 'assessed': True, 'learner_achieved_ids_for_lp': learner_achieved, 'select_all': False})
 			achieve_false = 0
 			learner_line = 0
 			for learner in self.learner_achieve_ids_for_lp:
@@ -10596,8 +11419,299 @@ class provider_assessment(models.Model):
 				learner_line += 1
 			if achieve_false == learner_line:
 				raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
-
 			return True
+
+	@api.multi
+	def action_achieved_button(self):
+		context = self._context
+		if context is None:
+			context = {}
+		self = self.with_context(assessed=True)
+		provider = self.provider_id
+		self.achieve_qual()
+		# if self.qual_skill_assessment == 'qual':
+		# 	learner_achieved = []
+		# 	if not self.learner_achieved_ids:
+		# 		text_guy = ''
+		# 		for learner_data in self.learner_achieve_ids:
+		# 			min_qual_creds = learner_data.qual_learner_assessment_achieve_line_id.m_credits
+		# 			min_creds_found = 0
+		# 			if learner_data.achieve:
+		# 				text_guy += learner_data.learner_id.name + '\n'
+		# 				req_units_found = []
+		# 				for us_min in learner_data.unit_standards_learner_assessment_achieve_line_id:
+		# 					dbg(us_min.level3)
+		# 					min_creds_found += int(us_min.level3)
+		# 					dbg('unit--' + str(us_min) + 'type found' + str(us_min.type))
+		# 					if us_min.type in ['Core','Fundamental']:
+		# 						req_units_found.append(us_min.id_no)
+		# 				text_guy += str(req_units_found) + '\n'
+		# 				# raise Warning(
+		# 				# 	_('min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found)))
+		# 				text_guy += 'min_qual_creds:' + str(min_qual_creds) + '-min_creds_found:' + str(min_creds_found) + '\n'
+		# 				qual_ids = []
+		# 				unit_ids = []
+		# 				for qual in learner_data.qual_learner_assessment_achieve_line_id:
+		# 					qual_ids.append(qual.id)
+		# 				for unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
+		# 					unit_ids.append(unit.id)
+		# 				learner_dict = {
+		# 						 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+		# 						 'learner_identity_number' : learner_data.learner_identity_number,
+		# 						 'identification_id' : learner_data.identification_id,
+		# 						 'qual_learner_assessment_achieved_line_id': [(6, 0, qual_ids)],
+		# 						 'unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+		# 						 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+		# 						 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+		# 						 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+		# 						}
+		# 				# This code is used to assign True value to achieve field of etqe learner qualification line
+		# 				qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+		# 				for line in qual_line_obj.learner_qualification_ids:
+		# 					min_expected_creds = line.learner_qualification_parent_id.m_credits
+		# 					text_guy += 'min_expected_creds:' +  str(min_expected_creds) + '\n'
+		# 					dbg(line)
+		# 					selected_line, achieved_line = 0, 0
+		# 					if line.learner_qualification_parent_id.id in qual_ids and line.provider_id.id == self.provider_id.id:
+		# 						dbg('match prov and quals for id:' + str(line))
+		# 						registration_min_creds = 0
+		# 						req_units = []
+		# 						for u_line in line.learner_registration_line_ids:
+		# 							# text_guy += 'units:' + str(u_line.id_data) + '\n'
+		# 							dbg('units:' + str(u_line) + '-qual:' + str(line) + 'learner:' + str(qual_line_obj))
+		# 							if u_line.selection:
+		# 								# text_guy += 'reg unit expected:' + str(u_line.id_data) + 'type---' + str(u_line.type) + '\n'
+		# 								dbg('reg unit expected' + str(u_line) + 'type---' + str(u_line.type))
+		# 								if u_line.type in ['Core', 'Fundamental']:
+		# 									req_units.append(u_line.id_data)
+		# 								selected_line += 1
+		# 								for assessment_unit in learner_data.unit_standards_learner_assessment_achieve_line_id:
+		# 									if u_line.title == assessment_unit.title:
+		# 										u_line.achieve = True
+		# 										line.is_complete = True
+		# 							if u_line.achieve:
+		# 								achieved_line += 1
+		# 						missing_req_units = []
+		# 						for x in req_units:
+		# 							if x not in req_units_found:
+		# 								missing_req_units.append(x)
+		# 						# raise Warning(_(missing_req_units))
+		# 						missing_required = False
+		# 						if missing_req_units == []:
+		# 							missing_required = False
+		# 							text_guy += 'no missing required units\n'
+		# 						else:
+		# 							missing_required = True
+		# 							text_guy += '!!!!!!!!!!missing required\n' + str(missing_req_units) + '\n'
+		# 						# check if the counts are same or if min creds requirement are met
+		# 						# if selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+		# 						# 	dbg('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units))
+		# 							# raise Warning(_('minimun creds met:' + str(min_creds_found) + 'found---' + str(min_qual_creds) + 'required-------missing required units:' + str(missing_req_units) + 'required' + str(missing_required)))
+		# 						if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required or\
+		# 								selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required:
+		# 							line.is_learner_achieved = True
+		# 							line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+		# 							line.certificate_date = str(datetime.today().date())
+		# 							line.approval_date = str(datetime.today().date())
+		# 							line.qual_status = 'Achieved'
+		# 							qual_line_obj.learner_status= 'Achieved'
+		# 							qual_line_obj.state= 'achieved'
+		# 							qual_line_obj.learners_status= 'achieved'
+		# 							learner_dict.update({'is_learner_achieved': True})
+		# 							text_guy += 'learner achieved!!!\n'
+		# 						else:
+		# 							text_guy += '!!!!!!!!!learner NOT achieved\n'
+		# 						# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
+		# 				learner_achieved.append((0, 0, learner_dict))
+		# 		# raise Warning(_(text_guy))
+		# 		self.unit_standard_variance = text_guy
+		# 	assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
+		# 														  'state':'achieved',
+		# 														  'pro_id':self.id,
+		# 														  'comment':self.comment,
+		# 														  'state_title':'Achieved'
+		# 														  })
+		# 	self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids':learner_achieved,'select_all':False})
+		# 	# code to check whether any1 learner achieve field checked or not by pradip 5/10/2016
+		# 	achieve_false = 0
+		# 	learner_line = 0
+		# 	for learner in self.learner_achieve_ids:
+		# 		if learner.achieve == False:
+		# 			achieve_false += 1
+		# 		learner_line += 1
+		# 	if achieve_false == learner_line:
+		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
+		# 	return True
+		self.achieve_skill()
+		# elif self.qual_skill_assessment == 'skill':
+		# 	learner_achieved = []
+		# 	if not self.learner_achieved_ids_for_skills:
+		# 		text = ''
+		# 		for learner_data in self.learner_achieve_ids_for_skills:
+		# 			if learner_data.achieve:
+		# 				# TODO: search for the providers matching SP and append to a list if selection is true, then check if the same SP is in the above loop
+		# 				prov_units = []
+		# 				prov_skills = []
+		# 				for skill in provider.skills_programme_ids:
+		# 					prov_skills.append(skill.skill_saqa_id)
+		# 					for us in skill.unit_standards_line:
+		# 						prov_units.append(us.id_no)
+		# 				skill_ids = []
+		# 				skill_id_nos = []
+		# 				unit_id_nos = []
+		# 				unit_ids = []
+		# 				for skill in learner_data.skill_learner_assessment_achieve_line_id:
+		# 					skill_ids.append(skill.id)
+		# 					skill_id_nos.append(skill.saqa_qual_id)
+		# 				for unit in learner_data.skill_unit_standards_learner_assessment_achieve_line_id:
+		# 					unit_ids.append(unit.id)
+		# 					unit_id_nos.append(unit.id_no)
+		# 				learner_dict = {
+		# 						 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+		# 						 'learner_identity_number' : learner_data.learner_identity_number,
+		# 						 'identification_id' : learner_data.identification_id,
+		# 						 'skill_learner_assessment_achieved_line_id': [(6, 0, skill_ids)],
+		# 						 'skill_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+		# 						 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+		# 						 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+		# 						 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+		# 						}
+		# 				# This code is used to assign True value to achieve field of Skills Programme learner rel
+		# 				qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+		# 				reg_skills_found = []
+		# 				for line in qual_line_obj.skills_programme_ids:
+		# 					selected_line, achieved_line = 0, 0
+		# 					reg_skills_found.append(line.saqa_skill_id)
+		# 					if line.skills_programme_id.id in skill_ids and line.provider_id.id == self.provider_id.id:
+		# 						reg_units_found = []
+		# 						ass_units_found = []
+		# 						for u_line in line.unit_standards_line:
+		# 							if u_line.selection:
+		# 								selected_line += 1
+		# 								reg_units_found.append(u_line.id_no)
+		# 								for assessment_unit in learner_data.skill_unit_standards_learner_assessment_achieve_line_id:
+		# 									if assessment_unit.id_no not in ass_units_found:
+		# 										ass_units_found.append(assessment_unit.id_no)
+		# 									if u_line.title == assessment_unit.title:
+		# 										u_line.achieve = True
+		# 										line.is_complete = True
+		# 							if u_line.achieve:
+		# 								achieved_line += 1
+		# 						text += 'line:' + str(line) + '-found skill:' + str(line.skills_programme_id.id) + 'selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line) + '\n'
+		# 						text += 'reg units:' + '\n' + str(reg_units_found) + '\n' + 'assessment units' + '\n' + str(ass_units_found) + '\n'
+		# 						achieved = False
+		# 						if reg_units_found == ass_units_found:
+		# 							achieved = True
+		# 						text += 'achieved:' + str(achieved) + '\n'
+		# 						if prov_units == unit_id_nos == reg_units_found:
+		# 							text += 'units X3 match!!!\n'
+		# 						else:
+		# 							text += 'units X3 failed :( \n' + str(prov_units) + '\n' + str(unit_id_nos) + '\n' + str(reg_units_found) + '\n'
+		#
+		# 						# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
+		# 						if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+		# 							line.is_learner_achieved = True
+		# 							line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+		# 							line.certificate_date = str(datetime.today().date())
+		# 							line.approval_date = str(datetime.today().date())
+		# 							line.skill_status = 'Achieved'
+		# 							qual_line_obj.learner_status= 'Achieved'
+		# 							qual_line_obj.state= 'achieved'
+		# 							qual_line_obj.learners_status= 'achieved'
+		# 							learner_dict.update({'is_learner_achieved': True})
+		# 				# checking skills and adding to the text warning
+		# 				if prov_skills == reg_skills_found == skill_id_nos:
+		# 					text += 'skills X3 match!!!\n'
+		# 				else:
+		# 					text += 'units X3 failed :( \n' + str(prov_skills) + '\n' + str(skill_id_nos) + '\n' + str(
+		# 						reg_skills_found) + '\n'
+		# 				learner_achieved.append((0, 0, learner_dict))
+		# 				text += str(skill_ids) + '\n'
+		#
+		#
+		# 		raise Warning(_(text))
+		# 	assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
+		# 														  'state':'achieved',
+		# 														  'pro_id':self.id,
+		# 														  'comment':self.comment,
+		# 														  'state_title':'Achieved'
+		# 														  })
+		# 	self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_skills':learner_achieved,'select_all':False})
+		# 	# code to check whether any1 learner achieve field checked or not by pradip 5/10/2016
+		# 	achieve_false = 0
+		# 	learner_line = 0
+		# 	for learner in self.learner_achieve_ids_for_skills:
+		# 		if learner.achieve == False:
+		# 			achieve_false += 1
+		# 		learner_line += 1
+		# 	if achieve_false == learner_line:
+		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
+		# 	return True
+		self.achieve_lp()
+		# Changes Added by Ganesh For Learning Programme
+		# elif self.qual_skill_assessment == 'lp':
+		# 	learner_achieved = []
+		# 	if not self.learner_achieved_ids_for_lp:
+		# 		for learner_data in self.learner_achieve_ids_for_lp:
+		# 			if learner_data.achieve:
+		# 				lp_ids = []
+		# 				unit_ids = []
+		# 				for lp in learner_data.lp_learner_assessment_achieve_line_id:
+		# 					lp_ids.append(lp.id)
+		# 				for unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+		# 					unit_ids.append(unit.id)
+		# 				learner_dict = {
+		# 						 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
+		# 						 'learner_identity_number' : learner_data.learner_identity_number,
+		# 						 'identification_id' : learner_data.identification_id,
+		# 						 'lp_learner_assessment_achieved_line_id': [(6, 0, lp_ids)],
+		# 						 'lp_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+		# 						 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
+		# 						 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
+		# 						 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
+		# 						}
+		# 				# This code is used to assign True value to achieve field of learning programme learner rel
+		# 				learner_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
+		# 				for line in learner_obj.learning_programme_ids:
+		# 					selected_line, achieved_line = 0, 0
+		# 					if line.learning_programme_id.id in lp_ids and line.provider_id.id == self.provider_id.id:
+		# 						for u_line in line.unit_standards_line:
+		# 							if u_line.selection:
+		# 								selected_line += 1
+		# 								for assessment_unit in learner_data.lp_unit_standards_learner_assessment_achieve_line_id:
+		# 									if u_line.title == assessment_unit.title:
+		# 										u_line.achieve = True
+		# 										line.is_complete = True
+		# 							if u_line.achieve:
+		# 								achieved_line += 1
+		# 						if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line:
+		# 							line.is_learner_achieved = True
+		# 							line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+		# 							line.certificate_date = str(datetime.today().date())
+		# 							line.approval_date = str(datetime.today().date())
+		# 							line.lp_status = 'Achieved'
+		# 							learner_obj.learner_status= 'Achieved'
+		# 							learner_obj.state= 'achieved'
+		# 							learner_obj.learners_status= 'achieved'
+		# 							learner_dict.update({'is_learner_achieved': True})
+		# 				learner_achieved.append((0, 0, learner_dict))
+		# 	assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
+		# 														  'state':'achieved',
+		# 														  'pro_id':self.id,
+		# 														  'comment':self.comment,
+		# 														  'state_title':'Achieved'
+		# 														  })
+		# 	self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_lp':learner_achieved,'select_all':False})
+		# 	achieve_false = 0
+		# 	learner_line = 0
+		# 	for learner in self.learner_achieve_ids_for_lp:
+		# 		if learner.achieve == False:
+		# 			achieve_false += 1
+		# 		learner_line += 1
+		# 	if achieve_false == learner_line:
+		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
+		#
+		# 	return True
 
 	@api.multi
 	def onchange_provider(self, provider_id):
@@ -10647,8 +11761,6 @@ class provider_assessment(models.Model):
 #             assessors_list = [assessors_rel.assessors_id and assessors_rel.assessors_id.id for assessors_rel in provider_data.assessors_ids]
 #             moderators_list = [moderators_rel.moderators_id and moderators_rel.moderators_id.id for moderators_rel in provider_data.moderators_ids]
 #             return {'domain': {'assessors_id': [('id', 'in', assessors_list)], 'moderators_id': [('id', 'in', moderators_list)] } ,'value':{'provider_accreditation_num': provider_accreditation_num, 'qualification_id':provider_data.qualification_id and provider_data.qualification_id.id, 'learner_ids':learner_line, 'learner_timetables':learner_line, 'learner_verification_ids':learner_line}}
-
-
 		return {}
 
 	# #  Added  Sequence for Provider Assessment.
