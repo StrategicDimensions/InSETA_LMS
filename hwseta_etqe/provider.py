@@ -9639,6 +9639,10 @@ class provider_assessment(models.Model):
 	partially_achieved_learner_count = fields.Integer('Partially Achieved Learners', compute='_get_partially_achieved_learner_count')
 	is_provider = fields.Boolean("Is Provider", compute='_get_login_user', store = False)
 
+	provider_province = fields.Many2one(related="provider_id.state_id", store=True)
+
+
+
 	@api.onchange('select_all')
 	def onchange_select_all(self):
 		if not self.qual_skill_assessment and self.select_all:

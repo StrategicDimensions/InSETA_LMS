@@ -2608,18 +2608,14 @@
 					<field name="name" string="Accreditation:" filter_domain="['|','|','|',('provider_accreditation_ref','ilike',self),('name','ilike',self),('email','ilike',self),('txtTradeName','ilike',self)]" />
 					<field name="provider_accreditation_ref"/>
 					<group expand="0" string="Group By">
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'final_state'}" />
-						<filter string="Province" icon="terp-personal" domain="[]"
-							context="{'group_by':'state_id'}" />
-						<filter string="Provider Accreditation Date" icon="terp-personal"
-							domain="[]" context="{'group_by':'provider_register_date'}" />
-						<filter string="Provider Approval Date" icon="terp-personal"
-							domain="[]" context="{'group_by':'provider_approval_date'}" />
-						<filter string="Extension of Scope" icon="terp-personal"
-							domain="[('is_extension_of_scope','=',True)]" context="{'group_by':'is_extension_of_scope'}" />
-						<filter string="Re-Accreditation" icon="terp-personal"
-							domain="[('is_existing_provider','=',True)]" context="{'group_by':'is_existing_provider'}" />
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'final_state'}"/>
+						<filter string="Province" icon="terp-personal" domain="[]" context="{'group_by':'state_id'}"/>
+						<filter string="Province Physical Address" icon="terp-personal" domain="[]" context="{'group_by':'province_code_physical'}"/>
+						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'province_code_postal'}"/>
+						<filter string="Provider Accreditation Date" icon="terp-personal" domain="[]" context="{'group_by':'provider_register_date'}"/>
+						<filter string="Provider Approval Date" icon="terp-personal" domain="[]" context="{'group_by':'provider_approval_date'}"/>
+						<filter string="Extension of Scope" icon="terp-personal" domain="[('is_extension_of_scope','=',True)]" context="{'group_by':'is_extension_of_scope'}"/>
+						<filter string="Re-Accreditation" icon="terp-personal" domain="[('is_existing_provider','=',True)]" context="{'group_by':'is_existing_provider'}"/>
 						<!-- <filter string="Other SETA" icon="terp-personal"
 							domain="[('optYesNo','=',True)]" context="{'group_by':'optYesNo'}" /> -->
 					</group>
@@ -3183,20 +3179,15 @@
 					<field name="assessors_moderators_ref" />
 					<field name="identification_id" />
 					<group expand="0" string="Group By">
-						<filter string="Assessor/Moderator" icon="terp-personal"
-							domain="[]" context="{'group_by':'assessor_moderator'}" />
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'final_state'}" />
-						<filter string="Application Month" icon="terp-personal"
-							domain="[]" context="{'group_by':'assessor_moderator_register_date'}" />
-						<filter string="Approval Month" icon="terp-personal"
-							domain="[]" context="{'group_by':'assessor_moderator_approval_date'}" />
-						<filter string="Province" icon="terp-personal" domain="[]"
-							context="{'group_by':'work_province'}" />
-						<filter string="Re-registration" icon="terp-personal" domain="[('already_registered','=',True)]"
-							context="{'group_by':'already_registered'}" />
-						<filter string="Extension of Scope" icon="terp-personal" domain="[('is_extension_of_scope','=',True)]"
-							context="{'group_by':'is_extension_of_scope'}" />
+						<filter string="Assessor/Moderator" icon="terp-personal" domain="[]" context="{'group_by':'assessor_moderator'}"/>
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'final_state'}"/>
+						<filter string="Application Month" icon="terp-personal" domain="[]" context="{'group_by':'assessor_moderator_register_date'}"/>
+						<filter string="Approval Month" icon="terp-personal" domain="[]" context="{'group_by':'assessor_moderator_approval_date'}"/>
+						<filter string="Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
+						<filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+						<filter string="Re-registration" icon="terp-personal" domain="[('already_registered','=',True)]" context="{'group_by':'already_registered'}"/>
+						<filter string="Extension of Scope" icon="terp-personal" domain="[('is_extension_of_scope','=',True)]" context="{'group_by':'is_extension_of_scope'}"/>
 					</group>
 				</search>
 			</field>
@@ -3260,10 +3251,10 @@
 						/> <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" 
 						groups="base.group_multi_company" /> </group> -->
 					<group expand="0" string="Group By">
-						<filter string="Province" icon="terp-personal" domain="[]"
-							context="{'group_by':'work_province'}" />
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'is_active_assessor'}" />
+						<filter string="Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+						<filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'is_active_assessor'}"/>
 					</group>
 				</search>
 			</field>
@@ -3858,10 +3849,10 @@
 						/> <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" 
 						groups="base.group_multi_company" /> </group> -->
 					<group expand="0" string="Group By">
-						<filter string="Province" icon="terp-personal" domain="[]"
-							context="{'group_by':'work_province'}" />
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'is_active_moderator'}" />
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'is_active_moderator'}"/>
+						<filter string="Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+                        <filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+                        <filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
 					</group>
 				</search>
 			</field>
@@ -5222,6 +5213,7 @@
 					<field name="fiscal_year" />
 					<field name="start_date" />
 					<field name="state" />
+					<field name="provider_province" />
 				</tree>
 			</field>
 		</record>
@@ -5236,6 +5228,8 @@
 				 <field name="qual_skill_assessment" />
 					
 					<group expand="0" string="Group By">
+						<filter string="Province" icon="terp-personal" domain="[]"
+							context="{'group_by':'provider_province'}" />
 						<filter string="Status" icon="terp-personal" domain="[]"
 							context="{'group_by':'state'}" />
 						<filter string="Provider" icon="terp-personal" domain="[]"
@@ -6373,8 +6367,11 @@
 					<field name="learner_identification_id" />
 					<field name="learner_reg_no" />
 					<group string="Group By">
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'state'}" />
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'state'}"/>
+						<filter string="Work Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+                        <filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
+                        <filter string="Home Province" icon="terp-personal" domain="[]" context=" {'group_by':'person_home_province_code'}"/>
+
 					</group>
 				</search>
 			</field>
@@ -6436,14 +6433,14 @@
 					<field name="name" />
 					<field name="identification_id" />
 					<group expand="0" string="Group By">
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'state'}" />
-						<filter string="Province" icon="terp-personal" domain="[]"
-							context="{'group_by':'person_home_province_code'}" />
-						<filter string="Registration Date" icon="terp-personal" domain="[]"
-							context="{'group_by':'create_date'}" />
-						<filter string="Provider" icon="terp-personal" domain="[]"
-							context="{'group_by':'provider_id'}" />
+						<!-- group by feauture -->
+						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'state'}"/>
+						<filter string="Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+						<filter string="Work Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
+						<filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
+						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'person_postal_province_code'}"/>
+						<filter string="Registration Date" icon="terp-personal" domain="[]" context="{'group_by':'create_date'}"/>
+						<filter string="Provider" icon="terp-personal" domain="[]" context="{'group_by':'provider_id'}"/>
 					</group>
 				</search>
 			</field>
