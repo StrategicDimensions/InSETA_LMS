@@ -4241,7 +4241,7 @@ class res_partner(models.Model):
 			if group.name == "Providers":
 				provider = True
 #                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)    
-			if group.name == "ETQE Manager":
+			if group.name in  ["ETQE Manager", "ETQE Administrator"]:
 				if args:
 					if args[0][0] == 'provider':
 						self._cr.execute("select id from res_partner where is_visible = True and provider = True")
@@ -9769,6 +9769,10 @@ class provider_assessment(models.Model):
 	unit_standard_variance = fields.Text()
 	unit_standard_library_variance = fields.Text()
 
+	provider_province = fields.Many2one(related="provider_id.state_id", store=True)
+
+
+
 	@api.onchange('select_all')
 	def onchange_select_all(self):
 		if not self.qual_skill_assessment and self.select_all:
@@ -11024,7 +11028,7 @@ class provider_assessment(models.Model):
 							dbg(us_min.level3)
 							min_creds_found += int(us_min.level3)
 							dbg('unit--' + str(us_min) + 'type found' + str(us_min.type))
-							if us_min.type in ['Core','Fundamental']:
+							if us_min.type in ['Core', 'Fundamental']:
 								req_units_found.append(us_min.id_no)
 						text_guy += str(req_units_found) + '\n'
 						# raise Warning(
@@ -11107,14 +11111,13 @@ class provider_assessment(models.Model):
 									line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.qual_status = 'Achieved'
-									qual_line_obj.learner_status= 'Achieved'
-									qual_line_obj.state= 'achieved'
-									qual_line_obj.learners_status= 'achieved'
+									qual_line_obj.learner_status = 'Achieved'
+									qual_line_obj.state = 'achieved'
+									qual_line_obj.learners_status = 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
 									text_guy += 'learner achieved!!!\n'
 								else:
 									text_guy += '!!!!!!!!!learner NOT achieved\n'
-								# 	dbg(str(line) + 'selected line' + str(selected_line) + 'achieved line:' + str(achieved_line))
 						learner_achieved.append((0, 0, learner_dict))
 				# raise Warning(_(text_guy))
 				self.unit_standard_variance = text_guy
@@ -11172,15 +11175,15 @@ class provider_assessment(models.Model):
 							unit_ids.append(unit.id)
 							unit_id_nos.append(unit.id_no)
 						learner_dict = {
-								 'learner_id':learner_data.learner_id and learner_data.learner_id.id,
-								 'learner_identity_number' : learner_data.learner_identity_number,
-								 'identification_id' : learner_data.identification_id,
-								 'skill_learner_assessment_achieved_line_id': [(6, 0, skill_ids)],
-								 'skill_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
-								 'assessors_id':learner_data.assessors_id and learner_data.assessors_id.id,
-								 'moderators_id':learner_data.moderators_id and learner_data.moderators_id.id,
-								 'timetable_id':learner_data.timetable_id and learner_data.timetable_id.id,
-								}
+							'learner_id': learner_data.learner_id and learner_data.learner_id.id,
+							'learner_identity_number': learner_data.learner_identity_number,
+							'identification_id': learner_data.identification_id,
+							'skill_learner_assessment_achieved_line_id': [(6, 0, skill_ids)],
+							'skill_unit_standards_learner_assessment_achieved_line_id': [(6, 0, unit_ids)],
+							'assessors_id': learner_data.assessors_id and learner_data.assessors_id.id,
+							'moderators_id': learner_data.moderators_id and learner_data.moderators_id.id,
+							'timetable_id': learner_data.timetable_id and learner_data.timetable_id.id,
+						}
 						# This code is used to assign True value to achieve field of Skills Programme learner rel
 						qual_line_obj = self.env['hr.employee'].search([('id', '=', learner_dict['learner_id'])])
 						reg_skills_found = []
@@ -11225,21 +11228,22 @@ class provider_assessment(models.Model):
 									line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.skill_status = 'Achieved'
-									qual_line_obj.learner_status= 'Achieved'
-									qual_line_obj.state= 'achieved'
-									qual_line_obj.learners_status= 'achieved'
+									qual_line_obj.learner_status = 'Achieved'
+									qual_line_obj.state = 'achieved'
+									qual_line_obj.learners_status = 'achieved'
 									learner_dict.update({'is_learner_achieved': True})
 						learner_achieved.append((0, 0, learner_dict))
 						# text += str(skill_ids) + '\n'
 				# raise Warning(_(text))
 				self.unit_standard_variance = text
 			assessment_status_obj = self.env['assessment.status'].create({'name': self._uid,
-																  'state':'achieved',
-																  'pro_id':self.id,
-																  'comment':self.comment,
-																  'state_title':'Achieved'
-																  })
-			self.write({'state':'achieved', 'assessed':True, 'learner_achieved_ids_for_skills':learner_achieved,'select_all':False})
+																		  'state': 'achieved',
+																		  'pro_id': self.id,
+																		  'comment': self.comment,
+																		  'state_title': 'Achieved'
+																		  })
+			self.write({'state': 'achieved', 'assessed': True, 'learner_achieved_ids_for_skills': learner_achieved,
+						'select_all': False})
 			# code to check whether any1 learner achieve field checked or not by pradip 5/10/2016
 			achieve_false = 0
 			learner_line = 0
