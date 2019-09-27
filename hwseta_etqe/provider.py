@@ -7504,7 +7504,7 @@ class provider_accreditation(models.Model):
 		elif self.is_extension_of_scope:
 			# commented original for in case
 			# self.write({ 'submitted':True,'evaluate':True,'validate':True, 'accreditation_state':'submit', 'final_state':'Recommended2'})
-			self.write({'state':'verification', 'submitted':True, 'evaluate':False, 'validate':False,'denied':False, 'recommended1':False,'recommended2':False, 'accreditation_state':'submit', 'final_state':'Recommended2'})
+			self.write({'state':'campus', 'submitted':True, 'evaluate':False, 'validate':False,'denied':False, 'recommended1':False,'recommended2':False, 'accreditation_state':'submit', 'final_state':'Recommended2'})
 		#'state':'verification',
 		# Below code is added to send email notification to linked assessors and moderators
 		ir_model_data_obj = self.env['ir.model.data']
