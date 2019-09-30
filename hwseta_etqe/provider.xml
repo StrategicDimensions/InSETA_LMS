@@ -1410,9 +1410,10 @@
 					<field name="email" widget="email" />
 					<field name="provider_register_date" />
 					<field name="provider_approval_date" />
-<!--					<field name="is_extension_of_scope"/>-->
-<!--					<field name="is_existing_provider"/>-->
-					<field name="final_state" />  
+					<field name="is_extension_of_scope" invisible="1"/>
+					<field name="is_existing_provider" invisible="1"/>
+					<field name="reapproval" invisible="1"/>
+					<field name="final_state" />
 					<field name="transaction_type" />
 					<!-- <field name="approved"/> -->
 				</tree>
