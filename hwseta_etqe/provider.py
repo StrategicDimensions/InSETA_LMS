@@ -6834,14 +6834,15 @@ class provider_accreditation(models.Model):
 
 	@api.depends('reapproval','is_extension_of_scope','is_existing_provider')
 	def _get_transaction_type(self):
-		if self.is_existing_provider:
-			self.transaction_type = 'reaccred'
-		elif self.is_extension_of_scope:
-			self.transaction_type = 'extension'
-		elif self.reapproval:
-			self.transaction_type = 'reapproval'
-		else:
-			self.transaction_type = 'new'
+		for this in self:
+			if this.is_existing_provider:
+				this.transaction_type = 'reaccred'
+			elif this.is_extension_of_scope:
+				this.transaction_type = 'extension'
+			elif this.reapproval:
+				this.transaction_type = 'reapproval'
+			else:
+				this.transaction_type = 'new'
 
 	reapproval = fields.Boolean()
 	transaction_type = fields.Selection([
