@@ -6832,7 +6832,7 @@ class provider_accreditation(models.Model):
 	provider_expiry_date = fields.Date(string='Provider Accreditation Date')
 	# todo: alternate_acc_number to be checked
 
-	@api.depends('reapproval','is_extension_of_scope','is_existing_provider')
+	@api.depends('reapproval','is_extension_of_scope','is_existing_provider','transaction_type')
 	def _get_transaction_type(self):
 		for this in self:
 			if not this.transaction_type:
