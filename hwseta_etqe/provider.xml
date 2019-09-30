@@ -1410,8 +1410,8 @@
 					<field name="email" widget="email" />
 					<field name="provider_register_date" />
 					<field name="provider_approval_date" />
-					<field name="is_extension_of_scope"/>
-					<field name="is_existing_provider"/>
+<!--					<field name="is_extension_of_scope"/>-->
+<!--					<field name="is_existing_provider"/>-->
 					<field name="final_state" />  
 					<field name="transaction_type" />
 					<!-- <field name="approved"/> -->
@@ -2620,6 +2620,7 @@
 						<filter string="Province Physical Address" icon="terp-personal" domain="[]" context="{'group_by':'province_code_physical'}"/>
 						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'province_code_postal'}"/>
 						<filter string="Provider Accreditation Date" icon="terp-personal" domain="[]" context="{'group_by':'provider_register_date'}"/>
+						<filter string="Transaction Type" icon="terp-personal" domain="[]" context="{'group_by':'transaction_type'}"/>
 						<filter string="Provider Approval Date" icon="terp-personal" domain="[]" context="{'group_by':'provider_approval_date'}"/>
 						<filter string="Extension of Scope" icon="terp-personal" domain="[('is_extension_of_scope','=',True)]" context="{'group_by':'is_extension_of_scope'}"/>
 						<filter string="Re-Accreditation" icon="terp-personal" domain="[('is_existing_provider','=',True)]" context="{'group_by':'is_existing_provider'}"/>
