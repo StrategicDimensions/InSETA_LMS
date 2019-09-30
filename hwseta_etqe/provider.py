@@ -6849,7 +6849,7 @@ class provider_accreditation(models.Model):
 		('extension','Extension Of Scope'),
 		('reapproval','Programme Re-Approval'),
 		('new','New Accreditation')
-	])
+	],compute='_get_transaction_type')
 	_sql_constraints = [('txtVATRegNo_uniq', 'unique(txtVATRegNo)',
 			'VAT Registration Number must be unique!'), ]
 
