@@ -1503,7 +1503,7 @@
 							</div>
 
 							<div class="oe_edit_only"
-								attrs="{'invisible':[('is_existing_provider','=',False),('is_extension_of_scope','=',False)]}">
+								attrs="{'invisible':[('is_existing_provider','=',False),('is_extension_of_scope','=',False),('reapproval','=',False)]}">
 								<label for="accreditation_number" />
 								<field name="accreditation_number"
 									attrs="{'required':['|',('is_existing_provider','=',True),('is_extension_of_scope','=',True)],'readonly':[('approved','=',True)]}"
