@@ -6357,7 +6357,7 @@ class provider_accreditation(models.Model):
 	@api.multi
 	@api.onchange('phone','mobile','fax','email')
 	def onchange_validate_number(self):
-		if self.is_existing_provider == False and self.is_extension_of_scope == False:
+		if self.is_existing_provider == False and self.is_extension_of_scope == False and self.reapproval == False:
 			if self.phone:
 				if not self.phone.isdigit() or len(self.phone) != 10:
 					self.phone = ''
