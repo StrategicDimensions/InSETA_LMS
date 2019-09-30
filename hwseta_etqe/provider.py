@@ -8135,166 +8135,28 @@ class provider_accreditation(models.Model):
 										 'status': provider_contact_vals.image,
 										}
 					credit_provider_campus_contact_lines.append((0, 0, provider_campus_contact_data))
-			# For physical address, longitude and lattitude
-	#
-	#         gmapString=""
-	#         physical_lat_d=""
-	#         physical_lat_m=""
-	#         physical_lat_s=""
-	#         physical_lng_d=""
-	#         physical_lng_m=""
-	#         physical_lng_s=""
-	#
-	#         postal_lat_d=""
-	#         postal_lat_m=""
-	#         postal_lat_s=""
-	#         postal_lng_d=""
-	#         postal_lng_m=""
-	#         postal_lng_s=""
-	#
-	#         if  self.txtPhysicalAddressLine1:
-	#             gmapString=gmapString+self.txtPhysicalAddressLine1;
-	#
-	#         if self.txtPhysicalAddressLine2:
-	#             if self.txtPhysicalAddressLine1:
-	#                 gmapString=gmapString+","+self.txtPhysicalAddressLine2
-	#             else:
-	#                 gmapString=gmapString+self.txtPhysicalAddressLine2
-	#         if self.txtPhysicalAddressLine3:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2:
-	#                 gmapString=gmapString+","+self.txtPhysicalAddressLine3
-	#             else:
-	#                 gmapString=gmapString+self.txtPhysicalAddressLine3
-	#
-	#         if self.provider_physical_suburb and self.provider_physical_suburb.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3:
-	#                 gmapString=gmapString+","+str(self.provider_physical_suburb and self.provider_physical_suburb.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.provider_physical_suburb and self.provider_physical_suburb.name)
-	#
-	#         if self.city_physical and self.city_physical.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3 or self.provider_physical_suburb:
-	#                 gmapString=gmapString+","+str(self.city_physical and self.city_physical.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.city_physical and self.city_physical.name)
-	#
-	#
-	#         if self.province_code_physical and self.province_code_physical.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3 or self.provider_physical_suburb or self.city_physical:
-	#                 gmapString=gmapString+","+str(self.province_code_physical and self.province_code_physical.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.province_code_physical and self.province_code_physical.name)
-	#
-	#         if self.country_code_physical and self.country_code_physical.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3 or self.provider_physical_suburb or self.city_physical or self.province_code_physical and self.province_code_physical.id:
-	#                 gmapString=gmapString+","+str(self.country_code_physical and self.country_code_physical.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.country_code_physical and self.country_code_physical.name)
-	#
-	#         print gmapString
-	#
-	#         g=geocoder.google(gmapString)
-	#
-	#         print "g.latlng",g.latlng
-	#         if g.latlng:
-	#             if g.latlng[0]:
-	#                 d = int(g.latlng[0])
-	#                 md = abs(g.latlng[0] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#
-	#                 physical_lat_d=str(d)
-	#                 physical_lat_m=str(md)
-	#                 physical_lat_s=str(sd)
-	#
-	#
-	#             if g.latlng[1]:
-	#                 d = int(g.latlng[1])
-	#                 md = abs(g.latlng[1] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#                 physical_lng_d=str(d)
-	#                 physical_lng_m=str(md)
-	#                 physical_lng_s=str(sd)
-	#
-	#         # For postal address, longitude and lattitude
-	#
-	#         gmapString=""
-	#
-	#         if  self.txtPostalAddressLine1:
-	#             gmapString=gmapString+self.txtPostalAddressLine1;
-	#
-	#         if self.txtPostalAddressLine2:
-	#             if self.txtPostalAddressLine1:
-	#                 gmapString=gmapString+","+self.txtPostalAddressLine2
-	#             else:
-	#                 gmapString=gmapString+self.txtPostalAddressLine2
-	#         if self.txtPostalAddressLine3:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2:
-	#                 gmapString=gmapString+","+self.txtPostalAddressLine3
-	#             else:
-	#                 gmapString=gmapString+self.txtPostalAddressLine3
-	#
-	#         if self.provider_postal_suburb and self.provider_postal_suburb.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3:
-	#                 gmapString=gmapString+","+str(self.provider_postal_suburb and self.provider_postal_suburb.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.provider_postal_suburb and self.provider_postal_suburb.name)
-	#
-	#         if self.city_postal and self.city_postal.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3 or self.provider_postal_suburb:
-	#                 gmapString=gmapString+","+str(self.city_postal and self.city_postal.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.city_postal and self.city_postal.name)
-	#
-	#         if self.province_code_postal and self.province_code_postal.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3 or self.provider_postal_suburb or self.city_postal:
-	#                 gmapString=gmapString+","+str(self.province_code_postal and self.province_code_postal.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.province_code_postal and self.province_code_postal.name)
-	#
-	#         if self.country_code_postal and self.country_code_postal.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3 or self.provider_postal_suburb or self.city_postal or self.province_code_postal and self.province_code_postal.id:
-	#                 gmapString=gmapString+","+str(self.country_code_postal and self.country_code_postal.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.country_code_postal and self.country_code_postal.name)
-	#
-	#         print gmapString
-	#
-	#         g=geocoder.google(gmapString)
-	#
-	#         if g.latlng:
-	#             if g.latlng[0]:
-	#                 d = int(g.latlng[0])
-	#                 md = abs(g.latlng[0] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#
-	#                 postal_lat_d=str(d)
-	#                 postal_lat_m=str(md)
-	#                 postal_lat_s=str(sd)
-	#
-	#
-	#             if g.latlng[1]:
-	#                 d = int(g.latlng[1])
-	#                 md = abs(g.latlng[1] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#                 postal_lng_d=str(d)
-	#                 postal_lng_m=str(md)
-	#                 postal_lng_s=str(sd)
-			if not self.is_existing_provider:
+			if not self.is_existing_provider or not self.reapproval:
 				provider_accreditation_num = self.env['ir.sequence'].get('provider.accreditation')
 				self.write({'sequence_num': provider_accreditation_num})
-			elif self.is_existing_provider:
-				provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+			elif self.is_existing_provider or self.reapproval:
+				if self.reapproval:
+					provider_obj = self.env['res.partner'].search(
+						[('alternate_acc_number', '=', self.accreditation_number)])
+				elif self.is_existing_provider:
+					provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+				else:
+					raise Warning(_('cant find an accreditation number to match against'))
 				pro_lst = []
 				for pro_obj in provider_obj:
 					pro_lst.append(pro_obj.id)
 				if pro_lst:
 					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
-					provider_accreditation_num = provider_obj.provider_accreditation_num
-					self.write({'sequence_num': provider_accreditation_num})
+					if self.reapproval:
+						provider_accreditation_num = provider_obj.alternate_acc_number
+						self.write({'sequence_num': provider_accreditation_num})
+					elif self.is_existing_provider:
+						provider_accreditation_num = provider_obj.provider_accreditation_num
+						self.write({'sequence_num': provider_accreditation_num})
 				'''For getting old batches for re-accreditation'''
 				provider_obj.write({'is_visible': False})
 				batch_master_obj = self.env['batch.master'].search([('provider_id','=',provider_obj.id)])
