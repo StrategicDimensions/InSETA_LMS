@@ -7938,7 +7938,7 @@ class provider_accreditation(models.Model):
 		ir_model_data_obj = self.env['ir.model.data']
 		if not self.comment_box:
 			raise Warning(_("Please enter status comment"))
-		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider:
+		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider or self.reapproval:
 			# code for new provider registration and existing provider
 			self.write({'provider_accreditation_status_ids':[(0, 0, {'pa_name':self.env['res.users'].browse(self._uid).name, 'pa_date':datetime.now(), 'pa_status':'Approved', 'pa_updation_date':self.write_date, 'pa_comment':self.comment_box})]})
 			self.write({'comment_box':''})
