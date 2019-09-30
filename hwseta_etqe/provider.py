@@ -6882,7 +6882,7 @@ class provider_accreditation(models.Model):
 	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope, reapproval):
 		res = {}
 		if reapproval:
-			provider_obj = self.env.uid.partner_id
+			provider_obj = self.env.user.partner_id
 			alt_num = provider_obj.alternate_acc_number
 			res.update({'accreditation_number':alt_num})
 		if accreditation_number is None:
