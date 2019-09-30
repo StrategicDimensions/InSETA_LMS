@@ -6879,7 +6879,7 @@ class provider_accreditation(models.Model):
 		return res
 
 	@api.multi
-	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope):
+	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope, reapproval):
 		res = {}
 		if accreditation_number is None:
 			return res
@@ -7350,6 +7350,248 @@ class provider_accreditation(models.Model):
 							'quality_management_system' : provider_obj.quality_management_system and provider_obj.quality_management_system.id,
 					}
 					res.update({'value':partner_vals})
+			elif reapproval:
+				provider_acc_obj = self.env['provider.accreditation'].search(
+					[('accreditation_number', '=', accreditation_number), ('reapproval', '=', True),
+					 ('approved', '=', False), ('final_state', '!=', 'Rejected')])
+				if provider_acc_obj:
+					return {'value': {'accreditation_number': '', 'is_existing_provider': False},
+					        'warning': {'title': 'Duplicate Entry',
+					                    'message': 'You have already applied for Re-approval.'}}
+				provider_objects = self.env['res.partner'].search(
+					[('alternate_acc_number', '=', accreditation_number)])
+				if not provider_objects:
+					return {'value': {'accreditation_number': '', 'is_existing_provider': False},
+					        'warning': {'title': 'Invalid Accreditation Number',
+					                    'message': 'Please Enter Valid Accreditation Number!!'}}
+				elif provider_objects:
+					pro_lst = []
+					for pro_obj in provider_objects:
+						pro_lst.append(pro_obj.id)
+					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
+					# commented for now but needs to write logic to get 60 days old date
+					#                     if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
+					#                         raise Warning(_("You are already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
+					# To fetch qualifications from provider master
+					q_vals_line, skills_vals_line, lp_vals_line, assessors_line, moderators_line = [], [], [], [], []
+					if provider_obj.qualification_ids:
+						for q_lines in provider_obj.qualification_ids:
+							if q_lines.status == 'approved':
+								qual_master_obj = self.env['provider.qualification'].search(
+									[('id', '=', q_lines.qualification_id.id), ('seta_branch_id', '=', '11')])
+								if qual_master_obj:
+									accreditation_qualification_line = []
+									for lines in q_lines.qualification_line:
+										for data in lines:
+											val = {
+												'name': data.name,
+												'type': data.type,
+												'id_no': data.id_data,
+												'title': data.title,
+												'level1': data.level1,
+												'level2': data.level2,
+												'level3': data.level3,
+												'selection': data.selection,
+												'is_seta_approved': data.is_seta_approved,
+												'is_provider_approved': data.is_provider_approved,
+											}
+											accreditation_qualification_line.append((0, 0, val))
+									q_vals = {
+										'qualification_id': qual_master_obj.id,
+										'saqa_qual_id': qual_master_obj.saqa_qual_id,
+										'minimum_credits': qual_master_obj.m_credits,
+										'qualification_line': accreditation_qualification_line,
+										'assessors_id': q_lines.assessors_id.id,
+										'moderators_id': q_lines.moderators_id.id,
+										'assessor_no': q_lines.assessor_no,
+										'moderator_no': q_lines.moderator_no,
+										'assessor_sla_document': q_lines.assessor_sla_document.id,
+										'moderator_sla_document': q_lines.moderator_sla_document.id,
+									}
+									q_vals_line.append((0, 0, q_vals))
+					# To fetch skills programme from provider master
+					if provider_obj.skills_programme_ids:
+						for skills_lines in provider_obj.skills_programme_ids:
+							if skills_lines.status == 'approved':
+								skill_master_obj = self.env['skills.programme'].search(
+									[('id', '=', skills_lines.skills_programme_id.id),
+									 ('seta_branch_id', '=', '11')])
+								if skill_master_obj:
+									accreditation_skill_line = []
+									for lines in skills_lines.unit_standards_line:
+										for data in lines:
+											if data.selection:
+												val = {
+													'name': data.name,
+													'type': data.type,
+													'id_no': data.id_no,
+													'title': data.title,
+													'level1': data.level1,
+													'level2': data.level2,
+													'level3': data.level3,
+													'selection': data.selection,
+												}
+												accreditation_skill_line.append((0, 0, val))
+									s_vals = {
+										'skills_programme_id': skill_master_obj.id,
+										'saqa_skill_id': skill_master_obj.saqa_qual_id,
+										'unit_standards_line': accreditation_skill_line,
+										'assessors_id': skills_lines.assessors_id.id,
+										'moderators_id': skills_lines.moderators_id.id,
+										'assessor_no': skills_lines.assessor_no,
+										'moderator_no': skills_lines.moderator_no,
+										'assessor_sla_document': skills_lines.assessor_sla_document.id,
+										'moderator_sla_document': skills_lines.moderator_sla_document.id,
+									}
+									skills_vals_line.append((0, 0, s_vals))
+					# To fetch Learning programme from provider master
+					if provider_obj.learning_programme_ids:
+						for lp_lines in provider_obj.learning_programme_ids:
+							if lp_lines.status == 'approved':
+								lp_master_obj = self.env['etqe.learning.programme'].search(
+									[('id', '=', lp_lines.learning_programme_id.id), ('seta_branch_id', '=', '11')])
+								if lp_master_obj:
+									accreditation_lp_line = []
+									for lines in lp_master_obj.unit_standards_line:
+										for data in lines:
+											if data.selection:
+												val = {
+													'name': data.name,
+													'type': data.type,
+													'id_no': data.id_no,
+													'title': data.title,
+													'level1': data.level1,
+													'level2': data.level2,
+													'level3': data.level3,
+													'selection': data.selection,
+													'seta_approved_lp': data.seta_approved_lp,
+													'provider_approved_lp': data.provider_approved_lp,
+												}
+												accreditation_lp_line.append((0, 0, val))
+									s_vals = {
+										'learning_programme_id': lp_master_obj.id,
+										'saqa_qual_id': lp_master_obj.saqa_qual_id,
+										'unit_standards_line': accreditation_lp_line,
+										'assessors_id': lp_lines.assessors_id.id,
+										'moderators_id': lp_lines.moderators_id.id,
+										'assessor_no': lp_lines.assessor_no,
+										'moderator_no': lp_lines.moderator_no,
+										'assessor_sla_document': lp_lines.assessor_sla_document.id,
+										'moderator_sla_document': lp_lines.moderator_sla_document.id,
+									}
+									lp_vals_line.append((0, 0, s_vals))
+					# To fetch assessors from provider master
+					assessors_line = []
+					if provider_obj.assessors_ids:
+						for as_line in provider_obj.assessors_ids:
+							val = {
+								'identification_id': as_line.identification_id,
+								'assessors_id': as_line.assessors_id.id,
+								'awork_email': as_line.awork_email,
+								'awork_phone': as_line.awork_phone,
+								'assessor_sla_document': as_line.assessor_sla_document,
+								'assessor_notification_letter': as_line.assessor_notification_letter,
+							}
+							assessors_line.append((0, 0, val))
+					# To fetch moderators from provider master
+					if provider_obj.moderators_ids:
+						for mo_line in provider_obj.moderators_ids:
+							val = {
+								'identification_id': mo_line.identification_id,
+								'moderators_id': mo_line.moderators_id.id,
+								'mwork_email': mo_line.mwork_email,
+								'mwork_phone': mo_line.mwork_phone,
+								'moderator_sla_document': mo_line.moderator_sla_document,
+								'moderator_notification_letter': mo_line.moderator_notification_letter,
+							}
+							moderators_line.append((0, 0, val))
+					partner_vals = {
+						'name': provider_obj.name,
+						'txtTradeName': provider_obj.provider_trading_name,
+						'street': provider_obj.street,
+						'street2': provider_obj.street2,
+						'street3': provider_obj.street3,
+						'zip': provider_obj.zip,
+						'city': provider_obj.city and provider_obj.city.id,
+						'state_id': provider_obj.state_id and provider_obj.state_id.id,
+						'country_id': provider_obj.country_id and provider_obj.country_id.id,
+						'email': provider_obj.email,
+						'phone': provider_obj.phone,
+						'mobile': provider_obj.mobile,
+						'qualification_id': provider_obj.qualification_id and provider_obj.qualification_id.id,
+						'txtPhysicalAddressLine1': provider_obj.physical_address_1,
+						'txtPhysicalAddressLine2': provider_obj.physical_address_2,
+						'txtPhysicalAddressLine3': provider_obj.physical_address_3,
+						'image': provider_obj.image,
+						'txtRegName': provider_obj.txtRegName,
+						'txtTradeName': provider_obj.txtTradeName,
+						'txtAbbrTradeName': provider_obj.txtAbbrTradeName,
+						'cboOrgLegalStatus': provider_obj.cboOrgLegalStatus and provider_obj.cboOrgLegalStatus.id,
+						'txtCompanyRegNo': provider_obj.txtCompanyRegNo,
+						'txtVATRegNo': provider_obj.txtVATRegNo,
+						'cboOrgSICCode': provider_obj.cboOrgSICCode,
+						'txtSDLNo': provider_obj.txtSDLNo,
+						'cboTHETAChamberSelect': provider_obj.cboTHETAChamberSelect and provider_obj.cboTHETAChamberSelect.id,
+						'cboProviderFocus': provider_obj.cboProviderFocus and provider_obj.cboProviderFocus.id,
+						'txtNumYearsCurrentBusiness': provider_obj.txtNumYearsCurrentBusiness,
+						'txtNumStaffMembers': provider_obj.txtNumStaffMembers,
+						'txtStateAccNumber': provider_obj.txtStateAccNumber,
+						'optAccStatus': provider_obj.optAccStatus,
+						'StatusReason': provider_obj.StatusReason,
+						'SICCode': provider_obj.SICCode,
+						'AccreditationStatus': provider_obj.AccreditationStatus,
+						'cmdNext': provider_obj.cmdNext,
+						'txtWorkEmail': provider_obj.txtWorkEmail,
+						'OrgLegalStatus': provider_obj.OrgLegalStatus,
+						'txtWorkPhone': provider_obj.txtWorkPhone,
+						'AppliedToAnotherSETA': provider_obj.AppliedToAnotherSETA,
+						'optYesNo': provider_obj.optYesNo,
+						'cboSETA': provider_obj.cboSETA and self.cboSETA.id,
+						'SICCode': provider_obj.provider_sic_code,
+						'provider_sars_number': provider_obj.txtSDLNo,
+						'cboOrgSICCode': provider_obj.provider_sic_code,
+						'txtPhysicalAddressLine1': provider_obj.physical_address_1,
+						'txtPhysicalAddressLine2': provider_obj.physical_address_2,
+						'txtPhysicalAddressLine3': provider_obj.physical_address_3,
+						'txtPostalAddressLine1': provider_obj.postal_address_1,
+						'txtPostalAddressLine2': provider_obj.postal_address_2,
+						'txtPostalAddressLine3': provider_obj.postal_address_3,
+						'city_physical': provider_obj.city_physical and provider_obj.city_physical.id,
+						'city_postal': provider_obj.city_postal and provider_obj.city_postal.id,
+						'zip_physical': provider_obj.zip_physical,
+						'zip_postal': provider_obj.zip_postal,
+						'country_code_physical': provider_obj.country_code_physical and provider_obj.country_code_physical.id,
+						'country_code_postal': provider_obj.country_code_postal and provider_obj.country_code_postal.id,
+						'province_code_physical': provider_obj.province_code_physical and provider_obj.province_code_physical.id,
+						'province_code_postal': provider_obj.province_code_postal and provider_obj.province_code_postal.id,
+						'provider_suburb': provider_obj.suburb and provider_obj.suburb.id,
+						'provider_physical_suburb': provider_obj.provider_physical_suburb and provider_obj.provider_physical_suburb.id,
+						'provider_postal_suburb': provider_obj.provider_postal_suburb and provider_obj.provider_postal_suburb.id,
+						'active': True,
+						'website': provider_obj.website,
+						'fax': provider_obj.fax,
+						'material': provider_obj.material,
+						'alternate_acc_number': provider_obj.alternate_acc_number,
+						'qualification_ids': q_vals_line,
+						'skills_programme_ids': skills_vals_line,
+						'learning_programme_ids': lp_vals_line,
+						'assessors_ids': assessors_line,
+						'moderators_ids': moderators_line,
+						'related_provider': provider_obj.id,
+						'cipro_documents': provider_obj.cipro_documents and provider_obj.cipro_documents.id,
+						'tax_clearance': provider_obj.tax_clearance and provider_obj.tax_clearance.id,
+						'lease_agreement_document': provider_obj.lease_agreement_document and provider_obj.lease_agreement_document.id,
+						'director_cv': provider_obj.director_cv and provider_obj.director_cv.id,
+						'certified_copies_of_qualifications': provider_obj.certified_copies_of_qualifications and provider_obj.certified_copies_of_qualifications.id,
+						'professional_body_registration': provider_obj.professional_body_registration and provider_obj.professional_body_registration.id,
+						'workplace_agreement': provider_obj.workplace_agreement and provider_obj.workplace_agreement.id,
+						'business_residence_proof': provider_obj.business_residence_proof and provider_obj.business_residence_proof.id,
+						'provider_learning_material': provider_obj.provider_learning_material and provider_obj.provider_learning_material.id,
+						'skills_programme_registration_letter': provider_obj.skills_programme_registration_letter and provider_obj.skills_programme_registration_letter.id,
+						'company_profile_and_organogram': provider_obj.company_profile_and_organogram and provider_obj.company_profile_and_organogram.id,
+						'quality_management_system': provider_obj.quality_management_system and provider_obj.quality_management_system.id,
+					}
+					res.update({'value': partner_vals})
 		return res
 
 	@api.multi
