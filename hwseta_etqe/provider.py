@@ -6832,18 +6832,19 @@ class provider_accreditation(models.Model):
 	provider_expiry_date = fields.Date(string='Provider Accreditation Date')
 	# todo: alternate_acc_number to be checked
 
-	@api.depends('reapproval','is_extension_of_scope','is_existing_provider','transaction_type')
+	@api.depends('reapproval','is_extension_of_scope','is_existing_provider')
 	def _get_transaction_type(self):
 		for this in self:
-			if not this.transaction_type:
-				if this.is_existing_provider:
-					this.transaction_type = 'reaccred'
-				elif this.is_extension_of_scope:
-					this.transaction_type = 'extension'
-				elif this.reapproval:
-					this.transaction_type = 'reapproval'
-				else:
-					this.transaction_type = 'new'
+			if this.is_existing_provider:
+				this.transaction_type = 'reaccred'
+			elif this.is_extension_of_scope:
+				this.transaction_type = 'extension'
+			elif this.reapproval:
+				this.transaction_type = 'reapproval'
+			else:
+				this.transaction_type = 'new'
+
+
 
 	reapproval = fields.Boolean()
 	transaction_type = fields.Selection([
@@ -6851,7 +6852,7 @@ class provider_accreditation(models.Model):
 		('extension','Extension Of Scope'),
 		('reapproval','Programme Re-Approval'),
 		('new','New Accreditation')
-	],compute='_get_transaction_type',store=True)
+	],compute='_get_transaction_type')
 	_sql_constraints = [('txtVATRegNo_uniq', 'unique(txtVATRegNo)',
 			'VAT Registration Number must be unique!'), ]
 
