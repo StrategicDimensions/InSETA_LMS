@@ -1472,12 +1472,12 @@
 							type="object" class="oe_highlight"
 						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
 							attrs="{'invisible':[('state','not in',['denied'])]}" />
-						<field name="state" widget="statusbar" clickable="True"
+						<!--<field name="state" widget="statusbar" clickable="True"
 							statusbar_visible="general_details,qualification,campus,recommended2,approved,denied"
-							statusbar_colors='{"general_details":"blue"}' attrs="{'invisible':[('is_extension_of_scope','=',False)]}"/>
+							statusbar_colors='{"general_details":"blue"}' attrs="{'invisible':[('is_extension_of_scope','=',False)]}"/>-->
 						<field name="state" widget="statusbar" clickable="True"
 							statusbar_visible="general_details,general_business_information,address_info,qualification, campus,verification,evaluation,recommended1,validated,recommended2,approved,denied"
-							statusbar_colors='{"campus":"blue"}' attrs="{'invisible':[('is_extension_of_scope','=',True)]}"/>
+							statusbar_colors='{"campus":"blue"}'/>
 					</header>
 						<field name="image" widget='image'
 							attrs="{'invisible':[('state','in',['general_business_information','address_info','campus','qualification','verification','evaluation','recommended1','validated','recommended2'])]}"
