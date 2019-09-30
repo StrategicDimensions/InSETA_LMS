@@ -6835,14 +6835,15 @@ class provider_accreditation(models.Model):
 	@api.depends('reapproval','is_extension_of_scope','is_existing_provider')
 	def _get_transaction_type(self):
 		for this in self:
-			if this.is_existing_provider:
-				this.transaction_type = 'reaccred'
-			elif this.is_extension_of_scope:
-				this.transaction_type = 'extension'
-			elif this.reapproval:
-				this.transaction_type = 'reapproval'
-			else:
-				this.transaction_type = 'new'
+			if not this.transaction_type:
+				if this.is_existing_provider:
+					this.transaction_type = 'reaccred'
+				elif this.is_extension_of_scope:
+					this.transaction_type = 'extension'
+				elif this.reapproval:
+					this.transaction_type = 'reapproval'
+				else:
+					this.transaction_type = 'new'
 
 	reapproval = fields.Boolean()
 	transaction_type = fields.Selection([
@@ -6850,7 +6851,7 @@ class provider_accreditation(models.Model):
 		('extension','Extension Of Scope'),
 		('reapproval','Programme Re-Approval'),
 		('new','New Accreditation')
-	],compute='_get_transaction_type')
+	],compute='_get_transaction_type',store=True)
 	_sql_constraints = [('txtVATRegNo_uniq', 'unique(txtVATRegNo)',
 			'VAT Registration Number must be unique!'), ]
 
