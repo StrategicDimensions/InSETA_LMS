@@ -6859,7 +6859,7 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def onchange_reapproval(self, reapproval):
 		res = {}
-		if reapproval and self.optYesNo:
+		if reapproval:
 			res.update({'value': {'is_extension_of_scope': False, 'accreditation_number': self.env['res.users'].browse(
 				self._uid).partner_id.alternate_acc_number}})
 		return res
@@ -6879,12 +6879,8 @@ class provider_accreditation(models.Model):
 		return res
 
 	@api.multi
-	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope, reapproval):
+	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope):
 		res = {}
-		if reapproval:
-			provider_obj = self.env.user.partner_id
-			alt_num = provider_obj.alternate_acc_number
-			res.update({'accreditation_number':alt_num})
 		if accreditation_number is None:
 			return res
 		if accreditation_number:
