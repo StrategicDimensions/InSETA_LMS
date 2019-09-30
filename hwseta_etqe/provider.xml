@@ -1507,7 +1507,7 @@
 								<label for="accreditation_number" />
 								<field name="accreditation_number"
 									attrs="{'required':['|',('is_existing_provider','=',True),('is_extension_of_scope','=',True)],'readonly':[('approved','=',True)]}"
-									on_change="onchange_accreditation_number(accreditation_number,is_existing_provider,is_extension_of_scope)"
+									on_change="onchange_accreditation_number(accreditation_number,is_existing_provider,is_extension_of_scope,reapproval)"
 									placeholder="Accreditation Number" />
 							</div>
 							<div class="oe_edit_only">
