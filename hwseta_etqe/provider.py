@@ -6830,8 +6830,36 @@ class provider_accreditation(models.Model):
 	provider_approval_date = fields.Date(string='Provider Approval Date')
 	provider_register_date = fields.Date(string='Provider Accreditation Date')
 	provider_expiry_date = fields.Date(string='Provider Accreditation Date')
+	# todo: alternate_acc_number to be checked
+
+	@api.depends('reapproval','is_extension_of_scope','is_existing_provider')
+	def _get_transaction_type(self):
+		if self.is_existing_provider:
+			self.transaction_type = 'reaccred'
+		elif self.is_extension_of_scope:
+			self.transaction_type = 'extension'
+		elif self.reapproval:
+			self.transaction_type = 'reapproval'
+		else:
+			self.transaction_type = 'new'
+
+	reapproval = fields.Boolean()
+	transaction_type = fields.Selection([
+		('reaccred','Re-Accreditation'),
+		('extension','Extension Of Scope'),
+		('reapproval','Programme Re-Approval'),
+		('new','New Accreditation')
+	])
 	_sql_constraints = [('txtVATRegNo_uniq', 'unique(txtVATRegNo)',
 			'VAT Registration Number must be unique!'), ]
+
+	@api.multi
+	def onchange_reapproval(self, reapproval):
+		res = {}
+		if reapproval and self.optYesNo:
+			res.update({'value': {'is_extension_of_scope': False, 'accreditation_number': self.env['res.users'].browse(
+				self._uid).partner_id.alternate_acc_number}})
+		return res
 
 	@api.multi
 	def onchange_is_existing_provider(self, is_existing_provider):

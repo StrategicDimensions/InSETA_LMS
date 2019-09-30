@@ -1492,6 +1492,12 @@
 								<field name="is_extension_of_scope" invisible="not context.get('active')" attrs="{'readonly':[('state','not in',['general_details'])]}"
 									on_change="onchange_is_extension_of_scope(is_extension_of_scope)" />
 								<label for="is_extension_of_scope" invisible="not context.get('active')" />
+                                <field name="reapproval"
+                                       invisible="context.get('active')"
+                                       on_change="onchange_reapproval(reapproval)"
+                                       attrs="{'readonly':[('state','not in',['general_details'])]}"
+									/>
+								<label for="reapproval" invisible="context.get('active')" string="Programme Re-Approval"/>
 							</div>
 
 							<div class="oe_edit_only"
