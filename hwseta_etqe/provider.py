@@ -8163,7 +8163,7 @@ class provider_accreditation(models.Model):
 					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
 					if self.reapproval:
 						provider_accreditation_num = provider_obj.alternate_acc_number
-						self.write({'sequence_num': provider_accreditation_num})
+						self.write({'sequence_num': accreditation_number})
 					elif self.is_existing_provider:
 						provider_accreditation_num = provider_obj.provider_accreditation_num
 						self.write({'sequence_num': provider_accreditation_num})
