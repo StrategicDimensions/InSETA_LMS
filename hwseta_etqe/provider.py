@@ -8320,6 +8320,7 @@ class provider_accreditation(models.Model):
 											}
 
 						credit_provider_campus_lines.append((0, 0, provider_campus_data))
+			dbg('existing----------' + str(exists))
 			partner_vals = {
 							'name':self.name,
 							'street': self.street,
@@ -8418,7 +8419,6 @@ class provider_accreditation(models.Model):
 							'child_ids':credit_provider_campus_lines,
 							# 'is_existing_provider':self.is_existing_provider,
 							'is_existing_provider':exists,
-							'reapproval':self.reapproval,
 						}
 			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
 			partner_id = self.env['res.partner'].create(partner_vals)
