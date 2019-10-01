@@ -7671,7 +7671,7 @@ class provider_accreditation(models.Model):
 	@api.model
 	def create(self, vals):
 		context = self._context
-		if vals.get('is_extension_of_scope') or vals.get('is_existing_provider') :
+		if vals.get('is_extension_of_scope') or vals.get('is_existing_provider') or vals.get('reapproval'):
 			vals['related_provider'] = self.env['res.users'].browse(self._uid).partner_id.id
 		vals['final_state'] = 'Draft'
 		if not context.get('from_website', False) :
