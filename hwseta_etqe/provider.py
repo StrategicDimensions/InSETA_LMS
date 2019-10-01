@@ -8905,6 +8905,7 @@ class provider_accreditation(models.Model):
 		if context is None:
 			context = {}
 		res = super(provider_accreditation, self).write(vals)
+		dbg(context)
 #         provider_accreditation_data = self.browse(cr, uid, ids)
 #         if self.qualification_ids or self.skills_programme_ids:
 #             for line in self.qualification_ids:
