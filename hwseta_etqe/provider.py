@@ -7939,6 +7939,7 @@ class provider_accreditation(models.Model):
 		if not self.comment_box:
 			raise Warning(_("Please enter status comment"))
 		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider or self.reapproval:
+			dbg('reapproval tick found')
 			# code for new provider registration and existing provider
 			self.write({'provider_accreditation_status_ids':[(0, 0, {'pa_name':self.env['res.users'].browse(self._uid).name, 'pa_date':datetime.now(), 'pa_status':'Approved', 'pa_updation_date':self.write_date, 'pa_comment':self.comment_box})]})
 			self.write({'comment_box':''})
@@ -8136,12 +8137,15 @@ class provider_accreditation(models.Model):
 										}
 					credit_provider_campus_contact_lines.append((0, 0, provider_campus_contact_data))
 			if not self.is_existing_provider or not self.reapproval:
+				dbg('not existing or reapproval')
 				provider_accreditation_num = self.env['ir.sequence'].get('provider.accreditation')
 				self.write({'sequence_num': provider_accreditation_num})
 			elif self.is_existing_provider or self.reapproval:
+				dbg('is a reapproval or existing')
 				if self.reapproval:
 					provider_obj = self.env['res.partner'].search(
 						[('alternate_acc_number', '=', self.accreditation_number)])
+					dbg('found existing provider with alt')
 				elif self.is_existing_provider:
 					provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
 				else:
@@ -8326,9 +8330,10 @@ class provider_accreditation(models.Model):
 							'provider_master_contact_ids' : credit_provider_contact_lines,
 							'qualification_line': credit_qualification_line_lines,
 							'qualification_id':self.qualification_id and self.qualification_id.id,
-							'physical_address_1':self.txtPhysicalAddressLine1,
-							'physical_address_2':self.txtPhysicalAddressLine2,
-							'physical_address_3':self.txtPhysicalAddressLine3,
+							# duplicate lines commented
+							# 'physical_address_1':self.txtPhysicalAddressLine1,
+							# 'physical_address_2':self.txtPhysicalAddressLine2,
+							# 'physical_address_3':self.txtPhysicalAddressLine3,
 							'provider':True,
 							'provider_accreditation_num':provider_accreditation_num,
 							'image':self.image,
@@ -8386,20 +8391,6 @@ class provider_accreditation(models.Model):
 							'active' : True,
 							'is_visible' : True,
 							'provider_status_Id': 'Accredited',
-
-	#                         'provider_latitude_degree' : physical_lat_d,
-	#                         'provider_latitude_minutes' : physical_lat_m,
-	#                         'provider_latitude_seconds' : physical_lat_s,
-	#                         'provider_longitude_degree' : physical_lng_d,
-	#                         'provider_longitude_minutes' : physical_lng_m,
-	#                         'provider_longitude_seconds' : physical_lng_s,
-	#
-	#                         'provider_latitude_degree_p' : postal_lat_d,
-	#                         'provider_latitude_minutes_p' : postal_lat_m,
-	#                         'provider_latitude_seconds_p' : postal_lat_s,
-	#                         'provider_longitude_degree_p' : postal_lng_d,
-	#                         'provider_longitude_minutes_p' : postal_lng_m,
-	#                         'provider_longitude_seconds_p' : postal_lng_s,
 							'same_as_home':self.same_as_home,
 							'website': self.website,
 							'fax': self.fax,
@@ -8421,6 +8412,7 @@ class provider_accreditation(models.Model):
 							'child_ids':credit_provider_campus_lines,
 							'is_existing_provider':self.is_existing_provider,
 						}
+			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
 			partner_id = self.env['res.partner'].create(partner_vals)
 			''' As per new configuration '''
 			etqe_conf = self.env['etqe.config'].search([])
