@@ -8320,6 +8320,9 @@ class provider_accreditation(models.Model):
 											}
 
 						credit_provider_campus_lines.append((0, 0, provider_campus_data))
+
+			if self.is_existing_provider or self.reapproval:
+				exists = True
 			dbg('existing----------' + str(exists))
 			partner_vals = {
 							'name':self.name,
