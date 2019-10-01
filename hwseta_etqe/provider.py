@@ -7939,7 +7939,7 @@ class provider_accreditation(models.Model):
 		if not self.comment_box:
 			raise Warning(_("Please enter status comment"))
 		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider or self.reapproval:
-			dbg('reapproval tick found')
+			dbg('reapproval tick found' + str(self.reapproval))
 			# code for new provider registration and existing provider
 			self.write({'provider_accreditation_status_ids':[(0, 0, {'pa_name':self.env['res.users'].browse(self._uid).name, 'pa_date':datetime.now(), 'pa_status':'Approved', 'pa_updation_date':self.write_date, 'pa_comment':self.comment_box})]})
 			self.write({'comment_box':''})
@@ -8138,10 +8138,14 @@ class provider_accreditation(models.Model):
 					credit_provider_campus_contact_lines.append((0, 0, provider_campus_contact_data))
 			if not self.is_existing_provider or not self.reapproval:
 				dbg('not existing or reapproval')
+				dbg('reapproval' + str(self.reapproval))
+				dbg('existing' + str(self.is_existing_provider))
 				provider_accreditation_num = self.env['ir.sequence'].get('provider.accreditation')
 				self.write({'sequence_num': provider_accreditation_num})
 			elif self.is_existing_provider or self.reapproval:
 				dbg('is a reapproval or existing')
+				dbg('reapproval' + str(self.reapproval))
+				dbg('existing' + str(self.is_existing_provider))
 				if self.reapproval:
 					provider_obj = self.env['res.partner'].search(
 						[('alternate_acc_number', '=', self.accreditation_number)])
@@ -8411,6 +8415,7 @@ class provider_accreditation(models.Model):
 							'SDL_No':self.txtSDLNo,
 							'child_ids':credit_provider_campus_lines,
 							'is_existing_provider':self.is_existing_provider,
+							'reapproval':self.reapproval,
 						}
 			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
 			partner_id = self.env['res.partner'].create(partner_vals)
