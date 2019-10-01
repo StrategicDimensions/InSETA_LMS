@@ -8897,6 +8897,12 @@ class provider_accreditation(models.Model):
 			mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_provider_extension_of_scope')
 			if mail_template_id:
 				self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
+		if self.reapproval:
+			provider_obj = self.env['res.partner'].search(
+				[('alternate_acc_number', '=', self.accreditation_number)])
+			seq = provider_obj.alternate_acc_number
+			raise Warning(_('reapproval' + str(seq)))
+			self.write({'sequence_num':seq})
 		return True
 
 	@api.multi
