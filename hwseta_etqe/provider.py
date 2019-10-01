@@ -8867,8 +8867,12 @@ class provider_accreditation(models.Model):
 #                         if etqe_brw.etqa_end_date:
 #                             new_date =sdate + relativedelta(years=etqe_brw.etqa_end_date)
 #                 provider_obj.write({'provider_start_date':sdate,'provider_end_date':new_date})
-			provider_accreditation_num = provider_obj.provider_accreditation_num
-			self.write({'sequence_num': provider_accreditation_num})
+			if self.reapproval:
+				provider_accreditation_num = provider_obj.alternate_acc_number
+				self.write({'sequence_num': provider_accreditation_num})
+			else:
+				provider_accreditation_num = provider_obj.provider_accreditation_num
+				self.write({'sequence_num': provider_accreditation_num})
 			# Below code is written to link provider with given assessors and moderators
 			pro_ass_vals = {
 							'provider_id':provider_obj.id,
