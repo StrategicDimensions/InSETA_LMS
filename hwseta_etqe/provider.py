@@ -7936,6 +7936,7 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def action_approve_button(self):
 		ir_model_data_obj = self.env['ir.model.data']
+		exists = False
 		if not self.comment_box:
 			raise Warning(_("Please enter status comment"))
 		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider or self.reapproval:
@@ -8137,15 +8138,16 @@ class provider_accreditation(models.Model):
 										}
 					credit_provider_campus_contact_lines.append((0, 0, provider_campus_contact_data))
 			if not self.is_existing_provider or not self.reapproval:
-				dbg('not existing or reapproval')
-				dbg('reapproval' + str(self.reapproval))
-				dbg('existing' + str(self.is_existing_provider))
+				# dbg('not existing or reapproval')
+				# dbg('reapproval' + str(self.reapproval))
+				# dbg('existing' + str(self.is_existing_provider))
 				provider_accreditation_num = self.env['ir.sequence'].get('provider.accreditation')
 				self.write({'sequence_num': provider_accreditation_num})
 			elif self.is_existing_provider or self.reapproval:
-				dbg('is a reapproval or existing')
-				dbg('reapproval' + str(self.reapproval))
-				dbg('existing' + str(self.is_existing_provider))
+				exists = True
+				# dbg('is a reapproval or existing')
+				# dbg('reapproval' + str(self.reapproval))
+				# dbg('existing' + str(self.is_existing_provider))
 				if self.reapproval:
 					provider_obj = self.env['res.partner'].search(
 						[('alternate_acc_number', '=', self.accreditation_number)])
@@ -8414,7 +8416,8 @@ class provider_accreditation(models.Model):
 							'alternate_acc_number':self.alternate_acc_number,
 							'SDL_No':self.txtSDLNo,
 							'child_ids':credit_provider_campus_lines,
-							'is_existing_provider':self.is_existing_provider,
+							# 'is_existing_provider':self.is_existing_provider,
+							'is_existing_provider':exists,
 							'reapproval':self.reapproval,
 						}
 			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
