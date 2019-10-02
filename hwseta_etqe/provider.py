@@ -8910,7 +8910,7 @@ class provider_accreditation(models.Model):
 			seq = provider_obj.alternate_acc_number
 			# raise Warning(_('reapproval' + str(seq)))
 			self.write({'sequence_num':seq})
-		raise Warning(_(str(self.read())))
+		# raise Warning(_(str(self.read())))
 		return True
 
 	@api.multi
