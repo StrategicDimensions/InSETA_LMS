@@ -8899,6 +8899,13 @@ class provider_accreditation(models.Model):
 		if self.reapproval:
 			provider_obj = self.env['res.partner'].search(
 				[('alternate_acc_number', '=', self.accreditation_number)])
+			p_list = []
+			for x in provider_obj:
+				p_list.append(x.id)
+			old_provider_obj = self.env['res.partner'].search([('id','=',min(p_list))])
+			old_provider_obj.unlink()
+			provider_obj = self.env['res.partner'].search(
+				[('alternate_acc_number', '=', self.accreditation_number)])
 			seq = provider_obj.alternate_acc_number
 			# raise Warning(_('reapproval' + str(seq)))
 			self.write({'sequence_num':seq})
