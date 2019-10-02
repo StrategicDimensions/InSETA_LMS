@@ -7730,7 +7730,7 @@ class provider_accreditation(models.Model):
 			for lp in self.learning_programme_ids:
 					if not lp.assessors_id or not lp.moderators_id or not lp.assessor_sla_document or not lp.moderator_sla_document:
 						raise Warning(_("Please enter required fields of Learning Programme in Main Campus before submit!"))
-		if not self.is_extension_of_scope and not self.is_existing_provider:
+		if not self.is_extension_of_scope and not self.is_existing_provider and not self.reapproval:
 			if self.qualification_ids or self.skills_programme_ids or self.learning_programme_ids:
 				for line in self.qualification_ids:
 					qual_count += 1
@@ -8421,7 +8421,7 @@ class provider_accreditation(models.Model):
 							# 'is_existing_provider':self.is_existing_provider,
 							'is_existing_provider':exists,
 						}
-			raise Warning(_(str(partner_vals)))
+			# raise Warning(_(str(partner_vals)))
 			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
 			partner_id = self.env['res.partner'].create(partner_vals)
 			''' As per new configuration '''
@@ -8900,8 +8900,9 @@ class provider_accreditation(models.Model):
 			provider_obj = self.env['res.partner'].search(
 				[('alternate_acc_number', '=', self.accreditation_number)])
 			seq = provider_obj.alternate_acc_number
-			raise Warning(_('reapproval' + str(seq)))
+			# raise Warning(_('reapproval' + str(seq)))
 			self.write({'sequence_num':seq})
+		raise Warning(_(str(self.read())))
 		return True
 
 	@api.multi
