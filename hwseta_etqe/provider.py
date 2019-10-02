@@ -8323,6 +8323,10 @@ class provider_accreditation(models.Model):
 
 			if self.is_existing_provider or self.reapproval:
 				exists = True
+			if self.reapproval:
+				context_accred_num = self.accreditation_number
+			else:
+				context_accred_num = provider_accreditation_num
 			dbg('existing----------' + str(exists))
 			partner_vals = {
 							'name':self.name,
@@ -8345,7 +8349,7 @@ class provider_accreditation(models.Model):
 							# 'physical_address_2':self.txtPhysicalAddressLine2,
 							# 'physical_address_3':self.txtPhysicalAddressLine3,
 							'provider':True,
-							'provider_accreditation_num':provider_accreditation_num,
+							'provider_accreditation_num':context_accred_num,
 							'image':self.image,
 							'txtRegName':self.txtRegName,
 							'txtTradeName':self.txtTradeName,
