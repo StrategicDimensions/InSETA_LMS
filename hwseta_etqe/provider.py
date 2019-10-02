@@ -8138,16 +8138,10 @@ class provider_accreditation(models.Model):
 										}
 					credit_provider_campus_contact_lines.append((0, 0, provider_campus_contact_data))
 			if not self.is_existing_provider or not self.reapproval:
-				# dbg('not existing or reapproval')
-				# dbg('reapproval' + str(self.reapproval))
-				# dbg('existing' + str(self.is_existing_provider))
 				provider_accreditation_num = self.env['ir.sequence'].get('provider.accreditation')
 				self.write({'sequence_num': provider_accreditation_num})
 			elif self.is_existing_provider or self.reapproval:
 				exists = True
-				# dbg('is a reapproval or existing')
-				# dbg('reapproval' + str(self.reapproval))
-				# dbg('existing' + str(self.is_existing_provider))
 				if self.reapproval:
 					provider_obj = self.env['res.partner'].search(
 						[('alternate_acc_number', '=', self.accreditation_number)])
@@ -8427,6 +8421,7 @@ class provider_accreditation(models.Model):
 							# 'is_existing_provider':self.is_existing_provider,
 							'is_existing_provider':exists,
 						}
+			raise Warning(_(str(partner_vals)))
 			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
 			partner_id = self.env['res.partner'].create(partner_vals)
 			''' As per new configuration '''
