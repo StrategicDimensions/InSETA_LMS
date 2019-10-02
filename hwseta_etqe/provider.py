@@ -8424,6 +8424,7 @@ class provider_accreditation(models.Model):
 						}
 			# raise Warning(_(str(partner_vals)))
 			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
+			dbg(partner_vals)
 			partner_id = self.env['res.partner'].create(partner_vals)
 			''' As per new configuration '''
 			etqe_conf = self.env['etqe.config'].search([])
@@ -8900,13 +8901,16 @@ class provider_accreditation(models.Model):
 		if self.reapproval:
 			provider_obj = self.env['res.partner'].search(
 				[('alternate_acc_number', '=', self.accreditation_number)])
+			dbg(provider_obj)
 			p_list = []
 			for x in provider_obj:
 				p_list.append(x.id)
 			old_provider_obj = self.env['res.partner'].search([('id','=',min(p_list))])
+			dbg(old_provider_obj)
 			old_provider_obj.write({'is_visible':False})
 			provider_obj = self.env['res.partner'].search(
 				[('alternate_acc_number', '=', self.accreditation_number),('is_visible','=',False)])
+			dbg(provider_obj)
 			seq = provider_obj.alternate_acc_number
 			# raise Warning(_('reapproval' + str(seq)))
 			self.write({'sequence_num':seq})
