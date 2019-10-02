@@ -4438,7 +4438,8 @@ class res_partner(models.Model):
 
 	@api.multi
 	def unlink(self):
-		raise Warning(_("Sorry!! You cannot delete Approved record !"))
+		if not self._uid == 1:
+			raise Warning(_("Sorry!! You cannot delete Approved record !"))
 		return super(res_partner, self).unlink()
 
 	@api.multi
@@ -8903,7 +8904,7 @@ class provider_accreditation(models.Model):
 			for x in provider_obj:
 				p_list.append(x.id)
 			old_provider_obj = self.env['res.partner'].search([('id','=',min(p_list))])
-			old_provider_obj.unlink()
+			old_provider_obj.write({'is_visible':False})
 			provider_obj = self.env['res.partner'].search(
 				[('alternate_acc_number', '=', self.accreditation_number)])
 			seq = provider_obj.alternate_acc_number
