@@ -6853,15 +6853,15 @@ class provider_accreditation(models.Model):
 			self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
 			self.type_visibility = 'reapproval'
 		else:
-			self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
-			self.type_visibility = 'extension'
+			self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+			self.type_visibility = 'existing'
 
 
 	reapproval = fields.Boolean()
 
 	type_visibility = fields.Selection([
 		('reapproval','reapproval'),
-		('extension','extension')],compute='_get_type_vis')
+		('existing','existing')],compute='_get_type_vis')
 
 	transaction_type = fields.Selection([
 		('reaccred','Re-Accreditation'),

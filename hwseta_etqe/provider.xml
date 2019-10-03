@@ -1489,19 +1489,18 @@
 						<div class="oe_title oe_left"
 							attrs="{'invisible':[('state','in',['general_business_information','address_info','campus','qualification','verification','evaluation','recommended1','validated','recommended2'])]}">
 							<div class="oe_edit_only">
-								<field name="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])]}"
+								<field name="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','!=','existing')]}"
 									on_change="onchange_is_existing_provider(is_existing_provider)"
-									invisible="context.get('active')" />
-								<label for="is_existing_provider" invisible="context.get('active')" />
+									/>
+								<label for="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','!=','existing')]}" />
 								<field name="is_extension_of_scope" invisible="not context.get('active')" attrs="{'readonly':[('state','not in',['general_details'])]}"
 									on_change="onchange_is_extension_of_scope(is_extension_of_scope)" />
 								<label for="is_extension_of_scope" invisible="not context.get('active')" />
                                 <field name="reapproval"
-                                       invisible="context.get('active')"
                                        on_change="onchange_reapproval(reapproval)"
                                        attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','!=','reapproval')]}"
 									/>
-								<label for="reapproval" invisible="context.get('active')" string="Programme Re-Approval"/>
+								<label for="reapproval" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','!=','reapproval')]}" string="Programme Re-Approval"/>
 							</div>
 
 							<div class="oe_edit_only"
