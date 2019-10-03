@@ -1413,6 +1413,7 @@
 					<field name="is_extension_of_scope" invisible="1"/>
 					<field name="is_existing_provider" invisible="1"/>
 					<field name="reapproval" invisible="1"/>
+					<field name="optYesNo" invisible="1"/>
 					<field name="final_state" />
 					<field name="transaction_type" />
 					<!-- <field name="approved"/> -->
@@ -1436,6 +1437,7 @@
 						<field name="recommended2" invisible="1" />
 						<field name="type_visibility" invisible="1" />
 						<field name="related_provider" invisible="1" />
+						<field name="optYesNo" invisible="1" />
 						<!-- <button name="action_submit_button" string="Submit" type="object"
 							class="oe_highlight" attrs="{'invisible':['|',('submitted','=',True)]}"/> 
 							<button name="action_approve_button" states="pending" string="Approve" type="object" 
