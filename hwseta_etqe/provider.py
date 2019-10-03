@@ -6851,8 +6851,10 @@ class provider_accreditation(models.Model):
 		provider = self.env.user.partner_id
 		if provider.optYesNo:
 			self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
+			self.type_visibility = 'reapproval'
 		else:
 			self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+			self.type_visibility = 'extension'
 
 
 	reapproval = fields.Boolean()
