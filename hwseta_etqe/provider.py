@@ -6846,8 +6846,26 @@ class provider_accreditation(models.Model):
 				this.transaction_type = 'new'
 
 
+	@api.depends('related_provider')
+	def _get_type_vis(self):
+		if self.related_provider:
+			if self.related_provider == self.env.user.partner_id:
+				provider = self.env.user.partner_id
+				if provider.optYesNo:
+					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
+				else:
+					self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+			else:
+				raise Warning(_('logged in user doesnt match provider found'))
+		else:
+			raise Warning(_('No related provider found!!!'))
 
 	reapproval = fields.Boolean()
+
+	type_visibility = fields.Selection([
+		('reapproval','reapproval'),
+		('extension','extension')],compute='_get_type_vis')
+
 	transaction_type = fields.Selection([
 		('reaccred','Re-Accreditation'),
 		('extension','Extension Of Scope'),

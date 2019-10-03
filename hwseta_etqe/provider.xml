@@ -1434,7 +1434,9 @@
 						<field name="recommended1" invisible="1" />
 						<field name="validate" invisible="1" />
 						<field name="recommended2" invisible="1" />
-						<!-- <button name="action_submit_button" string="Submit" type="object" 
+						<field name="type_visibility" invisible="1" />
+						<field name="related_provider" invisible="1" />
+						<!-- <button name="action_submit_button" string="Submit" type="object"
 							class="oe_highlight" attrs="{'invisible':['|',('submitted','=',True)]}"/> 
 							<button name="action_approve_button" states="pending" string="Approve" type="object" 
 							class="oe_highlight" attrs="{'invisible':['|',('approved','=',True),('submitted','=',False)]}"/> -->
@@ -1497,7 +1499,7 @@
                                 <field name="reapproval"
                                        invisible="context.get('active')"
                                        on_change="onchange_reapproval(reapproval)"
-                                       attrs="{'readonly':[('state','not in',['general_details'])]}"
+                                       attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','!=','reapproval')]}"
 									/>
 								<label for="reapproval" invisible="context.get('active')" string="Programme Re-Approval"/>
 							</div>
