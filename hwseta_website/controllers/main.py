@@ -15,6 +15,19 @@ import ast
 from openerp.addons.web.controllers.main import ensure_db
 from openerp.addons.web.controllers.main import Home
 from operator import itemgetter
+DEBUG = True
+
+if DEBUG:
+	import logging
+
+	logger = logging.getLogger(__name__)
+
+
+	def dbg(msg):
+		logger.info(msg)
+else:
+	def dbg(msg):
+		pass
 
 class Website(openerp.addons.website.controllers.main.Website):
     qualification=[]
