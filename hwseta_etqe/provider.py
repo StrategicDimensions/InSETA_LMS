@@ -6899,6 +6899,7 @@ class provider_accreditation(models.Model):
 
 	@api.multi
 	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope, reapproval):
+		dbg('onchange_accreditation_number')
 		res = {}
 		if accreditation_number is None:
 			return res
@@ -7612,6 +7613,7 @@ class provider_accreditation(models.Model):
 					}
 					res.update({'value': partner_vals})
 			else:raise Warning(_('not existing,not extension, not reapproval'))
+		dbg(res)
 		return res
 
 	@api.multi
@@ -8946,6 +8948,7 @@ class provider_accreditation(models.Model):
 		if context is None:
 			context = {}
 		res = super(provider_accreditation, self).write(vals)
+		dbg(vals)
 		dbg(context)
 #         provider_accreditation_data = self.browse(cr, uid, ids)
 #         if self.qualification_ids or self.skills_programme_ids:

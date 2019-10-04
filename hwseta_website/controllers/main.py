@@ -933,6 +933,7 @@ class Website(openerp.addons.website.controllers.main.Website):
             todays_date = str(datetime.datetime.now().date())
             values['provider_register_date'] = datetime.datetime.strptime(todays_date, "%Y-%m-%d").date()                
             context.update({'from_website':True})
+            dbg(values)
             # raise Warning(_(values))
             res = provider_accreditation_obj.create(cr,SUPERUSER_ID,values,context)
 #             if q_vals_line:
