@@ -8947,6 +8947,10 @@ class provider_accreditation(models.Model):
 #         mod_count = 0
 		if context is None:
 			context = {}
+		if vals.get('accreditation_number'):
+			dbg(vals.get('accreditation_number'))
+		else:
+			raise Warning(_('no accred num found' + str(vals.get('accreditation_number')) + 'self accred:' + str(self.accreditation_number) + ' alt:'+ str(vals.get('alternate_acc_number')) + 'alt self:' + str(self.alternate_acc_number)))
 		res = super(provider_accreditation, self).write(vals)
 		dbg(vals)
 		dbg(context)
