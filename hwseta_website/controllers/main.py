@@ -918,7 +918,7 @@ class Website(openerp.addons.website.controllers.main.Website):
             todays_date = str(datetime.datetime.now().date())
             values['provider_register_date'] = datetime.datetime.strptime(todays_date, "%Y-%m-%d").date()                
             context.update({'from_website':True})
-            raise Warning(_(values))
+            # raise Warning(_(values))
             res = provider_accreditation_obj.create(cr,SUPERUSER_ID,values,context)
 #             if q_vals_line:
 #                 provider_accreditation_obj.browse(cr,SUPERUSER_ID,res).write({'qualification_ids':q_vals_line,'skills_programme_ids':s_vals_line,'provider_accreditation_ref':post.get('provider_accreditation_ref',''),'acc_multi_doc_upload_ids':doc_vals})
