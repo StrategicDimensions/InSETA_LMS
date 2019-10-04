@@ -8950,7 +8950,10 @@ class provider_accreditation(models.Model):
 		if vals.get('accreditation_number'):
 			dbg(vals.get('accreditation_number'))
 		else:
-			raise Warning(_('no accred num found' + str(vals.get('accreditation_number')) + 'self accred:' + str(self.accreditation_number) + ' alt:'+ str(vals.get('alternate_acc_number')) + 'alt self:' + str(self.alternate_acc_number)))
+			if self.accreditation_number == self.alternate_acc_number:
+				vals.update({'accreditation_number':self.accreditation_number,'alternate_acc_number':self.alternate_acc_number})
+			# raise Warning(_('no accred num found' + str(vals.get('accreditation_number')) + 'self accred:' + str(self.accreditation_number) + ' alt:'+ str(vals.get('alternate_acc_number')) + 'alt self:' + str(self.alternate_acc_number)))
+			dbg('no accred num found' + str(vals.get('accreditation_number')) + 'self accred:' + str(self.accreditation_number) + ' alt:'+ str(vals.get('alternate_acc_number')) + 'alt self:' + str(self.alternate_acc_number))
 		res = super(provider_accreditation, self).write(vals)
 		dbg(vals)
 		dbg(context)
