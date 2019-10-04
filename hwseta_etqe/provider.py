@@ -7611,6 +7611,7 @@ class provider_accreditation(models.Model):
 						'quality_management_system': provider_obj.quality_management_system and provider_obj.quality_management_system.id,
 					}
 					res.update({'value': partner_vals})
+			else:raise Warning(_('not existing,not extension, not reapproval'))
 		return res
 
 	@api.multi

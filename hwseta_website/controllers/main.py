@@ -341,6 +341,8 @@ class Website(openerp.addons.website.controllers.main.Website):
                     values['optYesNo']=True
                     values['alternate_acc_number']=post.get('SETA')
                     values['accreditation_number'] = post.get('SETA')
+                    dbg(values['alternate_acc_number'])
+                    dbg(values['accreditation_number'])
                 elif str(post.get('optYesNo'))=='no':
                     values['optYesNo']=False                
             values['street'] = post.get('txtCmpStreet1','')
