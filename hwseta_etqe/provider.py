@@ -7699,6 +7699,7 @@ class provider_accreditation(models.Model):
 		if not context.get('from_website', False) :
 			vals['provider_register_date'] = datetime.today().date()
 			vals['provider_accreditation_ref'] = self.env['ir.sequence'].get('provider.accreditation.reference')
+		dbg(vals)
 		res = super(provider_accreditation, self).create(vals)
 
 		if res.email:
