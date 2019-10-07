@@ -6851,7 +6851,9 @@ class provider_accreditation(models.Model):
 	@api.depends('related_provider')
 	def _get_type_vis(self):
 		dbg('_get_type_vis')
-		if self.env.user.id == 1:
+		dbg(self.env.user.id)
+		dbg(self.related_provider)
+		if not self.env.user.has_group('hwseta_etqe.group_providers'):
 			pass
 		else:
 			provider = self.env.user.partner_id
