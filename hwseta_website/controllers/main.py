@@ -354,7 +354,7 @@ class Website(openerp.addons.website.controllers.main.Website):
                     values['optYesNo']=True
                     values['alternate_acc_number']=post.get('SETA')
                     values['accreditation_number'] = post.get('SETA')
-                    values['reapproval'] = True
+                    # values['reapproval'] = True
                     dbg(values['alternate_acc_number'])
                     dbg(values['accreditation_number'])
                 elif str(post.get('optYesNo'))=='no':
