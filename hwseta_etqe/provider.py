@@ -6850,6 +6850,7 @@ class provider_accreditation(models.Model):
 
 	@api.depends('related_provider')
 	def _get_type_vis(self):
+		dbg('_get_type_vis')
 		if self.env.user.id == 1:
 			pass
 		else:
@@ -6880,14 +6881,16 @@ class provider_accreditation(models.Model):
 
 	@api.multi
 	def onchange_reapproval(self, reapproval):
+		dbg('onchange_reapproval')
 		res = {}
 		if reapproval:
-			res.update({'value': {'is_extension_of_scope': False, 'accreditation_number': self.env['res.users'].browse(
+			res.update({'value': {'is_extension_of_scope': False, 'reapproval':True, 'accreditation_number': self.env['res.users'].browse(
 				self._uid).partner_id.alternate_acc_number}})
 		return res
 
 	@api.multi
 	def onchange_is_existing_provider(self, is_existing_provider):
+		dbg('onchange_is_existing_provider')
 		res = {}
 		if is_existing_provider:
 			res.update({'value':{ 'is_extension_of_scope' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
@@ -6895,6 +6898,7 @@ class provider_accreditation(models.Model):
 
 	@api.multi
 	def onchange_is_extension_of_scope(self, is_extension_of_scope):
+		dbg('onchange_is_extension_of_scope')
 		res = {}
 		if is_extension_of_scope:
 			res.update({'value':{ 'is_existing_provider' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
