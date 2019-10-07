@@ -6850,13 +6850,16 @@ class provider_accreditation(models.Model):
 
 	@api.depends('related_provider')
 	def _get_type_vis(self):
-		provider = self.env.user.partner_id
-		if provider.optYesNo:
-			self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
-			self.type_visibility = 'reapproval'
+		if self.env.user.id == 1:
+			pass
 		else:
-			self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
-			self.type_visibility = 'existing'
+			provider = self.env.user.partner_id
+			if provider.optYesNo:
+				self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
+				self.type_visibility = 'reapproval'
+			else:
+				self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+				self.type_visibility = 'existing'
 
 
 	reapproval = fields.Boolean()
@@ -6904,7 +6907,7 @@ class provider_accreditation(models.Model):
 		if accreditation_number is None:
 			return res
 		if accreditation_number:
-			raise Warning(_('reapproval:' + str(reapproval) + '-existing:' + str(is_existing_provider)+ '-extension:' + str(is_extension_of_scope)))
+			# raise Warning(_('reapproval:' + str(reapproval) + '-existing:' + str(is_existing_provider)+ '-extension:' + str(is_extension_of_scope)))
 			if is_extension_of_scope:
 				provider_acc_obj = self.env['provider.accreditation'].search([('accreditation_number', '=', accreditation_number),('is_extension_of_scope', '=', True),('approved', '=', False),('final_state', '!=', 'Rejected')])
 				if provider_acc_obj:
