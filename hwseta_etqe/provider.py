@@ -6853,16 +6853,17 @@ class provider_accreditation(models.Model):
 		dbg('_get_type_vis')
 		dbg(self.env.user.id)
 		dbg(self.related_provider)
-		if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1:
-			pass
-		else:
-			provider = self.env.user.partner_id
-			if provider.optYesNo:
-				self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
-				self.type_visibility = 'reapproval'
+		if self.related_provider:
+			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
+				pass
 			else:
-				self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
-				self.type_visibility = 'existing'
+				provider = self.env.user.partner_id
+				if provider.optYesNo:
+					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
+					self.type_visibility = 'reapproval'
+				else:
+					self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+					self.type_visibility = 'existing'
 
 
 	reapproval = fields.Boolean()
