@@ -6853,6 +6853,12 @@ class provider_accreditation(models.Model):
 		dbg('_get_type_vis')
 		dbg(self.env.user.id)
 		dbg(self.related_provider)
+		if self.reapproval:
+			self.type_visibility = 'reapproval'
+			pass
+		if self.is_existing_provider:
+			self.type_visibility = 'existing'
+			pass
 		if self.related_provider or self.env.user.partner_id:
 			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
 				pass
