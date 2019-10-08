@@ -6859,6 +6859,9 @@ class provider_accreditation(models.Model):
 		if self.is_existing_provider:
 			self.type_visibility = 'existing'
 			pass
+		if self.is_extension_of_scope:
+			self.type_visibility = 'extension'
+			pass
 		if self.related_provider or self.env.user.partner_id:
 			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
 				pass
@@ -6879,6 +6882,7 @@ class provider_accreditation(models.Model):
 
 	type_visibility = fields.Selection([
 		('reapproval','reapproval'),
+		('extension','extension'),
 		('existing','existing')],compute='_get_type_vis')
 
 	transaction_type = fields.Selection([
