@@ -6863,7 +6863,7 @@ class provider_accreditation(models.Model):
 			dbg('self.extension')
 			self.type_visibility = 'extension'
 			pass
-		if self.related_provider or self.env.user.partner_id:
+		elif self.related_provider or self.env.user.partner_id:
 			dbg('found related')
 			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
 				dbg('internal user')
