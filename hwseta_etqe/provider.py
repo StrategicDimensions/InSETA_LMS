@@ -6851,29 +6851,33 @@ class provider_accreditation(models.Model):
 	@api.depends('related_provider')
 	def _get_type_vis(self):
 		dbg('_get_type_vis')
-		dbg(self.env.user.id)
-		dbg(self.related_provider)
 		if self.reapproval:
+			dbg('self.reapproval')
 			self.type_visibility = 'reapproval'
 			pass
-		if self.is_existing_provider:
+		elif self.is_existing_provider:
+			dbg('self.existing')
 			self.type_visibility = 'existing'
 			pass
-		if self.is_extension_of_scope:
+		elif self.is_extension_of_scope:
+			dbg('self.extension')
 			self.type_visibility = 'extension'
 			pass
 		if self.related_provider or self.env.user.partner_id:
+			dbg('found related')
 			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
+				dbg('internal user')
 				pass
 			else:
+				dbg('not internal user')
 				provider = self.env.user.partner_id
 				dbg(provider)
 				if provider.optYesNo:
-					dbg(provider.optYesNo)
+					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
 					self.type_visibility = 'reapproval'
 				else:
-					dbg(provider.optYesNo)
+					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
 					self.type_visibility = 'existing'
 
@@ -8965,6 +8969,7 @@ class provider_accreditation(models.Model):
 
 	@api.multi
 	def write(self, vals):
+		dbg('write')
 		context = self._context
 #         qual_count = 0
 #         skill_count = 0
