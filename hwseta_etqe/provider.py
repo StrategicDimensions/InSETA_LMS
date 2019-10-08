@@ -6858,10 +6858,13 @@ class provider_accreditation(models.Model):
 				pass
 			else:
 				provider = self.env.user.partner_id
+				dbg(provider)
 				if provider.optYesNo:
+					dbg(provider.optYesNo)
 					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
 					self.type_visibility = 'reapproval'
 				else:
+					dbg(provider.optYesNo)
 					self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
 					self.type_visibility = 'existing'
 
