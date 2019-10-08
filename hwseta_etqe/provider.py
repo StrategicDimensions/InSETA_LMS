@@ -6853,7 +6853,7 @@ class provider_accreditation(models.Model):
 		dbg('_get_type_vis')
 		dbg(self.env.user.id)
 		dbg(self.related_provider)
-		if self.related_provider:
+		if self.related_provider or self.env.user.partner_id:
 			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
 				pass
 			else:
