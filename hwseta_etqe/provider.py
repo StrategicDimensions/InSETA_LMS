@@ -6872,19 +6872,25 @@ class provider_accreditation(models.Model):
 				dbg('not internal user')
 				provider = self.env.user.partner_id
 				dbg(provider)
-				if provider.optYesNo:
+				dbg(provider.provider)
+				if provider.optYesNo and provider.provider:
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
 					self.type_visibility = 'reapproval'
-				else:
+				elif provider.provider and not provider.optYesNo:
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+					self.type_visibility = 'existing'
+				else:
+					dbg('opt ' + str(provider.optYesNo))
+					self.write({'type_visibility': 'new', 'reapproval': False, 'is_existing_provider': False,'is_extension_of_scope':False})
 					self.type_visibility = 'existing'
 
 
 	reapproval = fields.Boolean()
 
 	type_visibility = fields.Selection([
+		('new','new'),
 		('reapproval','reapproval'),
 		('extension','extension'),
 		('existing','existing')],compute='_get_type_vis')
