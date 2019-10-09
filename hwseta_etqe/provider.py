@@ -8382,6 +8382,8 @@ class provider_accreditation(models.Model):
 				exists = True
 			if self.reapproval:
 				context_accred_num = self.accreditation_number
+			elif self.optYesNo and self.alternate_acc_number:
+				context_accred_num = self.alternate_acc_number
 			else:
 				context_accred_num = provider_accreditation_num
 			dbg('existing----------' + str(exists))
