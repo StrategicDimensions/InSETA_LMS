@@ -6877,14 +6877,17 @@ class provider_accreditation(models.Model):
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
 					self.type_visibility = 'reapproval'
+					raise Warning(_('if provider.optYesNo and provider.provider:'))
 				elif provider.provider and not provider.optYesNo:
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
 					self.type_visibility = 'existing'
+					raise Warning(_('elif provider.provider and not provider.optYesNo:'))
 				else:
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility': 'new', 'reapproval': False, 'is_existing_provider': False,'is_extension_of_scope':False})
 					self.type_visibility = 'existing'
+					raise Warning(_('neither'))
 
 
 	reapproval = fields.Boolean()
