@@ -1166,14 +1166,14 @@
 			<field name="model">skills.programme.learner.rel</field>
 			<field name="arch" type="xml">
 				<search string="Skills Programme Search">
-					<field name="name"/>
-					<field name="learner_identification_id" />
+<!--					<field name="name"/>-->
+<!--					<field name="learner_identification_id" />-->
 					<!-- <field name="learner_reg_no" />  rather search by email/cell number -->
 <!--					<field name="national_id" />-->
-					<group string="Group By">
-						<filter string="Status" icon="terp-personal" domain="[]"
-							context="{'group_by':'state'}" />
-					</group>
+<!--					<group string="Group By">-->
+<!--						<filter string="Status" icon="terp-personal" domain="[]"-->
+<!--							context="{'group_by':'state'}" />-->
+<!--					</group>-->
 				</search>
 			</field>
 		</record>
