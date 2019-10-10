@@ -1201,7 +1201,7 @@
 		<record id="action_skills_programme_form_admin" model="ir.actions.act_window.view">
 			<field eval="2" name="sequence"/>
 			<field name="view_mode">form</field>
-			<field name="view_id" ref="view_etqe_skills_programme_form_admin"/>
+			<field name="view_id" ref="skills_programme_form_admin"/>
 			<field name="act_window_id" ref="action_skills_programme_view_admin"/>
 		</record>
 		<menuitem name="Skills Programmes" id="skills_programme_entry_admin" action="action_skills_programme_view_admin"
