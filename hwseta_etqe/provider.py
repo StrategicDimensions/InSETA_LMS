@@ -8978,6 +8978,8 @@ class provider_accreditation(models.Model):
 			seq = provider_obj.alternate_acc_number
 			# raise Warning(_('reapproval' + str(seq)))
 			self.write({'sequence_num':seq})
+		if self.optYesNo and self.alternate_acc_number:
+			self.write({'sequence_num': self.alternate_acc_number})
 		# raise Warning(_(str(self.read())))
 		return True
 
