@@ -1,6 +1,7 @@
 import base64
 import calendar
 from datetime import datetime
+import datetime as dt
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, tools, api, _
 from openerp.exceptions import Warning
@@ -631,7 +632,7 @@ class learner_registration_qualification(models.Model):
 							  'assessors_id': [('id', 'in', assessors_lst)],
 							  'moderators_id':[('id', 'in', moderators_lst)],
 							  'batch_id':[('id','in',batch_lst)]}}
-#             return {'domain':{'learner_qualification_parent_id': [('id', 'in', qual_id)]}}    
+#             return {'domain':{'learner_qualification_parent_id': [('id', 'in', qual_id)]}}
 		elif qual_id:
 			return {'domain': {'learner_qualification_parent_id': [('id', 'in', qual_id)],
 							   'assessors_id': [('id', 'in', assessors_lst)],
@@ -793,8 +794,8 @@ class assessors_moderators_status(models.Model):
 	am_comment = fields.Char(string="Comment")
 	am_date = fields.Datetime(string="Date")
 	am_updation_date = fields.Datetime(string="Update Date")
-  
-assessors_moderators_status()  
+
+assessors_moderators_status()
 
 class assessors_moderators_qualification(models.Model):
 	_name = 'assessors.moderators.qualification'
@@ -2546,7 +2547,7 @@ class assessors_moderators_register(models.Model):
 #         user_pool = self.env['res.users']
 #         group_pool = self.env['res.groups']
 #         email_to_string=""
-#          
+#
 #         group_obj = group_pool.search([('name', '=', 'ETQE Manager')])
 #         for group_data in group_obj:
 #             print "group_id====",group_data.id
@@ -2557,8 +2558,8 @@ class assessors_moderators_register(models.Model):
 #                     email_to_string=email_to_string + ',' + user_data.partner_id.email
 #                 else:
 #                     email_to_string=user_data.partner_id.email
-#                      
-#         print "email_to_string===",email_to_string            
+#
+#         print "email_to_string===",email_to_string
 #         email_template_obj = self.env['email.template']
 #         ir_model_data_obj = self.env['ir.model.data']
 #         mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_edi_etq11')
@@ -2693,7 +2694,7 @@ class assessors_moderators_register(models.Model):
 #         user_pool = self.env['res.users']
 #         group_pool = self.env['res.groups']
 #         email_to_string=""
-#          
+#
 #         group_obj = group_pool.search([('name', '=', 'ETQE Manager')])
 #         for group_data in group_obj:
 #             user_obj = user_pool.search([('groups_id', '=', group_data.id)])
@@ -2702,7 +2703,7 @@ class assessors_moderators_register(models.Model):
 #                     email_to_string=email_to_string + ',' + user_data.partner_id.email
 #                 else:
 #                     email_to_string=user_data.partner_id.email
-#                      
+#
 #         email_template_obj = self.env['email.template']
 #         ir_model_data_obj = self.env['ir.model.data']
 #         mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_edi_etq11')
@@ -3403,7 +3404,7 @@ class assessors_moderators_register(models.Model):
 			mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_assessor_eos')
 			if mail_template_id:
 				self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
-#             if self.already_registered:            
+#             if self.already_registered:
 #                 etqe_conf = self.env['etqe.config'].search([])
 #                 if etqe_conf:
 #                     new_date = "2018-03-31"
@@ -3442,7 +3443,7 @@ class assessors_moderators_register(models.Model):
 
 #         if self.state == "pending" and self.submitted == False:
 #             raise Warning(_('Sorry! you can not change status to Pending first submit application.'))
-#         
+#
 #         if self.state == "verification" and self.verify == False:
 #             raise Warning(_('Sorry! you can not change status to verification first verify application.'))
 
@@ -3678,7 +3679,7 @@ class provider_master_qualification(models.Model):
 #         ir_model_data_obj = self.env['ir.model.data']
 #         mail_template_id = ir_model_data_obj.get_object_reference('hwseta_sdp', 'email_template_sdf_register_organisation_post_submit')
 #         if mail_template_id:
-#             self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True,context=self.env.context)           
+#             self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True,context=self.env.context)
 
 		return True
 provider_master_qualification()
@@ -3721,7 +3722,7 @@ class etqe_moderators_provider_campus_rel(models.Model):
 			return {'value':{'mwork_email':moderators_obj.work_email, 'mwork_phone':moderators_obj.work_phone}}
 		else:
 			return {}
-etqe_moderators_provider_campus_rel() 
+etqe_moderators_provider_campus_rel()
 
 
 class provider_master_campus_qualification_line(models.Model):
@@ -4240,7 +4241,7 @@ class res_partner(models.Model):
 				sdf = True
 			if group.name == "Providers":
 				provider = True
-#                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)    
+#                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 			if group.name in  ["ETQE Manager", "ETQE Administrator"]:
 				if args:
 					if args[0][0] == 'provider':
@@ -4651,7 +4652,7 @@ class etqe_moderators_provider_rel(models.Model):
 	@api.multi
 	def action_rejected_request(self):
 		self.write({'status':'rejected', 'reject_request':True})
-etqe_moderators_provider_rel() 
+etqe_moderators_provider_rel()
 
 class provider_qualification(models.Model):
 	_name = 'provider.qualification'
@@ -5205,10 +5206,10 @@ class etqe_moderators_provider_accreditation_campus_rel(models.Model):
 	qualification_list = fields.Char('Qualification List', size=1000, default=_get_qualification_list)
 	campus_moderator_sla_document = fields.Many2one('ir.attachment', string="SLA Document")
 	moderator_notification_letter = fields.Many2one('ir.attachment', string="Notification Letter")
- 
+
 	@api.multi
 	def onchange_moderators(self, moderators_id):
- 
+
 		if moderators_id:
 			moderators_obj = self.env['hr.employee'].browse(moderators_id)
 			return {'value':{'mwork_email':moderators_obj.work_email, 'mwork_phone':moderators_obj.work_phone}}
@@ -5291,11 +5292,11 @@ class provider_accreditation_campus(models.Model):
 	@api.multi
 	def _get_image(self, name, args):
 		return dict((p.id, tools.image_get_resized_images(p.image)) for p in self)
- 
+
 	@api.one
 	def _set_image(self, name, value, args):
 		return self.write({'image': tools.image_resize_image_big(value)})
- 
+
 	@api.multi
 	def _has_image(self, name, args):
 		return dict((p.id, bool(p.image)) for p in self)
@@ -5863,7 +5864,7 @@ class etqe_moderators_provider_accreditation_rel(models.Model):
 			return {'value':{'mwork_email':moderators_obj.work_email, 'mwork_phone':moderators_obj.work_phone}}
 		else:
 			return {}
-etqe_moderators_provider_accreditation_rel() 
+etqe_moderators_provider_accreditation_rel()
 
 class skills_programme_unit_standards_accreditation_rel(models.Model):
 	_name = 'skills.programme.unit.standards.accreditation.rel'
@@ -6327,7 +6328,7 @@ class provider_accreditation(models.Model):
 				return super(provider_accreditation, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 			if group.name == "Applicant Skills Development Provider":
 				return super(provider_accreditation, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
-  
+
 		if user == 1:
 			return super(provider_accreditation, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 		else :
@@ -6386,11 +6387,11 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def _get_image(self, name, args):
 		return dict((p.id, tools.image_get_resized_images(p.image)) for p in self)
- 
+
 	@api.one
 	def _set_image(self, name, value, args):
 		return self.write({'image': tools.image_resize_image_big(value)})
- 
+
 	@api.multi
 	def _has_image(self, name, args):
 		return dict((p.id, bool(p.image)) for p in self)
@@ -6398,7 +6399,7 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def header_addr_map(self):
 		return self.open_map_addr(self.street, self.city, self.state_id, self.country_id, self.zip)
- 
+
 
 	@api.multi
 	def physical_addr_map(self):
@@ -6873,22 +6874,66 @@ class provider_accreditation(models.Model):
 				provider = self.env.user.partner_id
 				dbg(provider)
 				dbg(provider.provider)
-				if provider.optYesNo and provider.provider:
+				etqe_conf = self.env['etqe.config'].search([])
+				vis = False
+				if etqe_conf:
+					dbg('etqe conf found')
+					etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+					if etqe_brw.before_expiry_visible_days:
+						dbg('found days param')
+						provider_diff = (datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() - datetime.today().date()).days
+						dbg(type(provider_diff))
+						dbg(provider_diff)
+						dbg(' today-' + str(datetime.today().date()) + 'provider_end_date-' +str(provider.provider_end_date))
+						dbg('config days:' + str(etqe_brw.before_expiry_visible_days) + ' today and end date diff:' + str(provider_diff))
+						if datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() >  datetime.today().date():
+							ext_vis = True
+							dbg('ext vis True')
+						else:
+							ext_vis = False
+						if etqe_brw.before_expiry_visible_days > provider_diff:
+							dbg('already accredited')
+							vis = False
+							dbg('vis = False')
+						else:
+							vis = True
+							dbg('vis = True')
+					else:
+						raise Warning(_('no etqe config for days before expiry'))
+				else:
+					raise Warning(_('no etqe config found, please contact administrator'))
+				if provider.optYesNo and provider.provider and vis:
+					if vis and not ext_vis:
+						dbg('opt ' + str(provider.optYesNo))
+						self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
+						self.type_visibility = 'reapproval'
+						# raise Warning(_('if provider.optYesNo and provider.provider:'))
+						dbg('if provider.optYesNo and provider.provider:')
+					else:
+						dbg('opt ' + str(provider.optYesNo))
+						self.write({'type_visibility': 'ext_and_reapp'})
+						self.type_visibility = 'ext_and_reapp'
+						# raise Warning(_('if provider.optYesNo and provider.provider:'))
+						dbg('if provider.optYesNo and provider.provider:')
+				elif provider.provider and not provider.optYesNo and vis:
+					if vis and not ext_vis:
+						dbg('opt ' + str(provider.optYesNo))
+						self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+						self.type_visibility = 'existing'
+					else:
+						dbg('opt ' + str(provider.optYesNo))
+						self.write({'type_visibility': 'ext_and_exist'})
+						self.type_visibility = 'ext_and_exist'
+				elif provider.provider and not provider.optYesNo and not vis:
 					dbg('opt ' + str(provider.optYesNo))
-					self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
-					self.type_visibility = 'reapproval'
-					# raise Warning(_('if provider.optYesNo and provider.provider:'))
-					dbg('if provider.optYesNo and provider.provider:')
-				elif provider.provider and not provider.optYesNo:
-					dbg('opt ' + str(provider.optYesNo))
-					self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
-					self.type_visibility = 'existing'
+					self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':False,'accreditation_number': provider.provider_accreditation_num})
+					self.type_visibility = 'extension'
 					# raise Warning(_('elif provider.provider and not provider.optYesNo:'))
 					dbg('elif provider.provider and not provider.optYesNo:')
 				else:
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility': 'new', 'reapproval': False, 'is_existing_provider': False,'is_extension_of_scope':False})
-					self.type_visibility = 'existing'
+					self.type_visibility = 'new'
 					dbg('neither')
 					# raise Warning(_('neither'))
 
@@ -6898,6 +6943,8 @@ class provider_accreditation(models.Model):
 	type_visibility = fields.Selection([
 		('new','new'),
 		('reapproval','reapproval'),
+		('ext_and_reapp','ext_and_reapp'),
+		('ext_and_exist','ext_and_exist'),
 		('extension','extension'),
 		('existing','existing')],compute='_get_type_vis')
 
@@ -6957,8 +7004,26 @@ class provider_accreditation(models.Model):
 						for pro_obj in provider_objects:
 							pro_lst.append(pro_obj.id)
 						provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
-						if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
-							raise Warning(_("You have already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
+						# if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
+						# 	raise Warning(_("You have already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
+						etqe_conf = self.env['etqe.config'].search([])
+						if etqe_conf:
+							dbg('etqe conf found')
+							etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+							if etqe_brw.before_expiry_visible_days:
+								dbg('found days param')
+								provider_diff = (datetime.strptime(provider_obj.provider_end_date,
+																   '%Y-%m-%d').date() - datetime.today().date()).days
+								if is_existing_provider and etqe_brw.before_expiry_visible_days > provider_diff:
+									dbg('already accredited')
+									raise Warning(_("You have already accreditated, Your end date is %s.") % (
+										provider_obj.provider_end_date))
+								else:
+									pass
+							else:
+								raise Warning(_('no etqe config for days before expiry'))
+						else:
+							raise Warning(_('no etqe config found, please contact administrator'))
 						# To fetch qualifications from provider master
 						q_vals_line, skills_vals_line, lp_vals_line, assessors_line, moderators_line = [], [], [], [], []
 						if provider_obj.qualification_ids:
@@ -7191,10 +7256,26 @@ class provider_accreditation(models.Model):
 					for pro_obj in provider_objects:
 						pro_lst.append(pro_obj.id)
 					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
+					etqe_conf = self.env['etqe.config'].search([])
+					if etqe_conf:
+						dbg('etqe conf found')
+						etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+						if etqe_brw.before_expiry_visible_days:
+							dbg('found days param')
+							provider_diff = (datetime.strptime(provider_obj.provider_end_date,
+															   '%Y-%m-%d').date() - datetime.today().date()).days
+							if is_existing_provider and etqe_brw.before_expiry_visible_days > provider_diff:
+								dbg('already accredited')
+								raise Warning(_("You have already accreditated, Your end date is %s.") % (
+									provider_obj.provider_end_date))
+							else:
+								pass
+						else:
+							raise Warning(_('no etqe config for days before expiry'))
+					else:
+						raise Warning(_('no etqe config found, please contact administrator'))
 					# commented for now but needs to write logic to get 60 days old date
-#                     if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
-#                         raise Warning(_("You are already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
-					# To fetch qualifications from provider master
+                    # To fetch qualifications from provider master
 					q_vals_line, skills_vals_line, lp_vals_line, assessors_line, moderators_line = [], [], [], [], []
 					if provider_obj.qualification_ids:
 						for q_lines in provider_obj.qualification_ids:
@@ -7430,6 +7511,24 @@ class provider_accreditation(models.Model):
 						pro_lst.append(pro_obj.id)
 					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
 					# commented for now but needs to write logic to get 60 days old date
+					etqe_conf = self.env['etqe.config'].search([])
+					if etqe_conf:
+						dbg('etqe conf found')
+						etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+						if etqe_brw.before_expiry_visible_days:
+							dbg('found days param')
+							provider_diff = (datetime.strptime(provider_obj.provider_end_date,
+															   '%Y-%m-%d').date() - datetime.today().date()).days
+							if is_existing_provider and etqe_brw.before_expiry_visible_days > provider_diff:
+								dbg('already accredited')
+								raise Warning(_("You have already accreditated, Your end date is %s.") % (
+									provider_obj.provider_end_date))
+							else:
+								pass
+						else:
+							raise Warning(_('no etqe config for days before expiry'))
+					else:
+						raise Warning(_('no etqe config found, please contact administrator'))
 					#                     if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
 					#                         raise Warning(_("You are already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
 					# To fetch qualifications from provider master
@@ -8521,9 +8620,9 @@ class provider_accreditation(models.Model):
 	#         if mail_template_id:
 			self.write({'state':'approved', 'approved':True, 'related_provider':partner_id.id, 'provider_accreditation_num':provider_accreditation_num, 'final_state':'Approved', 'provider_approval_date':datetime.today().date()})
 #             Commented because Attachement problem in email template
-#             att_obj = self.env['ir.attachment']  
-#             attachment_ids = []   
-#             report_xml_letter = self.env['report']._get_report_from_name('hwseta_etqe.report_letter_of_approval')  
+#             att_obj = self.env['ir.attachment']
+#             attachment_ids = []
+#             report_xml_letter = self.env['report']._get_report_from_name('hwseta_etqe.report_letter_of_approval')
 #             letter_of_approval, format1 = self.pool['report'].get_pdf(self._cr, self._uid, [report_xml_letter.id], 'hwseta_etqe.report_letter_of_approval', data={}), 'pdf'
 #             letter_attachment_data = {
 #                     'name': "Letter of Approval.pdf",
@@ -8533,7 +8632,7 @@ class provider_accreditation(models.Model):
 #                     'res_name': 'provider_accreditation',
 #                     'res_id': self.id,
 #                 }
-#             attachment_ids.append(att_obj.create(letter_attachment_data)[0].id)  
+#             attachment_ids.append(att_obj.create(letter_attachment_data)[0].id)
 	#         report_xml_certificate = self.env['report']._get_report_from_name('hwseta_etqe.report_accreditation_certificate')
 	#         accreditation_certificate,format2= self.pool['report'].get_pdf(self._cr, self._uid, [report_xml_certificate.id], 'hwseta_etqe.report_accreditation_certificate', data={}),'pdf'
 	#         certificate_attachment_data = {
@@ -8549,7 +8648,7 @@ class provider_accreditation(models.Model):
 #             ir_model_data_obj = self.env['ir.model.data']
 #             mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_accreditation_approved')
 #             email_template_obj = self.env['email.template']
-#             temp_obj = email_template_obj.browse(mail_template_id[1])        
+#             temp_obj = email_template_obj.browse(mail_template_id[1])
 #             if mail_template_id:
 #                 temp_obj.write({'attachment_ids':[(6, 0, attachment_ids)]})
 #                 self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
@@ -9010,7 +9109,7 @@ class provider_accreditation(models.Model):
 #             count = qual_count + skill_count
 #             if count > 3:
 #                 raise Warning(_('Sorry! You Can Add Maximum 3 Qualifications or Skills Programme.'))
-# 
+#
 #         if self.assessors_ids:
 #             for line in self.assessors_ids:
 #                 ass_count += 1
@@ -9018,7 +9117,7 @@ class provider_accreditation(models.Model):
 #                 raise Warning(_('Please Add Assessor.'))
 #             elif ass_count > count:
 #                 raise Warning(_('Please Remove Assessor.'))
-# 
+#
 #         if self.moderators_ids:
 #             for line in self.moderators_ids:
 #                 mod_count += 1
@@ -9175,13 +9274,13 @@ class learner_assessment_line(models.Model):
 #                     for line in load_learner.proj_enrolled_ids:
 #                         for l in line:
 #                             if l.provider_id.id==provider_id:
-#                                 provider_list.append(load_learner.id) 
+#                                 provider_list.append(load_learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 #         return True
-  
+
 #         learner_obj = self.env['hr.employee'].search([('is_learner', '=', True)])
 #         for learner in learner_obj:
-#             provider_list.append(learner.id) 
+#             provider_list.append(learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 
 		# This code is used to filter and show only logged user's learner on 06/10/2016
@@ -9214,7 +9313,7 @@ class learner_assessment_line(models.Model):
 				for qualification_campus_id in provider_obj.qualification_campus_ids:
 					for quali_id in qualification_campus_id.qualification_id:
 						qualification.append(quali_id.id)
-#         load skill programme as per provider        
+#         load skill programme as per provider
 		skill_programme = []
 		if self._uid == 1:
 			skill_obj = self.env['skills.programme'].search([])
@@ -9275,7 +9374,7 @@ class learner_assessment_line(models.Model):
 #             return res
 #         learner_data = self.env['hr.employee'].browse(learner_id)
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_data.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -9293,8 +9392,8 @@ class learner_assessment_line(models.Model):
 #                             if ul.id not in unit_lst:
 #                                 unit_lst.append(ul.id)
 #                 l1.append(l.learner_qualification_parent_id.id)
-#         
-#         
+#
+#
 #         res.update({
 #                     'value':{
 #                                 'learner_identity_number' : learner_data.learner_reg_no,
@@ -9303,8 +9402,8 @@ class learner_assessment_line(models.Model):
 # #                             'unit_standards_learner_assessment_line_id':[(6,0,[])],
 #                              },
 # #                    'domain':{'unit_standards_learner_assessment_line_id':[('id','in',unit_lst)]}
-#                     }) 
-#         return res       
+#                     })
+#         return res
 	@api.multi
 	def onchange_learner_reg_no(self, learner_identity_number):
 		res = {}
@@ -9325,10 +9424,10 @@ class learner_assessment_line(models.Model):
 #         res = {}
 #         if not identification_id:
 #             return res
-# 
+#
 #         learner_obj = self.env['hr.employee'].search([('identification_id','=',identification_id)])
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_obj.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -9337,7 +9436,7 @@ class learner_assessment_line(models.Model):
 #                         if ul.id not in unit_lst:
 #                             unit_lst.append(ul.id)
 #             l1.append(l.learner_qualification_parent_id.id)
-#         
+#
 #         res.update({
 #                     'value':{
 #                              'learner_id':learner_obj.id,
@@ -9500,7 +9599,7 @@ class provider_assessment(models.Model):
 #                     learners_assessor_id = learner_qual.assessors_id.id
 #                     learners_moderator_id = learner_qual.moderators_id.id
 #                     for unit_line in learner_qual.learner_registration_line_ids:
-#                         if unit_line.achieve == False and unit_line.selection:   
+#                         if unit_line.achieve == False and unit_line.selection:
 #                             # pro_qual_id = self.env['provider.qualification.line'].search([('title', '=', unit_line.title)]).id
 #                             pro_qual_id = self.env['provider.qualification.line'].search([('title', '=', unit_line.title)]).id
 #                             if pro_qual_id:
@@ -11976,7 +12075,7 @@ class provider_assessment(models.Model):
 #             assessors_list = [assessors_rel.assessors_id and assessors_rel.assessors_id.id for assessors_rel in provider_data.assessors_ids]
 #             moderators_list = [moderators_rel.moderators_id and moderators_rel.moderators_id.id for moderators_rel in provider_data.moderators_ids]
 #             return {'domain': {'assessors_id': [('id', 'in', assessors_list)], 'moderators_id': [('id', 'in', moderators_list)] } , 'value':{'provider_accreditation_num': provider_accreditation_num, 'qualification_id':provider_data.qualification_id and provider_data.qualification_id.id, 'learner_ids':learner_line, 'learner_timetables':learner_line, 'learner_verification_ids':learner_line}}
- 
+
 
 #         if provider_id and employer_id:
 #             employee_pool=self.env['hr.employee']
@@ -12052,7 +12151,7 @@ class provider_assessment(models.Model):
 		raise Warning(_('Sorry! You cannot delete the Assessment'))
 		return super(provider_assessment, self).unlink()
 provider_assessment()
-# This class is created to add One2many field in hr.employee  
+# This class is created to add One2many field in hr.employee
 class learner_master_status(models.Model):
 	_name = 'learner.master.status'
 	_description = 'Learner Master Status'
@@ -12063,7 +12162,7 @@ class learner_master_status(models.Model):
 	learner_master_comment = fields.Char(string="Comment")
 	learner_master_date = fields.Datetime(string="Date")
 learner_master_status()
-# This class is created to add One2many field of history in learner.registration  
+# This class is created to add One2many field of history in learner.registration
 class learner_status(models.Model):
 	_name = 'learner.status'
 	_description = 'Learner Status'
@@ -13687,7 +13786,7 @@ class learner_assessment(models.Model):
 	moderators_id = fields.Many2one("hr.employee", 'Moderator', domain=[('is_moderators', '=', True)])
 	pro_learner_id = fields.Many2one('hr.employee', string='Learner')
 	status = fields.Selection([('new', 'New'), ('done', 'Done')], string='Status')
-learner_assessment() 
+learner_assessment()
 
 class learner_provider_rel(models.Model):
 	_name = 'learner.provider.rel'
@@ -13843,7 +13942,7 @@ class hr_employee(models.Model):
 #             moderator_ids = map(lambda x:x[0], self._cr.fetchall())
 #             print "--------moderator_ids--------",moderator_ids
 #             args.append(('id', 'in', moderator_ids))
-#             args.append(('user_id', '=', user))               
+#             args.append(('user_id', '=', user))
 			self._cr.execute("select id from hr_employee where assessor_seq_no='%s'" % (user_data.assessor_moderator_id.assessor_seq_no,))
 			assessor_ids = map(lambda x:x[0], self._cr.fetchall())
 			args.append(('id', 'in', assessor_ids))
@@ -13948,7 +14047,7 @@ class hr_employee(models.Model):
 	logged_provider_id_for_lp = fields.Many2one(related="learning_programme_ids.provider_id")
 #     _sql_constraints = [('am_idno_uniq', 'unique(assessor_moderator_identification_id)',
 #         'R.S.A.Identification No must be unique per Assessor/Moderator!'),]
-#     
+#
 #     _sql_constraints = [('learner_idno_uniq', 'unique(learner_identification_id)',
 #             'Learner Identification Number must be unique per Learner!'), ]
 	# method of Set As Active Button to change state
@@ -14634,13 +14733,13 @@ class learner_assessment_line_for_skills(models.Model):
 #                     for line in load_learner.proj_enrolled_ids:
 #                         for l in line:
 #                             if l.provider_id.id==provider_id:
-#                                 provider_list.append(load_learner.id) 
+#                                 provider_list.append(load_learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 #         return True
-  
+
 #         learner_obj = self.env['hr.employee'].search([('is_learner', '=', True)])
 #         for learner in learner_obj:
-#             provider_list.append(learner.id) 
+#             provider_list.append(learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 
 		# This code is used to filter and show only logged user's learner on 06/10/2016
@@ -14673,7 +14772,7 @@ class learner_assessment_line_for_skills(models.Model):
 				for qualification_campus_id in provider_obj.qualification_campus_ids:
 					for quali_id in qualification_campus_id.qualification_id:
 						qualification.append(quali_id.id)
-#         load skill programme as per provider        
+#         load skill programme as per provider
 		skill_programme = []
 		if self._uid == 1:
 			skill_obj = self.env['skills.programme'].search([])
@@ -14734,7 +14833,7 @@ class learner_assessment_line_for_skills(models.Model):
 #             return res
 #         learner_data = self.env['hr.employee'].browse(learner_id)
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_data.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -14752,8 +14851,8 @@ class learner_assessment_line_for_skills(models.Model):
 #                             if ul.id not in unit_lst:
 #                                 unit_lst.append(ul.id)
 #                 l1.append(l.learner_qualification_parent_id.id)
-#         
-#         
+#
+#
 #         res.update({
 #                     'value':{
 #                                 'learner_identity_number' : learner_data.learner_reg_no,
@@ -14762,8 +14861,8 @@ class learner_assessment_line_for_skills(models.Model):
 # #                             'unit_standards_learner_assessment_line_id':[(6,0,[])],
 #                              },
 # #                    'domain':{'unit_standards_learner_assessment_line_id':[('id','in',unit_lst)]}
-#                     }) 
-#         return res       
+#                     })
+#         return res
 	@api.multi
 	def onchange_learner_reg_no(self, learner_identity_number):
 		res = {}
@@ -14784,10 +14883,10 @@ class learner_assessment_line_for_skills(models.Model):
 #         res = {}
 #         if not identification_id:
 #             return res
-# 
+#
 #         learner_obj = self.env['hr.employee'].search([('identification_id','=',identification_id)])
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_obj.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -14796,7 +14895,7 @@ class learner_assessment_line_for_skills(models.Model):
 #                         if ul.id not in unit_lst:
 #                             unit_lst.append(ul.id)
 #             l1.append(l.learner_qualification_parent_id.id)
-#         
+#
 #         res.update({
 #                     'value':{
 #                              'learner_id':learner_obj.id,
