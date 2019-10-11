@@ -6866,6 +6866,12 @@ class provider_accreditation(models.Model):
 			pass
 		elif self.related_provider or self.env.user.partner_id:
 			dbg('found related')
+			dbg('has provider group?')
+			dbg(self.env.user.has_group('hwseta_etqe.group_providers'))
+			dbg('logged in user = 1?')
+			dbg(self.env.user.id)
+			dbg('self.related_provider = 3?')
+			dbg(self.related_provider.id)
 			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3:
 				dbg('internal user')
 				pass
