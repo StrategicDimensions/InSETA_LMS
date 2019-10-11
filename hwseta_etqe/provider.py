@@ -6849,7 +6849,7 @@ class provider_accreditation(models.Model):
 				this.transaction_type = 'new'
 
 
-	@api.depends('related_provider')
+	@api.depends('related_provider','reapproval','is_existing_provider','is_extension_of_scope')
 	def _get_type_vis(self):
 		dbg('_get_type_vis')
 		if self.reapproval:
