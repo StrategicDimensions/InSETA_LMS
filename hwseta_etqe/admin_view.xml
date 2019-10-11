@@ -988,6 +988,9 @@
 							<field name="is_active_provider"/>
 							<field name="is_existing_provider"/>
 							<field name="is_visible"/>
+							<field name="provider_start_date"/>
+							<field name="provider_end_date"/>
+							<field name="email"/>
 							<field name="phone"/>
 							<field name="mobile"/>
 							<field name="provider_contact_ids"/>
@@ -1028,6 +1031,8 @@
 					<field name="display_name"/>
 					<field name="phone"/>
 					<field name="email"/>
+                    <field name="provider_start_date"/>
+                    <field name="provider_end_date"/>
 				</tree>
 			</field>
 		</record>
@@ -1077,6 +1082,129 @@
 		<!--<menuitem name="providers" id="learner_res_partner_admin_menu" action="action_res_partner_view_admin"-->
 			<!--sequence="1" parent="seta_admin_submenu" groups="hwseta_etqe.group_seta_administrator"/>-->
 		<menuitem name="providers" id="learner_res_partner_admin_menu" action="action_res_partner_view_admin"
+			sequence="1" groups="hwseta_etqe.group_seta_administrator"/>
+        			<!--Bongi - Skills Programme Admin View  -->
+
+		<record id="skills_programme_form_admin" model="ir.ui.view">
+			<field name="name">skills.programme.form.admin</field>
+			<field name="model">skills.programme.learner.rel</field>
+			<!--DOUBLE CHECK ATUAL MODEL NAME-->
+			<field name="arch" type="xml">
+				<form string="Skills Programme">
+					<sheet>
+						<group>
+							<group>
+								<field name="skills_programme_id" on_change="onchange_skills_programme(skills_programme_id)" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+								<field name="start_date"/>
+								<field name="assessors_id"/>
+								<field name="assessor_date"/>
+								<field name="batch_id" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+							</group>
+							<group>
+								<field name="saqa_skill_id"/>
+								<field name="end_date"/>
+								<field name="moderators_id"/>
+								<field name="moderator_date"/>
+								<field name="provider_id"/>
+								<field name="select" invisible="1"/>
+							</group>
+						</group>
+						<group>
+							<field name="unit_standards_line" nolabel="1">
+								<tree string="Unit Standards Line" editable="bottom" delete="false" create="false">
+									<field name="type" readonly="1"/>
+									<field name="id_no" readonly="1"/>
+									<field name="title" readonly="1"/>
+									<field name="level1" readonly="1"/>
+									<field name="level2" readonly="1"/>
+									<field name="level3" readonly="1"/>
+									<field name="selection" readonly="1"/>
+									<field name="achieve" readonly="1"/>
+								</tree>
+
+							</field>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<!--tree view for skills-->
+		<record id="view_skills_programme_tree_admin" model="ir.ui.view">
+			<field name="name">skills.programme.tree.admin</field>
+			<field name="model">skills.programme.learner.rel</field>
+			<!--DOUBLE CHECK ACTIUAL MODEL NAME-->
+			<field name="arch" type="xml">
+				<tree string="Skills Programmme">
+					<field name="saqa_skill_id" invisible="1"/>
+					<field name="skills_programme_id" widget="selection"
+					placeholder="Skills Programme" class="oe_no_button" />
+					<field name="select" invisible="1" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="provider_id" />
+					<field name="certificate_no" />
+					<field name="certificate_date" />
+									<!-- TODO: hard eval-->
+					<field name="is_complete" readonly="1" />
+					<field name="is_learner_achieved" readonly="1" />
+					<field name="assessors_id" />
+					<field name="assessor_date" />
+					<field name="moderators_id" />
+					<field name="moderator_date" />
+					<field name="approval_date" />
+					<field name="batch_id" />
+					<field name="skill_status" />
+				</tree>
+			</field>
+		</record>
+
+		<!--search view for skills-->
+		<record id="view_skills_programme_search_admin" model="ir.ui.view">
+			<field name="name">skills.programme.search.admin</field>
+			<field name="model">skills.programme.learner.rel</field>
+			<field name="arch" type="xml">
+				<search string="Skills Programme Search">
+<!--					<field name="name"/>-->
+<!--					<field name="learner_identification_id" />-->
+					<!-- <field name="learner_reg_no" />  rather search by email/cell number -->
+<!--					<field name="national_id" />-->
+<!--					<group string="Group By">-->
+<!--						<filter string="Status" icon="terp-personal" domain="[]"-->
+<!--							context="{'group_by':'state'}" />-->
+<!--					</group>-->
+				</search>
+			</field>
+		</record>
+
+		<!-- action for skills programme view -->
+		<record id="action_skills_programme_view_admin" model="ir.actions.act_window">
+			<field name="name">Skills Programme Admin</field>
+			<field name="res_model">skills.programme.learner.rel</field>
+			<!--DOUBLE CHECK ACTIUAL MODEL NAME-->
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="view_skills_programme_search_admin" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new Skills Programme.
+				</p>
+			</field>
+		</record>
+		<record id="action_skills_programme_tree_admin" model="ir.actions.act_window.view">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_skills_programme_tree_admin"/>
+			<field name="act_window_id" ref="action_skills_programme_view_admin"/>
+		</record>
+		<record id="action_skills_programme_form_admin" model="ir.actions.act_window.view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="skills_programme_form_admin"/>
+			<field name="act_window_id" ref="action_skills_programme_view_admin"/>
+		</record>
+		<menuitem name="Skills Programmes" id="skills_programme_entry_admin" action="action_skills_programme_view_admin"
 			sequence="1" groups="hwseta_etqe.group_seta_administrator"/>
 
 	</data>
