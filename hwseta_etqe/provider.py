@@ -6877,13 +6877,9 @@ class provider_accreditation(models.Model):
 				etqe_conf = self.env['etqe.config'].search([])
 				vis = False
 				if etqe_conf:
-					dbg('etqe conf found')
 					etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
 					if etqe_brw.before_expiry_visible_days:
-						dbg('found days param')
 						provider_diff = (datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() - datetime.today().date()).days
-						dbg(type(provider_diff))
-						dbg(provider_diff)
 						dbg(' today-' + str(datetime.today().date()) + 'provider_end_date-' +str(provider.provider_end_date))
 						dbg('config days:' + str(etqe_brw.before_expiry_visible_days) + ' today and end date diff:' + str(provider_diff))
 						if datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() > datetime.today().date():
@@ -6892,12 +6888,12 @@ class provider_accreditation(models.Model):
 						else:
 							ext_vis = False
 							dbg('ext_vis = False')
-						if etqe_brw.before_expiry_visible_days > provider_diff:
-							vis = False
-							dbg('vis = False')
-						else:
+						if etqe_brw.before_expiry_visible_days > provider_diff or datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() < datetime.today().date():
 							vis = True
 							dbg('vis = True')
+						else:
+							vis = False
+							dbg('vis = False')
 					else:
 						raise Warning(_('no etqe config for days before expiry'))
 				else:
