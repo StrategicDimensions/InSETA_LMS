@@ -6986,7 +6986,12 @@ class provider_accreditation(models.Model):
 		dbg('onchange_is_extension_of_scope')
 		res = {}
 		if is_extension_of_scope:
-			res.update({'value':{ 'is_existing_provider' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
+			if self.env['res.users'].browse(self._uid).partner_id.optYesNo:
+				res.update({'value': {'is_existing_provider': False,
+									  'accreditation_number': self.env['res.users'].browse(
+										  self._uid).partner_id.alternate_acc_number}})
+			else:
+				res.update({'value':{ 'is_existing_provider' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
 		else:
 			res.update({'value': {'accreditation_number': ''}})
 		return res
