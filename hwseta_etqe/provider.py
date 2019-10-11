@@ -7009,7 +7009,11 @@ class provider_accreditation(models.Model):
 				if provider_acc_obj:
 					return {'value': {'accreditation_number': '','is_extension_of_scope': False},'warning':{'title':'Duplicate Entry','message':'You have already applied for extension of scope.'}}
 				else:
-					provider_objects = self.env['res.partner'].search([('is_active_provider','=',True),('provider_accreditation_num', '=', accreditation_number)])
+					if self.env['res.partner'].search([('is_active_provider','=',True),('provider_accreditation_num', '=', accreditation_number)]):
+						provider_objects = self.env['res.partner'].search([('is_active_provider','=',True),('provider_accreditation_num', '=', accreditation_number)])
+					else:
+						provider_objects = self.env['res.partner'].search([('is_active_provider', '=', True),
+														('alternate_acc_number', '=', accreditation_number)])
 					if not provider_objects:
 						return {'value': {'accreditation_number': '', 'is_extension_of_scope': False }, 'warning':{'title':'Invalid Accreditation Number','message':'Please Enter Correct Accreditation Number of Active Provider!!'}}
 					elif provider_objects:
