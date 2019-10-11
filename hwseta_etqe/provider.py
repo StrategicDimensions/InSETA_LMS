@@ -6921,11 +6921,18 @@ class provider_accreditation(models.Model):
 						dbg('vis and ext vis/ext_and_exist')
 						self.write({'type_visibility': 'ext_and_exist'})
 						self.type_visibility = 'ext_and_exist'
-				elif provider.provider and not provider.optYesNo and not vis:
-					dbg('provider, no opt, no vis/extension')
-					self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':False,'accreditation_number': provider.provider_accreditation_num})
-					self.type_visibility = 'extension'
-					dbg('elif provider.provider and not provider.optYesNo:')
+				elif provider.provider and not vis and ext_vis:
+					if provider.optYesNo:
+						dbg('provider, no opt, no vis/extension')
+						self.write({'type_visibility': 'extension', 'reapproval': False, 'is_existing_provider': False,
+									'accreditation_number': provider.provider.alternate_acc_number})
+						self.type_visibility = 'extension'
+						dbg('elif provider.provider and provider.optYesNo:')
+					else:
+						dbg('provider, no opt, no vis/extension')
+						self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':False,'accreditation_number': provider.provider_accreditation_num})
+						self.type_visibility = 'extension'
+						dbg('elif provider.provider and not provider.optYesNo:')
 				else:
 					dbg('opt ' + str(provider.optYesNo))
 					self.write({'type_visibility': 'new', 'reapproval': False, 'is_existing_provider': False,'is_extension_of_scope':False})
