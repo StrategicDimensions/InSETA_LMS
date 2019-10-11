@@ -7260,12 +7260,13 @@ class provider_accreditation(models.Model):
 							dbg('found days param')
 							provider_diff = (datetime.strptime(provider_obj.provider_end_date,
 															   '%Y-%m-%d').date() - datetime.today().date()).days
-							if is_existing_provider and etqe_brw.before_expiry_visible_days > provider_diff:
+							if etqe_brw.before_expiry_visible_days > provider_diff or datetime.strptime(
+									provider_obj.provider_end_date, '%Y-%m-%d').date() < datetime.today().date():
+								pass
+							else:
 								dbg('already accredited')
 								raise Warning(_("You have already accreditated, Your end date is %s.") % (
 									provider_obj.provider_end_date))
-							else:
-								pass
 						else:
 							raise Warning(_('no etqe config for days before expiry'))
 					else:
