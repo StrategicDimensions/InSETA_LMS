@@ -6886,13 +6886,13 @@ class provider_accreditation(models.Model):
 						dbg(provider_diff)
 						dbg(' today-' + str(datetime.today().date()) + 'provider_end_date-' +str(provider.provider_end_date))
 						dbg('config days:' + str(etqe_brw.before_expiry_visible_days) + ' today and end date diff:' + str(provider_diff))
-						if datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() >  datetime.today().date():
+						if datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() > datetime.today().date():
 							ext_vis = True
 							dbg('ext vis True')
 						else:
 							ext_vis = False
+							dbg('ext_vis = False')
 						if etqe_brw.before_expiry_visible_days > provider_diff:
-							dbg('already accredited')
 							vis = False
 							dbg('vis = False')
 						else:
@@ -6916,19 +6916,19 @@ class provider_accreditation(models.Model):
 						# raise Warning(_('if provider.optYesNo and provider.provider:'))
 						dbg('if provider.optYesNo and provider.provider:')
 				elif provider.provider and not provider.optYesNo and vis:
+					dbg('is a provider, not optyesno, vis is true')
 					if vis and not ext_vis:
-						dbg('opt ' + str(provider.optYesNo))
+						dbg('vis and not ext vis/existing')
 						self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
 						self.type_visibility = 'existing'
 					else:
-						dbg('opt ' + str(provider.optYesNo))
+						dbg('vis and ext vis/ext_and_exist')
 						self.write({'type_visibility': 'ext_and_exist'})
 						self.type_visibility = 'ext_and_exist'
 				elif provider.provider and not provider.optYesNo and not vis:
-					dbg('opt ' + str(provider.optYesNo))
+					dbg('provider, no opt, no vis/extension')
 					self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':False,'accreditation_number': provider.provider_accreditation_num})
 					self.type_visibility = 'extension'
-					# raise Warning(_('elif provider.provider and not provider.optYesNo:'))
 					dbg('elif provider.provider and not provider.optYesNo:')
 				else:
 					dbg('opt ' + str(provider.optYesNo))
