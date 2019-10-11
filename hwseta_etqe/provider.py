@@ -6872,7 +6872,9 @@ class provider_accreditation(models.Model):
 			dbg(self.env.user.id)
 			dbg('self.related_provider = 3?')
 			dbg(self.related_provider.id)
-			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3 or not self.env.user.partner_id.provider:
+			dbg('internal external?')
+			dbg(self.env.user.internal_external_users)
+			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3 or not self.env.user.partner_id.provider or self.env.user.internal_external_users == 'internal':
 				dbg('internal user')
 				pass
 			else:
