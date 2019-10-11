@@ -6961,6 +6961,8 @@ class provider_accreditation(models.Model):
 		if reapproval:
 			res.update({'value': {'is_extension_of_scope': False, 'reapproval':True, 'accreditation_number': self.env['res.users'].browse(
 				self._uid).partner_id.alternate_acc_number}})
+		else:
+			res.update({'value': {'accreditation_number': ''}})
 		return res
 
 	@api.multi
@@ -6969,6 +6971,8 @@ class provider_accreditation(models.Model):
 		res = {}
 		if is_existing_provider:
 			res.update({'value':{ 'is_extension_of_scope' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
+		else:
+			res.update({'value': {'accreditation_number': ''}})
 		return res
 
 	@api.multi
@@ -6977,6 +6981,8 @@ class provider_accreditation(models.Model):
 		res = {}
 		if is_extension_of_scope:
 			res.update({'value':{ 'is_existing_provider' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
+		else:
+			res.update({'value': {'accreditation_number': ''}})
 		return res
 
 	@api.multi
