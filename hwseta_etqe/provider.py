@@ -6925,7 +6925,7 @@ class provider_accreditation(models.Model):
 					if provider.optYesNo:
 						dbg('provider, no opt, no vis/extension')
 						self.write({'type_visibility': 'extension', 'reapproval': False, 'is_existing_provider': False,
-									'accreditation_number': provider.provider.alternate_acc_number})
+									'accreditation_number': provider.alternate_acc_number})
 						self.type_visibility = 'extension'
 						dbg('elif provider.provider and provider.optYesNo:')
 					else:
