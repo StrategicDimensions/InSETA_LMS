@@ -1,6 +1,7 @@
 import base64
 import calendar
 from datetime import datetime
+import datetime as dt
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, tools, api, _
 from openerp.exceptions import Warning
@@ -631,7 +632,7 @@ class learner_registration_qualification(models.Model):
 							  'assessors_id': [('id', 'in', assessors_lst)],
 							  'moderators_id':[('id', 'in', moderators_lst)],
 							  'batch_id':[('id','in',batch_lst)]}}
-#             return {'domain':{'learner_qualification_parent_id': [('id', 'in', qual_id)]}}    
+#             return {'domain':{'learner_qualification_parent_id': [('id', 'in', qual_id)]}}
 		elif qual_id:
 			return {'domain': {'learner_qualification_parent_id': [('id', 'in', qual_id)],
 							   'assessors_id': [('id', 'in', assessors_lst)],
@@ -793,8 +794,8 @@ class assessors_moderators_status(models.Model):
 	am_comment = fields.Char(string="Comment")
 	am_date = fields.Datetime(string="Date")
 	am_updation_date = fields.Datetime(string="Update Date")
-  
-assessors_moderators_status()  
+
+assessors_moderators_status()
 
 class assessors_moderators_qualification(models.Model):
 	_name = 'assessors.moderators.qualification'
@@ -2546,7 +2547,7 @@ class assessors_moderators_register(models.Model):
 #         user_pool = self.env['res.users']
 #         group_pool = self.env['res.groups']
 #         email_to_string=""
-#          
+#
 #         group_obj = group_pool.search([('name', '=', 'ETQE Manager')])
 #         for group_data in group_obj:
 #             print "group_id====",group_data.id
@@ -2557,8 +2558,8 @@ class assessors_moderators_register(models.Model):
 #                     email_to_string=email_to_string + ',' + user_data.partner_id.email
 #                 else:
 #                     email_to_string=user_data.partner_id.email
-#                      
-#         print "email_to_string===",email_to_string            
+#
+#         print "email_to_string===",email_to_string
 #         email_template_obj = self.env['email.template']
 #         ir_model_data_obj = self.env['ir.model.data']
 #         mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_edi_etq11')
@@ -2693,7 +2694,7 @@ class assessors_moderators_register(models.Model):
 #         user_pool = self.env['res.users']
 #         group_pool = self.env['res.groups']
 #         email_to_string=""
-#          
+#
 #         group_obj = group_pool.search([('name', '=', 'ETQE Manager')])
 #         for group_data in group_obj:
 #             user_obj = user_pool.search([('groups_id', '=', group_data.id)])
@@ -2702,7 +2703,7 @@ class assessors_moderators_register(models.Model):
 #                     email_to_string=email_to_string + ',' + user_data.partner_id.email
 #                 else:
 #                     email_to_string=user_data.partner_id.email
-#                      
+#
 #         email_template_obj = self.env['email.template']
 #         ir_model_data_obj = self.env['ir.model.data']
 #         mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_edi_etq11')
@@ -3403,7 +3404,7 @@ class assessors_moderators_register(models.Model):
 			mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_assessor_eos')
 			if mail_template_id:
 				self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
-#             if self.already_registered:            
+#             if self.already_registered:
 #                 etqe_conf = self.env['etqe.config'].search([])
 #                 if etqe_conf:
 #                     new_date = "2018-03-31"
@@ -3442,7 +3443,7 @@ class assessors_moderators_register(models.Model):
 
 #         if self.state == "pending" and self.submitted == False:
 #             raise Warning(_('Sorry! you can not change status to Pending first submit application.'))
-#         
+#
 #         if self.state == "verification" and self.verify == False:
 #             raise Warning(_('Sorry! you can not change status to verification first verify application.'))
 
@@ -3678,7 +3679,7 @@ class provider_master_qualification(models.Model):
 #         ir_model_data_obj = self.env['ir.model.data']
 #         mail_template_id = ir_model_data_obj.get_object_reference('hwseta_sdp', 'email_template_sdf_register_organisation_post_submit')
 #         if mail_template_id:
-#             self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True,context=self.env.context)           
+#             self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True,context=self.env.context)
 
 		return True
 provider_master_qualification()
@@ -3721,7 +3722,7 @@ class etqe_moderators_provider_campus_rel(models.Model):
 			return {'value':{'mwork_email':moderators_obj.work_email, 'mwork_phone':moderators_obj.work_phone}}
 		else:
 			return {}
-etqe_moderators_provider_campus_rel() 
+etqe_moderators_provider_campus_rel()
 
 
 class provider_master_campus_qualification_line(models.Model):
@@ -4240,7 +4241,7 @@ class res_partner(models.Model):
 				sdf = True
 			if group.name == "Providers":
 				provider = True
-#                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)    
+#                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 			if group.name in  ["ETQE Manager", "ETQE Administrator"]:
 				if args:
 					if args[0][0] == 'provider':
@@ -4438,7 +4439,8 @@ class res_partner(models.Model):
 
 	@api.multi
 	def unlink(self):
-		raise Warning(_("Sorry!! You cannot delete Approved record !"))
+		if not self._uid == 1:
+			raise Warning(_("Sorry!! You cannot delete Approved record !"))
 		return super(res_partner, self).unlink()
 
 	@api.multi
@@ -4650,7 +4652,7 @@ class etqe_moderators_provider_rel(models.Model):
 	@api.multi
 	def action_rejected_request(self):
 		self.write({'status':'rejected', 'reject_request':True})
-etqe_moderators_provider_rel() 
+etqe_moderators_provider_rel()
 
 class provider_qualification(models.Model):
 	_name = 'provider.qualification'
@@ -5204,10 +5206,10 @@ class etqe_moderators_provider_accreditation_campus_rel(models.Model):
 	qualification_list = fields.Char('Qualification List', size=1000, default=_get_qualification_list)
 	campus_moderator_sla_document = fields.Many2one('ir.attachment', string="SLA Document")
 	moderator_notification_letter = fields.Many2one('ir.attachment', string="Notification Letter")
- 
+
 	@api.multi
 	def onchange_moderators(self, moderators_id):
- 
+
 		if moderators_id:
 			moderators_obj = self.env['hr.employee'].browse(moderators_id)
 			return {'value':{'mwork_email':moderators_obj.work_email, 'mwork_phone':moderators_obj.work_phone}}
@@ -5290,11 +5292,11 @@ class provider_accreditation_campus(models.Model):
 	@api.multi
 	def _get_image(self, name, args):
 		return dict((p.id, tools.image_get_resized_images(p.image)) for p in self)
- 
+
 	@api.one
 	def _set_image(self, name, value, args):
 		return self.write({'image': tools.image_resize_image_big(value)})
- 
+
 	@api.multi
 	def _has_image(self, name, args):
 		return dict((p.id, bool(p.image)) for p in self)
@@ -5862,7 +5864,7 @@ class etqe_moderators_provider_accreditation_rel(models.Model):
 			return {'value':{'mwork_email':moderators_obj.work_email, 'mwork_phone':moderators_obj.work_phone}}
 		else:
 			return {}
-etqe_moderators_provider_accreditation_rel() 
+etqe_moderators_provider_accreditation_rel()
 
 class skills_programme_unit_standards_accreditation_rel(models.Model):
 	_name = 'skills.programme.unit.standards.accreditation.rel'
@@ -6326,7 +6328,7 @@ class provider_accreditation(models.Model):
 				return super(provider_accreditation, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 			if group.name == "Applicant Skills Development Provider":
 				return super(provider_accreditation, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
-  
+
 		if user == 1:
 			return super(provider_accreditation, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 		else :
@@ -6357,7 +6359,7 @@ class provider_accreditation(models.Model):
 	@api.multi
 	@api.onchange('phone','mobile','fax','email')
 	def onchange_validate_number(self):
-		if self.is_existing_provider == False and self.is_extension_of_scope == False:
+		if self.is_existing_provider == False and self.is_extension_of_scope == False and self.reapproval == False:
 			if self.phone:
 				if not self.phone.isdigit() or len(self.phone) != 10:
 					self.phone = ''
@@ -6385,11 +6387,11 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def _get_image(self, name, args):
 		return dict((p.id, tools.image_get_resized_images(p.image)) for p in self)
- 
+
 	@api.one
 	def _set_image(self, name, value, args):
 		return self.write({'image': tools.image_resize_image_big(value)})
- 
+
 	@api.multi
 	def _has_image(self, name, args):
 		return dict((p.id, bool(p.image)) for p in self)
@@ -6397,7 +6399,7 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def header_addr_map(self):
 		return self.open_map_addr(self.street, self.city, self.state_id, self.country_id, self.zip)
- 
+
 
 	@api.multi
 	def physical_addr_map(self):
@@ -6830,35 +6832,196 @@ class provider_accreditation(models.Model):
 	provider_approval_date = fields.Date(string='Provider Approval Date')
 	provider_register_date = fields.Date(string='Provider Accreditation Date')
 	provider_expiry_date = fields.Date(string='Provider Accreditation Date')
+	# todo: alternate_acc_number to be checked
+
+	@api.depends('reapproval','is_extension_of_scope','is_existing_provider','optYesNo')
+	def _get_transaction_type(self):
+		for this in self:
+			if this.is_existing_provider and not this.optYesNo:
+				this.transaction_type = 'reaccred'
+			elif this.is_extension_of_scope and not this.reapproval:
+				this.transaction_type = 'extension'
+			elif this.reapproval and not this.is_extension_of_scope:
+				this.transaction_type = 'reapproval'
+			elif this.optYesNo and not this.reapproval and not this.is_extension_of_scope:
+				this.transaction_type = 'new_prog_approval'
+			else:
+				this.transaction_type = 'new'
+
+
+	@api.depends('related_provider','reapproval','is_existing_provider','is_extension_of_scope')
+	def _get_type_vis(self):
+		dbg('_get_type_vis')
+		if self.reapproval:
+			dbg('self.reapproval')
+			self.type_visibility = 'reapproval'
+			pass
+		elif self.is_existing_provider:
+			dbg('self.existing')
+			self.type_visibility = 'existing'
+			pass
+		elif self.is_extension_of_scope:
+			dbg('self.extension')
+			self.type_visibility = 'extension'
+			pass
+		elif self.related_provider or self.env.user.partner_id:
+			dbg('found related')
+			dbg('has provider group?')
+			dbg(self.env.user.has_group('hwseta_etqe.group_providers'))
+			dbg('logged in user = 1?')
+			dbg(self.env.user.id)
+			dbg('self.related_provider = 3?')
+			dbg(self.related_provider.id)
+			dbg('internal external?')
+			dbg(self.env.user.internal_external_users)
+			if not self.env.user.has_group('hwseta_etqe.group_providers') or self.env.user.id == 1 or self.related_provider.id == 3 or not self.env.user.partner_id.provider or self.env.user.internal_external_users == 'internal':
+				dbg('internal user')
+				pass
+			else:
+				dbg('not internal user')
+				provider = self.env.user.partner_id
+				dbg(provider)
+				dbg(provider.provider)
+				etqe_conf = self.env['etqe.config'].search([])
+				vis = False
+				if etqe_conf:
+					etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+					if etqe_brw.before_expiry_visible_days:
+						provider_diff = (datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() - datetime.today().date()).days
+						dbg(' today-' + str(datetime.today().date()) + 'provider_end_date-' +str(provider.provider_end_date))
+						dbg('config days:' + str(etqe_brw.before_expiry_visible_days) + ' today and end date diff:' + str(provider_diff))
+						if datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() > datetime.today().date():
+							ext_vis = True
+							dbg('ext vis True')
+						else:
+							ext_vis = False
+							dbg('ext_vis = False')
+						if etqe_brw.before_expiry_visible_days > provider_diff or datetime.strptime(provider.provider_end_date,'%Y-%m-%d').date() < datetime.today().date():
+							vis = True
+							dbg('vis = True')
+						else:
+							vis = False
+							dbg('vis = False')
+					else:
+						raise Warning(_('no etqe config for days before expiry'))
+				else:
+					raise Warning(_('no etqe config found, please contact administrator'))
+				if provider.optYesNo and provider.provider and vis:
+					if vis and not ext_vis:
+						dbg('opt ' + str(provider.optYesNo))
+						self.write({'type_visibility':'reapproval','reapproval':True,'is_existing_provider':False,'accreditation_number':provider.alternate_acc_number})
+						self.type_visibility = 'reapproval'
+						# raise Warning(_('if provider.optYesNo and provider.provider:'))
+						dbg('if provider.optYesNo and provider.provider:')
+					else:
+						dbg('opt ' + str(provider.optYesNo))
+						self.write({'type_visibility': 'ext_and_reapp'})
+						self.type_visibility = 'ext_and_reapp'
+						# raise Warning(_('if provider.optYesNo and provider.provider:'))
+						dbg('if provider.optYesNo and provider.provider:')
+				elif provider.provider and not provider.optYesNo and vis:
+					dbg('is a provider, not optyesno, vis is true')
+					if vis and not ext_vis:
+						dbg('vis and not ext vis/existing')
+						self.write({'type_visibility': 'existing', 'reapproval': False,'is_existing_provider':True,'accreditation_number': provider.provider_accreditation_num})
+						self.type_visibility = 'existing'
+					else:
+						dbg('vis and ext vis/ext_and_exist')
+						self.write({'type_visibility': 'ext_and_exist'})
+						self.type_visibility = 'ext_and_exist'
+				elif provider.provider and not vis and ext_vis:
+					dbg('provider, no vis, ext = true')
+					if provider.optYesNo:
+						dbg('opt true')
+						self.write({'type_visibility': 'extension', 'reapproval': False, 'is_existing_provider': False,
+									'accreditation_number': provider.alternate_acc_number})
+						self.type_visibility = 'extension'
+					else:
+						dbg('no opt')
+						self.write({'type_visibility': 'extension', 'reapproval': False,'is_existing_provider':False,'accreditation_number': provider.provider_accreditation_num})
+						self.type_visibility = 'extension'
+				else:
+					dbg('opt ' + str(provider.optYesNo))
+					self.write({'type_visibility': 'new', 'reapproval': False, 'is_existing_provider': False,'is_extension_of_scope':False})
+					self.type_visibility = 'new'
+					dbg('neither')
+					# raise Warning(_('neither'))
+
+
+	reapproval = fields.Boolean()
+
+	type_visibility = fields.Selection([
+		('new','new'),
+		('reapproval','reapproval'),
+		('ext_and_reapp','ext_and_reapp'),
+		('ext_and_exist','ext_and_exist'),
+		('extension','extension'),
+		('existing','existing')],compute='_get_type_vis')
+
+	transaction_type = fields.Selection([
+		('reaccred','Re-Accreditation'),
+		('extension','Extension Of Scope'),
+		('reapproval','Programme Re-Approval'),
+		('new','New Accreditation'),
+		('new_prog_approval','New Programme Approval'),
+	],compute='_get_transaction_type')
 	_sql_constraints = [('txtVATRegNo_uniq', 'unique(txtVATRegNo)',
 			'VAT Registration Number must be unique!'), ]
 
 	@api.multi
+	def onchange_reapproval(self, reapproval):
+		dbg('onchange_reapproval')
+		res = {}
+		if reapproval:
+			res.update({'value': {'is_extension_of_scope': False, 'reapproval':True, 'accreditation_number': self.env['res.users'].browse(
+				self._uid).partner_id.alternate_acc_number}})
+		else:
+			res.update({'value': {'accreditation_number': ''}})
+		return res
+
+	@api.multi
 	def onchange_is_existing_provider(self, is_existing_provider):
+		dbg('onchange_is_existing_provider')
 		res = {}
 		if is_existing_provider:
 			res.update({'value':{ 'is_extension_of_scope' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
+		else:
+			res.update({'value': {'accreditation_number': ''}})
 		return res
 
 	@api.multi
 	def onchange_is_extension_of_scope(self, is_extension_of_scope):
+		dbg('onchange_is_extension_of_scope')
 		res = {}
 		if is_extension_of_scope:
-			res.update({'value':{ 'is_existing_provider' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
+			if self.env['res.users'].browse(self._uid).partner_id.optYesNo:
+				res.update({'value': {'is_existing_provider': False,
+									  'accreditation_number': self.env['res.users'].browse(
+										  self._uid).partner_id.alternate_acc_number}})
+			else:
+				res.update({'value':{ 'is_existing_provider' : False, 'accreditation_number':self.env['res.users'].browse(self._uid).partner_id.provider_accreditation_num}})
+		else:
+			res.update({'value': {'accreditation_number': ''}})
 		return res
 
 	@api.multi
-	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope):
+	def onchange_accreditation_number(self, accreditation_number, is_existing_provider, is_extension_of_scope, reapproval):
+		dbg('onchange_accreditation_number')
 		res = {}
 		if accreditation_number is None:
 			return res
 		if accreditation_number:
+			# raise Warning(_('reapproval:' + str(reapproval) + '-existing:' + str(is_existing_provider)+ '-extension:' + str(is_extension_of_scope)))
 			if is_extension_of_scope:
 				provider_acc_obj = self.env['provider.accreditation'].search([('accreditation_number', '=', accreditation_number),('is_extension_of_scope', '=', True),('approved', '=', False),('final_state', '!=', 'Rejected')])
 				if provider_acc_obj:
 					return {'value': {'accreditation_number': '','is_extension_of_scope': False},'warning':{'title':'Duplicate Entry','message':'You have already applied for extension of scope.'}}
 				else:
-					provider_objects = self.env['res.partner'].search([('is_active_provider','=',True),('provider_accreditation_num', '=', accreditation_number)])
+					if self.env['res.partner'].search([('is_active_provider','=',True),('provider_accreditation_num', '=', accreditation_number)]):
+						provider_objects = self.env['res.partner'].search([('is_active_provider','=',True),('provider_accreditation_num', '=', accreditation_number)])
+					else:
+						provider_objects = self.env['res.partner'].search([('is_active_provider', '=', True),
+														('alternate_acc_number', '=', accreditation_number)])
 					if not provider_objects:
 						return {'value': {'accreditation_number': '', 'is_extension_of_scope': False }, 'warning':{'title':'Invalid Accreditation Number','message':'Please Enter Correct Accreditation Number of Active Provider!!'}}
 					elif provider_objects:
@@ -6866,8 +7029,26 @@ class provider_accreditation(models.Model):
 						for pro_obj in provider_objects:
 							pro_lst.append(pro_obj.id)
 						provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
-						if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
-							raise Warning(_("You have already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
+						# if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
+						# 	raise Warning(_("You have already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
+						etqe_conf = self.env['etqe.config'].search([])
+						if etqe_conf:
+							dbg('etqe conf found')
+							etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+							if etqe_brw.before_expiry_visible_days:
+								dbg('found days param')
+								provider_diff = (datetime.strptime(provider_obj.provider_end_date,
+																   '%Y-%m-%d').date() - datetime.today().date()).days
+								if is_existing_provider and etqe_brw.before_expiry_visible_days > provider_diff:
+									dbg('already accredited')
+									raise Warning(_("You have already accreditated, Your end date is %s.") % (
+										provider_obj.provider_end_date))
+								else:
+									pass
+							else:
+								raise Warning(_('no etqe config for days before expiry'))
+						else:
+							raise Warning(_('no etqe config found, please contact administrator'))
 						# To fetch qualifications from provider master
 						q_vals_line, skills_vals_line, lp_vals_line, assessors_line, moderators_line = [], [], [], [], []
 						if provider_obj.qualification_ids:
@@ -7100,10 +7281,27 @@ class provider_accreditation(models.Model):
 					for pro_obj in provider_objects:
 						pro_lst.append(pro_obj.id)
 					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
+					etqe_conf = self.env['etqe.config'].search([])
+					if etqe_conf:
+						dbg('etqe conf found')
+						etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+						if etqe_brw.before_expiry_visible_days:
+							dbg('found days param')
+							provider_diff = (datetime.strptime(provider_obj.provider_end_date,
+															   '%Y-%m-%d').date() - datetime.today().date()).days
+							if etqe_brw.before_expiry_visible_days > provider_diff or datetime.strptime(
+									provider_obj.provider_end_date, '%Y-%m-%d').date() < datetime.today().date():
+								pass
+							else:
+								dbg('already accredited')
+								raise Warning(_("You have already accreditated, Your end date is %s.") % (
+									provider_obj.provider_end_date))
+						else:
+							raise Warning(_('no etqe config for days before expiry'))
+					else:
+						raise Warning(_('no etqe config found, please contact administrator'))
 					# commented for now but needs to write logic to get 60 days old date
-#                     if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
-#                         raise Warning(_("You are already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
-					# To fetch qualifications from provider master
+                    # To fetch qualifications from provider master
 					q_vals_line, skills_vals_line, lp_vals_line, assessors_line, moderators_line = [], [], [], [], []
 					if provider_obj.qualification_ids:
 						for q_lines in provider_obj.qualification_ids:
@@ -7319,6 +7517,268 @@ class provider_accreditation(models.Model):
 							'quality_management_system' : provider_obj.quality_management_system and provider_obj.quality_management_system.id,
 					}
 					res.update({'value':partner_vals})
+			elif reapproval:
+				provider_acc_obj = self.env['provider.accreditation'].search(
+					[('accreditation_number', '=', accreditation_number), ('reapproval', '=', True),
+					 ('approved', '=', False), ('final_state', '!=', 'Rejected')])
+				if provider_acc_obj:
+					return {'value': {'accreditation_number': '', 'is_existing_provider': False},
+					        'warning': {'title': 'Duplicate Entry',
+					                    'message': 'You have already applied for Re-approval.'}}
+				provider_objects = self.env['res.partner'].search(
+					[('alternate_acc_number', '=', accreditation_number)])
+				if not provider_objects:
+					return {'value': {'accreditation_number': '', 'is_existing_provider': False},
+					        'warning': {'title': 'Invalid Accreditation Number',
+					                    'message': 'Please Enter Valid Accreditation Number!!'}}
+				elif provider_objects:
+					pro_lst = []
+					for pro_obj in provider_objects:
+						pro_lst.append(pro_obj.id)
+					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
+					# commented for now but needs to write logic to get 60 days old date
+					etqe_conf = self.env['etqe.config'].search([])
+					if etqe_conf:
+						dbg('etqe conf found')
+						etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
+						if etqe_brw.before_expiry_visible_days:
+							dbg('found days param')
+							provider_diff = (datetime.strptime(provider_obj.provider_end_date,
+															   '%Y-%m-%d').date() - datetime.today().date()).days
+							if is_existing_provider and etqe_brw.before_expiry_visible_days > provider_diff:
+								dbg('already accredited')
+								raise Warning(_("You have already accreditated, Your end date is %s.") % (
+									provider_obj.provider_end_date))
+							else:
+								pass
+						else:
+							raise Warning(_('no etqe config for days before expiry'))
+					else:
+						raise Warning(_('no etqe config found, please contact administrator'))
+					#                     if is_existing_provider and str(datetime.today().date()) < provider_obj.provider_end_date:
+					#                         raise Warning(_("You are already accreditated, Your end date is %s.") % (provider_obj.provider_end_date))
+					# To fetch qualifications from provider master
+					q_vals_line, skills_vals_line, lp_vals_line, assessors_line, moderators_line = [], [], [], [], []
+					if provider_obj.qualification_ids:
+						for q_lines in provider_obj.qualification_ids:
+							if q_lines.status == 'approved':
+								qual_master_obj = self.env['provider.qualification'].search(
+									[('id', '=', q_lines.qualification_id.id), ('seta_branch_id', '=', '11')])
+								if qual_master_obj:
+									accreditation_qualification_line = []
+									for lines in q_lines.qualification_line:
+										for data in lines:
+											val = {
+												'name': data.name,
+												'type': data.type,
+												'id_no': data.id_data,
+												'title': data.title,
+												'level1': data.level1,
+												'level2': data.level2,
+												'level3': data.level3,
+												'selection': data.selection,
+												'is_seta_approved': data.is_seta_approved,
+												'is_provider_approved': data.is_provider_approved,
+											}
+											accreditation_qualification_line.append((0, 0, val))
+									q_vals = {
+										'qualification_id': qual_master_obj.id,
+										'saqa_qual_id': qual_master_obj.saqa_qual_id,
+										'minimum_credits': qual_master_obj.m_credits,
+										'qualification_line': accreditation_qualification_line,
+										'assessors_id': q_lines.assessors_id.id,
+										'moderators_id': q_lines.moderators_id.id,
+										'assessor_no': q_lines.assessor_no,
+										'moderator_no': q_lines.moderator_no,
+										'assessor_sla_document': q_lines.assessor_sla_document.id,
+										'moderator_sla_document': q_lines.moderator_sla_document.id,
+									}
+									q_vals_line.append((0, 0, q_vals))
+					# To fetch skills programme from provider master
+					if provider_obj.skills_programme_ids:
+						for skills_lines in provider_obj.skills_programme_ids:
+							if skills_lines.status == 'approved':
+								skill_master_obj = self.env['skills.programme'].search(
+									[('id', '=', skills_lines.skills_programme_id.id),
+									 ('seta_branch_id', '=', '11')])
+								if skill_master_obj:
+									accreditation_skill_line = []
+									for lines in skills_lines.unit_standards_line:
+										for data in lines:
+											if data.selection:
+												val = {
+													'name': data.name,
+													'type': data.type,
+													'id_no': data.id_no,
+													'title': data.title,
+													'level1': data.level1,
+													'level2': data.level2,
+													'level3': data.level3,
+													'selection': data.selection,
+												}
+												accreditation_skill_line.append((0, 0, val))
+									s_vals = {
+										'skills_programme_id': skill_master_obj.id,
+										'saqa_skill_id': skill_master_obj.saqa_qual_id,
+										'unit_standards_line': accreditation_skill_line,
+										'assessors_id': skills_lines.assessors_id.id,
+										'moderators_id': skills_lines.moderators_id.id,
+										'assessor_no': skills_lines.assessor_no,
+										'moderator_no': skills_lines.moderator_no,
+										'assessor_sla_document': skills_lines.assessor_sla_document.id,
+										'moderator_sla_document': skills_lines.moderator_sla_document.id,
+									}
+									skills_vals_line.append((0, 0, s_vals))
+					# To fetch Learning programme from provider master
+					if provider_obj.learning_programme_ids:
+						for lp_lines in provider_obj.learning_programme_ids:
+							if lp_lines.status == 'approved':
+								lp_master_obj = self.env['etqe.learning.programme'].search(
+									[('id', '=', lp_lines.learning_programme_id.id), ('seta_branch_id', '=', '11')])
+								if lp_master_obj:
+									accreditation_lp_line = []
+									for lines in lp_master_obj.unit_standards_line:
+										for data in lines:
+											if data.selection:
+												val = {
+													'name': data.name,
+													'type': data.type,
+													'id_no': data.id_no,
+													'title': data.title,
+													'level1': data.level1,
+													'level2': data.level2,
+													'level3': data.level3,
+													'selection': data.selection,
+													'seta_approved_lp': data.seta_approved_lp,
+													'provider_approved_lp': data.provider_approved_lp,
+												}
+												accreditation_lp_line.append((0, 0, val))
+									s_vals = {
+										'learning_programme_id': lp_master_obj.id,
+										'saqa_qual_id': lp_master_obj.saqa_qual_id,
+										'unit_standards_line': accreditation_lp_line,
+										'assessors_id': lp_lines.assessors_id.id,
+										'moderators_id': lp_lines.moderators_id.id,
+										'assessor_no': lp_lines.assessor_no,
+										'moderator_no': lp_lines.moderator_no,
+										'assessor_sla_document': lp_lines.assessor_sla_document.id,
+										'moderator_sla_document': lp_lines.moderator_sla_document.id,
+									}
+									lp_vals_line.append((0, 0, s_vals))
+					# To fetch assessors from provider master
+					assessors_line = []
+					if provider_obj.assessors_ids:
+						for as_line in provider_obj.assessors_ids:
+							val = {
+								'identification_id': as_line.identification_id,
+								'assessors_id': as_line.assessors_id.id,
+								'awork_email': as_line.awork_email,
+								'awork_phone': as_line.awork_phone,
+								'assessor_sla_document': as_line.assessor_sla_document,
+								'assessor_notification_letter': as_line.assessor_notification_letter,
+							}
+							assessors_line.append((0, 0, val))
+					# To fetch moderators from provider master
+					if provider_obj.moderators_ids:
+						for mo_line in provider_obj.moderators_ids:
+							val = {
+								'identification_id': mo_line.identification_id,
+								'moderators_id': mo_line.moderators_id.id,
+								'mwork_email': mo_line.mwork_email,
+								'mwork_phone': mo_line.mwork_phone,
+								'moderator_sla_document': mo_line.moderator_sla_document,
+								'moderator_notification_letter': mo_line.moderator_notification_letter,
+							}
+							moderators_line.append((0, 0, val))
+					partner_vals = {
+						'name': provider_obj.name,
+						'txtTradeName': provider_obj.provider_trading_name,
+						'street': provider_obj.street,
+						'street2': provider_obj.street2,
+						'street3': provider_obj.street3,
+						'zip': provider_obj.zip,
+						'city': provider_obj.city and provider_obj.city.id,
+						'state_id': provider_obj.state_id and provider_obj.state_id.id,
+						'country_id': provider_obj.country_id and provider_obj.country_id.id,
+						'email': provider_obj.email,
+						'phone': provider_obj.phone,
+						'mobile': provider_obj.mobile,
+						'qualification_id': provider_obj.qualification_id and provider_obj.qualification_id.id,
+						'txtPhysicalAddressLine1': provider_obj.physical_address_1,
+						'txtPhysicalAddressLine2': provider_obj.physical_address_2,
+						'txtPhysicalAddressLine3': provider_obj.physical_address_3,
+						'image': provider_obj.image,
+						'txtRegName': provider_obj.txtRegName,
+						'txtTradeName': provider_obj.txtTradeName,
+						'txtAbbrTradeName': provider_obj.txtAbbrTradeName,
+						'cboOrgLegalStatus': provider_obj.cboOrgLegalStatus and provider_obj.cboOrgLegalStatus.id,
+						'txtCompanyRegNo': provider_obj.txtCompanyRegNo,
+						'txtVATRegNo': provider_obj.txtVATRegNo,
+						'cboOrgSICCode': provider_obj.cboOrgSICCode,
+						'txtSDLNo': provider_obj.txtSDLNo,
+						'cboTHETAChamberSelect': provider_obj.cboTHETAChamberSelect and provider_obj.cboTHETAChamberSelect.id,
+						'cboProviderFocus': provider_obj.cboProviderFocus and provider_obj.cboProviderFocus.id,
+						'txtNumYearsCurrentBusiness': provider_obj.txtNumYearsCurrentBusiness,
+						'txtNumStaffMembers': provider_obj.txtNumStaffMembers,
+						'txtStateAccNumber': provider_obj.txtStateAccNumber,
+						'optAccStatus': provider_obj.optAccStatus,
+						'StatusReason': provider_obj.StatusReason,
+						'SICCode': provider_obj.SICCode,
+						'AccreditationStatus': provider_obj.AccreditationStatus,
+						'cmdNext': provider_obj.cmdNext,
+						'txtWorkEmail': provider_obj.txtWorkEmail,
+						'OrgLegalStatus': provider_obj.OrgLegalStatus,
+						'txtWorkPhone': provider_obj.txtWorkPhone,
+						'AppliedToAnotherSETA': provider_obj.AppliedToAnotherSETA,
+						'optYesNo': provider_obj.optYesNo,
+						'cboSETA': provider_obj.cboSETA and self.cboSETA.id,
+						'SICCode': provider_obj.provider_sic_code,
+						'provider_sars_number': provider_obj.txtSDLNo,
+						'cboOrgSICCode': provider_obj.provider_sic_code,
+						'txtPhysicalAddressLine1': provider_obj.physical_address_1,
+						'txtPhysicalAddressLine2': provider_obj.physical_address_2,
+						'txtPhysicalAddressLine3': provider_obj.physical_address_3,
+						'txtPostalAddressLine1': provider_obj.postal_address_1,
+						'txtPostalAddressLine2': provider_obj.postal_address_2,
+						'txtPostalAddressLine3': provider_obj.postal_address_3,
+						'city_physical': provider_obj.city_physical and provider_obj.city_physical.id,
+						'city_postal': provider_obj.city_postal and provider_obj.city_postal.id,
+						'zip_physical': provider_obj.zip_physical,
+						'zip_postal': provider_obj.zip_postal,
+						'country_code_physical': provider_obj.country_code_physical and provider_obj.country_code_physical.id,
+						'country_code_postal': provider_obj.country_code_postal and provider_obj.country_code_postal.id,
+						'province_code_physical': provider_obj.province_code_physical and provider_obj.province_code_physical.id,
+						'province_code_postal': provider_obj.province_code_postal and provider_obj.province_code_postal.id,
+						'provider_suburb': provider_obj.suburb and provider_obj.suburb.id,
+						'provider_physical_suburb': provider_obj.provider_physical_suburb and provider_obj.provider_physical_suburb.id,
+						'provider_postal_suburb': provider_obj.provider_postal_suburb and provider_obj.provider_postal_suburb.id,
+						'active': True,
+						'website': provider_obj.website,
+						'fax': provider_obj.fax,
+						'material': provider_obj.material,
+						'alternate_acc_number': provider_obj.alternate_acc_number,
+						'qualification_ids': q_vals_line,
+						'skills_programme_ids': skills_vals_line,
+						'learning_programme_ids': lp_vals_line,
+						'assessors_ids': assessors_line,
+						'moderators_ids': moderators_line,
+						'related_provider': provider_obj.id,
+						'cipro_documents': provider_obj.cipro_documents and provider_obj.cipro_documents.id,
+						'tax_clearance': provider_obj.tax_clearance and provider_obj.tax_clearance.id,
+						'lease_agreement_document': provider_obj.lease_agreement_document and provider_obj.lease_agreement_document.id,
+						'director_cv': provider_obj.director_cv and provider_obj.director_cv.id,
+						'certified_copies_of_qualifications': provider_obj.certified_copies_of_qualifications and provider_obj.certified_copies_of_qualifications.id,
+						'professional_body_registration': provider_obj.professional_body_registration and provider_obj.professional_body_registration.id,
+						'workplace_agreement': provider_obj.workplace_agreement and provider_obj.workplace_agreement.id,
+						'business_residence_proof': provider_obj.business_residence_proof and provider_obj.business_residence_proof.id,
+						'provider_learning_material': provider_obj.provider_learning_material and provider_obj.provider_learning_material.id,
+						'skills_programme_registration_letter': provider_obj.skills_programme_registration_letter and provider_obj.skills_programme_registration_letter.id,
+						'company_profile_and_organogram': provider_obj.company_profile_and_organogram and provider_obj.company_profile_and_organogram.id,
+						'quality_management_system': provider_obj.quality_management_system and provider_obj.quality_management_system.id,
+					}
+					res.update({'value': partner_vals})
+			else:raise Warning(_('not existing,not extension, not reapproval'))
+		dbg(res)
 		return res
 
 	@api.multi
@@ -7398,12 +7858,13 @@ class provider_accreditation(models.Model):
 	@api.model
 	def create(self, vals):
 		context = self._context
-		if vals.get('is_extension_of_scope') or vals.get('is_existing_provider') :
+		if vals.get('is_extension_of_scope') or vals.get('is_existing_provider') or vals.get('reapproval'):
 			vals['related_provider'] = self.env['res.users'].browse(self._uid).partner_id.id
 		vals['final_state'] = 'Draft'
 		if not context.get('from_website', False) :
 			vals['provider_register_date'] = datetime.today().date()
 			vals['provider_accreditation_ref'] = self.env['ir.sequence'].get('provider.accreditation.reference')
+		dbg(vals)
 		res = super(provider_accreditation, self).create(vals)
 
 		if res.email:
@@ -7457,7 +7918,7 @@ class provider_accreditation(models.Model):
 			for lp in self.learning_programme_ids:
 					if not lp.assessors_id or not lp.moderators_id or not lp.assessor_sla_document or not lp.moderator_sla_document:
 						raise Warning(_("Please enter required fields of Learning Programme in Main Campus before submit!"))
-		if not self.is_extension_of_scope and not self.is_existing_provider:
+		if not self.is_extension_of_scope and not self.is_existing_provider and not self.reapproval:
 			if self.qualification_ids or self.skills_programme_ids or self.learning_programme_ids:
 				for line in self.qualification_ids:
 					qual_count += 1
@@ -7502,7 +7963,10 @@ class provider_accreditation(models.Model):
 		if not self.is_extension_of_scope:
 			self.write({ 'submitted':True, 'accreditation_state':'submit', 'final_state':'Submitted'})
 		elif self.is_extension_of_scope:
-			self.write({ 'submitted':True,'evaluate':True,'validate':True, 'accreditation_state':'submit', 'final_state':'Recommended2'})
+			# commented original for in case
+			# self.write({ 'submitted':True,'evaluate':True,'validate':True, 'accreditation_state':'submit', 'final_state':'Recommended2'})
+			# self.write({'state':'campus', 'submitted':True, 'evaluate':False, 'validate':False,'denied':False, 'recommended1':False,'recommended2':False, 'accreditation_state':'submit', 'final_state':'evaluated'})
+			self.write({'submitted': True, 'accreditation_state': 'submit', 'final_state': 'Submitted'})
 		#'state':'verification',
 		# Below code is added to send email notification to linked assessors and moderators
 		ir_model_data_obj = self.env['ir.model.data']
@@ -7661,9 +8125,11 @@ class provider_accreditation(models.Model):
 	@api.multi
 	def action_approve_button(self):
 		ir_model_data_obj = self.env['ir.model.data']
+		exists = False
 		if not self.comment_box:
 			raise Warning(_("Please enter status comment"))
-		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider:
+		if (not self.is_existing_provider and not self.is_extension_of_scope) or self.is_existing_provider or self.reapproval:
+			dbg('reapproval tick found' + str(self.reapproval))
 			# code for new provider registration and existing provider
 			self.write({'provider_accreditation_status_ids':[(0, 0, {'pa_name':self.env['res.users'].browse(self._uid).name, 'pa_date':datetime.now(), 'pa_status':'Approved', 'pa_updation_date':self.write_date, 'pa_comment':self.comment_box})]})
 			self.write({'comment_box':''})
@@ -7860,166 +8326,30 @@ class provider_accreditation(models.Model):
 										 'status': provider_contact_vals.image,
 										}
 					credit_provider_campus_contact_lines.append((0, 0, provider_campus_contact_data))
-			# For physical address, longitude and lattitude
-	#
-	#         gmapString=""
-	#         physical_lat_d=""
-	#         physical_lat_m=""
-	#         physical_lat_s=""
-	#         physical_lng_d=""
-	#         physical_lng_m=""
-	#         physical_lng_s=""
-	#
-	#         postal_lat_d=""
-	#         postal_lat_m=""
-	#         postal_lat_s=""
-	#         postal_lng_d=""
-	#         postal_lng_m=""
-	#         postal_lng_s=""
-	#
-	#         if  self.txtPhysicalAddressLine1:
-	#             gmapString=gmapString+self.txtPhysicalAddressLine1;
-	#
-	#         if self.txtPhysicalAddressLine2:
-	#             if self.txtPhysicalAddressLine1:
-	#                 gmapString=gmapString+","+self.txtPhysicalAddressLine2
-	#             else:
-	#                 gmapString=gmapString+self.txtPhysicalAddressLine2
-	#         if self.txtPhysicalAddressLine3:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2:
-	#                 gmapString=gmapString+","+self.txtPhysicalAddressLine3
-	#             else:
-	#                 gmapString=gmapString+self.txtPhysicalAddressLine3
-	#
-	#         if self.provider_physical_suburb and self.provider_physical_suburb.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3:
-	#                 gmapString=gmapString+","+str(self.provider_physical_suburb and self.provider_physical_suburb.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.provider_physical_suburb and self.provider_physical_suburb.name)
-	#
-	#         if self.city_physical and self.city_physical.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3 or self.provider_physical_suburb:
-	#                 gmapString=gmapString+","+str(self.city_physical and self.city_physical.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.city_physical and self.city_physical.name)
-	#
-	#
-	#         if self.province_code_physical and self.province_code_physical.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3 or self.provider_physical_suburb or self.city_physical:
-	#                 gmapString=gmapString+","+str(self.province_code_physical and self.province_code_physical.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.province_code_physical and self.province_code_physical.name)
-	#
-	#         if self.country_code_physical and self.country_code_physical.id:
-	#             if self.txtPhysicalAddressLine1 or self.txtPhysicalAddressLine2 or self.txtPhysicalAddressLine3 or self.provider_physical_suburb or self.city_physical or self.province_code_physical and self.province_code_physical.id:
-	#                 gmapString=gmapString+","+str(self.country_code_physical and self.country_code_physical.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.country_code_physical and self.country_code_physical.name)
-	#
-	#         print gmapString
-	#
-	#         g=geocoder.google(gmapString)
-	#
-	#         print "g.latlng",g.latlng
-	#         if g.latlng:
-	#             if g.latlng[0]:
-	#                 d = int(g.latlng[0])
-	#                 md = abs(g.latlng[0] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#
-	#                 physical_lat_d=str(d)
-	#                 physical_lat_m=str(md)
-	#                 physical_lat_s=str(sd)
-	#
-	#
-	#             if g.latlng[1]:
-	#                 d = int(g.latlng[1])
-	#                 md = abs(g.latlng[1] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#                 physical_lng_d=str(d)
-	#                 physical_lng_m=str(md)
-	#                 physical_lng_s=str(sd)
-	#
-	#         # For postal address, longitude and lattitude
-	#
-	#         gmapString=""
-	#
-	#         if  self.txtPostalAddressLine1:
-	#             gmapString=gmapString+self.txtPostalAddressLine1;
-	#
-	#         if self.txtPostalAddressLine2:
-	#             if self.txtPostalAddressLine1:
-	#                 gmapString=gmapString+","+self.txtPostalAddressLine2
-	#             else:
-	#                 gmapString=gmapString+self.txtPostalAddressLine2
-	#         if self.txtPostalAddressLine3:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2:
-	#                 gmapString=gmapString+","+self.txtPostalAddressLine3
-	#             else:
-	#                 gmapString=gmapString+self.txtPostalAddressLine3
-	#
-	#         if self.provider_postal_suburb and self.provider_postal_suburb.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3:
-	#                 gmapString=gmapString+","+str(self.provider_postal_suburb and self.provider_postal_suburb.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.provider_postal_suburb and self.provider_postal_suburb.name)
-	#
-	#         if self.city_postal and self.city_postal.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3 or self.provider_postal_suburb:
-	#                 gmapString=gmapString+","+str(self.city_postal and self.city_postal.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.city_postal and self.city_postal.name)
-	#
-	#         if self.province_code_postal and self.province_code_postal.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3 or self.provider_postal_suburb or self.city_postal:
-	#                 gmapString=gmapString+","+str(self.province_code_postal and self.province_code_postal.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.province_code_postal and self.province_code_postal.name)
-	#
-	#         if self.country_code_postal and self.country_code_postal.id:
-	#             if self.txtPostalAddressLine1 or self.txtPostalAddressLine2 or self.txtPostalAddressLine3 or self.provider_postal_suburb or self.city_postal or self.province_code_postal and self.province_code_postal.id:
-	#                 gmapString=gmapString+","+str(self.country_code_postal and self.country_code_postal.name)
-	#             else:
-	#                 gmapString=gmapString+str(self.country_code_postal and self.country_code_postal.name)
-	#
-	#         print gmapString
-	#
-	#         g=geocoder.google(gmapString)
-	#
-	#         if g.latlng:
-	#             if g.latlng[0]:
-	#                 d = int(g.latlng[0])
-	#                 md = abs(g.latlng[0] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#
-	#                 postal_lat_d=str(d)
-	#                 postal_lat_m=str(md)
-	#                 postal_lat_s=str(sd)
-	#
-	#
-	#             if g.latlng[1]:
-	#                 d = int(g.latlng[1])
-	#                 md = abs(g.latlng[1] - d) * 60
-	#                 m = int(md)
-	#                 sd = (md - m) * 60
-	#                 postal_lng_d=str(d)
-	#                 postal_lng_m=str(md)
-	#                 postal_lng_s=str(sd)
-			if not self.is_existing_provider:
+			if not self.is_existing_provider or not self.reapproval:
 				provider_accreditation_num = self.env['ir.sequence'].get('provider.accreditation')
 				self.write({'sequence_num': provider_accreditation_num})
-			elif self.is_existing_provider:
-				provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+			elif self.is_existing_provider or self.reapproval:
+				exists = True
+				if self.reapproval:
+					provider_obj = self.env['res.partner'].search(
+						[('alternate_acc_number', '=', self.accreditation_number)])
+					dbg('found existing provider with alt')
+				elif self.is_existing_provider:
+					provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+				else:
+					raise Warning(_('cant find an accreditation number to match against'))
 				pro_lst = []
 				for pro_obj in provider_obj:
 					pro_lst.append(pro_obj.id)
 				if pro_lst:
 					provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
-					provider_accreditation_num = provider_obj.provider_accreditation_num
-					self.write({'sequence_num': provider_accreditation_num})
+					if self.reapproval:
+						provider_accreditation_num = provider_obj.alternate_acc_number
+						self.write({'sequence_num': accreditation_number})
+					elif self.is_existing_provider:
+						provider_accreditation_num = provider_obj.provider_accreditation_num
+						self.write({'sequence_num': provider_accreditation_num})
 				'''For getting old batches for re-accreditation'''
 				provider_obj.write({'is_visible': False})
 				batch_master_obj = self.env['batch.master'].search([('provider_id','=',provider_obj.id)])
@@ -8173,6 +8503,16 @@ class provider_accreditation(models.Model):
 											}
 
 						credit_provider_campus_lines.append((0, 0, provider_campus_data))
+
+			if self.is_existing_provider or self.reapproval:
+				exists = True
+			if self.reapproval:
+				context_accred_num = self.accreditation_number
+			elif self.optYesNo and self.alternate_acc_number:
+				context_accred_num = self.alternate_acc_number
+			else:
+				context_accred_num = provider_accreditation_num
+			dbg('existing----------' + str(exists))
 			partner_vals = {
 							'name':self.name,
 							'street': self.street,
@@ -8189,11 +8529,12 @@ class provider_accreditation(models.Model):
 							'provider_master_contact_ids' : credit_provider_contact_lines,
 							'qualification_line': credit_qualification_line_lines,
 							'qualification_id':self.qualification_id and self.qualification_id.id,
-							'physical_address_1':self.txtPhysicalAddressLine1,
-							'physical_address_2':self.txtPhysicalAddressLine2,
-							'physical_address_3':self.txtPhysicalAddressLine3,
+							# duplicate lines commented
+							# 'physical_address_1':self.txtPhysicalAddressLine1,
+							# 'physical_address_2':self.txtPhysicalAddressLine2,
+							# 'physical_address_3':self.txtPhysicalAddressLine3,
 							'provider':True,
-							'provider_accreditation_num':provider_accreditation_num,
+							'provider_accreditation_num':context_accred_num,
 							'image':self.image,
 							'txtRegName':self.txtRegName,
 							'txtTradeName':self.txtTradeName,
@@ -8249,20 +8590,6 @@ class provider_accreditation(models.Model):
 							'active' : True,
 							'is_visible' : True,
 							'provider_status_Id': 'Accredited',
-
-	#                         'provider_latitude_degree' : physical_lat_d,
-	#                         'provider_latitude_minutes' : physical_lat_m,
-	#                         'provider_latitude_seconds' : physical_lat_s,
-	#                         'provider_longitude_degree' : physical_lng_d,
-	#                         'provider_longitude_minutes' : physical_lng_m,
-	#                         'provider_longitude_seconds' : physical_lng_s,
-	#
-	#                         'provider_latitude_degree_p' : postal_lat_d,
-	#                         'provider_latitude_minutes_p' : postal_lat_m,
-	#                         'provider_latitude_seconds_p' : postal_lat_s,
-	#                         'provider_longitude_degree_p' : postal_lng_d,
-	#                         'provider_longitude_minutes_p' : postal_lng_m,
-	#                         'provider_longitude_seconds_p' : postal_lng_s,
 							'same_as_home':self.same_as_home,
 							'website': self.website,
 							'fax': self.fax,
@@ -8282,8 +8609,12 @@ class provider_accreditation(models.Model):
 							'alternate_acc_number':self.alternate_acc_number,
 							'SDL_No':self.txtSDLNo,
 							'child_ids':credit_provider_campus_lines,
-							'is_existing_provider':self.is_existing_provider,
+							# 'is_existing_provider':self.is_existing_provider,
+							'is_existing_provider':exists,
 						}
+			# raise Warning(_(str(partner_vals)))
+			dbg('creating new partner!!!!!!!!!!!!!!!!!!!!!!!')
+			dbg(partner_vals)
 			partner_id = self.env['res.partner'].create(partner_vals)
 			''' As per new configuration '''
 			etqe_conf = self.env['etqe.config'].search([])
@@ -8316,9 +8647,9 @@ class provider_accreditation(models.Model):
 	#         if mail_template_id:
 			self.write({'state':'approved', 'approved':True, 'related_provider':partner_id.id, 'provider_accreditation_num':provider_accreditation_num, 'final_state':'Approved', 'provider_approval_date':datetime.today().date()})
 #             Commented because Attachement problem in email template
-#             att_obj = self.env['ir.attachment']  
-#             attachment_ids = []   
-#             report_xml_letter = self.env['report']._get_report_from_name('hwseta_etqe.report_letter_of_approval')  
+#             att_obj = self.env['ir.attachment']
+#             attachment_ids = []
+#             report_xml_letter = self.env['report']._get_report_from_name('hwseta_etqe.report_letter_of_approval')
 #             letter_of_approval, format1 = self.pool['report'].get_pdf(self._cr, self._uid, [report_xml_letter.id], 'hwseta_etqe.report_letter_of_approval', data={}), 'pdf'
 #             letter_attachment_data = {
 #                     'name': "Letter of Approval.pdf",
@@ -8328,7 +8659,7 @@ class provider_accreditation(models.Model):
 #                     'res_name': 'provider_accreditation',
 #                     'res_id': self.id,
 #                 }
-#             attachment_ids.append(att_obj.create(letter_attachment_data)[0].id)  
+#             attachment_ids.append(att_obj.create(letter_attachment_data)[0].id)
 	#         report_xml_certificate = self.env['report']._get_report_from_name('hwseta_etqe.report_accreditation_certificate')
 	#         accreditation_certificate,format2= self.pool['report'].get_pdf(self._cr, self._uid, [report_xml_certificate.id], 'hwseta_etqe.report_accreditation_certificate', data={}),'pdf'
 	#         certificate_attachment_data = {
@@ -8344,7 +8675,7 @@ class provider_accreditation(models.Model):
 #             ir_model_data_obj = self.env['ir.model.data']
 #             mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_accreditation_approved')
 #             email_template_obj = self.env['email.template']
-#             temp_obj = email_template_obj.browse(mail_template_id[1])        
+#             temp_obj = email_template_obj.browse(mail_template_id[1])
 #             if mail_template_id:
 #                 temp_obj.write({'attachment_ids':[(6, 0, attachment_ids)]})
 #                 self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
@@ -8727,8 +9058,12 @@ class provider_accreditation(models.Model):
 #                         if etqe_brw.etqa_end_date:
 #                             new_date =sdate + relativedelta(years=etqe_brw.etqa_end_date)
 #                 provider_obj.write({'provider_start_date':sdate,'provider_end_date':new_date})
-			provider_accreditation_num = provider_obj.provider_accreditation_num
-			self.write({'sequence_num': provider_accreditation_num})
+			if self.reapproval:
+				provider_accreditation_num = provider_obj.alternate_acc_number
+				self.write({'sequence_num': provider_accreditation_num})
+			else:
+				provider_accreditation_num = provider_obj.provider_accreditation_num
+				self.write({'sequence_num': provider_accreditation_num})
 			# Below code is written to link provider with given assessors and moderators
 			pro_ass_vals = {
 							'provider_id':provider_obj.id,
@@ -8753,10 +9088,31 @@ class provider_accreditation(models.Model):
 			mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_provider_extension_of_scope')
 			if mail_template_id:
 				self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
+		if self.reapproval:
+			provider_obj = self.env['res.partner'].search(
+				[('alternate_acc_number', '=', self.accreditation_number)])
+			dbg(provider_obj)
+			p_list = []
+			for x in provider_obj:
+				p_list.append(x.id)
+			old_provider_obj = self.env['res.partner'].search([('id','=',min(p_list))])
+			dbg(old_provider_obj)
+			old_provider_obj.write({'is_visible':False})
+			provider_obj = self.env['res.partner'].search(
+				[('alternate_acc_number', '=', self.accreditation_number),('is_visible','=',False)])
+			dbg(provider_obj)
+			seq = provider_obj.alternate_acc_number
+			# raise Warning(_('reapproval' + str(seq)))
+			self.write({'sequence_num':seq})
+		if self.optYesNo and self.alternate_acc_number:
+			# raise Warning(_('found alt and opt' + str(self.optYesNo) + str(self.alternate_acc_number)))
+			self.write({'sequence_num': self.alternate_acc_number})
+		# raise Warning(_(str(self.read())))
 		return True
 
 	@api.multi
 	def write(self, vals):
+		dbg('write')
 		context = self._context
 #         qual_count = 0
 #         skill_count = 0
@@ -8764,7 +9120,16 @@ class provider_accreditation(models.Model):
 #         mod_count = 0
 		if context is None:
 			context = {}
+		if vals.get('accreditation_number'):
+			dbg(vals.get('accreditation_number'))
+		else:
+			if self.accreditation_number == self.alternate_acc_number:
+				vals.update({'accreditation_number':self.accreditation_number,'alternate_acc_number':self.alternate_acc_number})
+			# raise Warning(_('no accred num found' + str(vals.get('accreditation_number')) + 'self accred:' + str(self.accreditation_number) + ' alt:'+ str(vals.get('alternate_acc_number')) + 'alt self:' + str(self.alternate_acc_number)))
+			dbg('no accred num found' + str(vals.get('accreditation_number')) + 'self accred:' + str(self.accreditation_number) + ' alt:'+ str(vals.get('alternate_acc_number')) + 'alt self:' + str(self.alternate_acc_number))
 		res = super(provider_accreditation, self).write(vals)
+		dbg(vals)
+		dbg(context)
 #         provider_accreditation_data = self.browse(cr, uid, ids)
 #         if self.qualification_ids or self.skills_programme_ids:
 #             for line in self.qualification_ids:
@@ -8774,7 +9139,7 @@ class provider_accreditation(models.Model):
 #             count = qual_count + skill_count
 #             if count > 3:
 #                 raise Warning(_('Sorry! You Can Add Maximum 3 Qualifications or Skills Programme.'))
-# 
+#
 #         if self.assessors_ids:
 #             for line in self.assessors_ids:
 #                 ass_count += 1
@@ -8782,7 +9147,7 @@ class provider_accreditation(models.Model):
 #                 raise Warning(_('Please Add Assessor.'))
 #             elif ass_count > count:
 #                 raise Warning(_('Please Remove Assessor.'))
-# 
+#
 #         if self.moderators_ids:
 #             for line in self.moderators_ids:
 #                 mod_count += 1
@@ -8808,27 +9173,33 @@ class provider_accreditation(models.Model):
 			self = self.with_context(qualification_ids=self.qualification_ids)
 		if self.state in ['verification','evaluation','recommended1','recommended2','validated','approved','denied'] and self.env.user.partner_id.provider == True:
 			raise Warning(_('Sorry! you are not authorized to view evaluation process'))
-		if self.state == "verification" and self.submitted == False:
-			raise Warning(_('Sorry! you can not change status to verification first submit application.'))
-		if self.state == "evaluation" and self.verify == False:
-			raise Warning(_('Sorry! you can not change status to evaluation first verify application.'))
-		if self.state == "approved" and self.evaluate == False:
-			raise Warning(_('Sorry! you can not change status to approve first evaluate application.'))
+		# if self.state == "verification" and self.submitted == False:
+		if self.state in ['verification','evaluation','recommended1','recommended2','validated','approved','denied'] and self.submitted == False:
+			raise Warning(_('Sorry! you can not change status to %s first submit application.'%self.state))
+		# if self.state == "evaluation" and self.verify == False:
+		if self.state in ['evaluation','recommended1','recommended2','validated','approved','denied'] and self.verify == False:
+			raise Warning(_('Sorry! you can not change status to %s first verify application.'%self.state))
+		# if self.state == "approved" and self.evaluate == False:
+		if self.state in ['recommended1','recommended2','validated','approved','denied'] and self.evaluate == False:
+			raise Warning(_('Sorry! you can not change status to %s first evaluate application.'%self.state))
 		if self.state == "approved" and self.denied == True:
 			raise Warning(_('Sorry! you can not change status to Approved.'))
 		if self.state == "approved" and self.approved == False:
-			raise Warning(_('Sorry! you can not change status to Approved first Approve application.'))
+			raise Warning(_('Sorry! you can not change status to Approved first Approve application by clicking the button.'))
 		if self.state == "denied" and self.approved == True:
-			raise Warning(_('Sorry! you can not change status to Rejected.'))
+			raise Warning(_('Sorry! you can not change status to Rejected. First reject by clicking the button'))
 		if self.state == "denied" and self.denied == False:
 			raise Warning(_('Sorry! you can not change status to Rejected first Reject application..'))
-		if self.state == "recommended1" and self.evaluate == False:
-			raise Warning(_('Sorry! you can not change status to Recommended first Recommended application..'))
-		if self.state == "validated" and self.recommended1 == False:
-			raise Warning(_('Sorry! you can not change status to Validated first Validate application..'))
-		if self.state == "recommended2" and self.validate == False:
-			raise Warning(_('Sorry! you can not change status to Recommended first Recommended application..'))
-		if not self.is_extension_of_scope and not self.is_existing_provider:
+		# made redundant by a line above
+		# if self.state == "recommended1" and self.evaluate == False:
+		# 	raise Warning(_('Sorry! you can not change status to Recommended first Recommended application..'))
+		# if self.state == "validated" and self.recommended1 == False:
+		if self.state in ['validated','recommended2','approved','denied'] and self.recommended1 == False:
+			raise Warning(_('Sorry! you can not change status to %s first Recommend application..'%self.state))
+		# if self.state == "recommended2" and self.validate == False:
+		if self.state in ['recommended2','approved','denied'] and self.validate == False:
+			raise Warning(_('Sorry! you can not change status to %s first Validate application..'%self.state))
+		if not self.is_extension_of_scope and not self.is_existing_provider and not self.reapproval:
 			for line in self.qualification_ids:
 				if line.qualification_id.is_exit_level_outcomes == False:
 					if line.minimum_credits > line.total_credits:
@@ -8939,13 +9310,13 @@ class learner_assessment_line(models.Model):
 #                     for line in load_learner.proj_enrolled_ids:
 #                         for l in line:
 #                             if l.provider_id.id==provider_id:
-#                                 provider_list.append(load_learner.id) 
+#                                 provider_list.append(load_learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 #         return True
-  
+
 #         learner_obj = self.env['hr.employee'].search([('is_learner', '=', True)])
 #         for learner in learner_obj:
-#             provider_list.append(learner.id) 
+#             provider_list.append(learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 
 		# This code is used to filter and show only logged user's learner on 06/10/2016
@@ -8978,7 +9349,7 @@ class learner_assessment_line(models.Model):
 				for qualification_campus_id in provider_obj.qualification_campus_ids:
 					for quali_id in qualification_campus_id.qualification_id:
 						qualification.append(quali_id.id)
-#         load skill programme as per provider        
+#         load skill programme as per provider
 		skill_programme = []
 		if self._uid == 1:
 			skill_obj = self.env['skills.programme'].search([])
@@ -9039,7 +9410,7 @@ class learner_assessment_line(models.Model):
 #             return res
 #         learner_data = self.env['hr.employee'].browse(learner_id)
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_data.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -9057,8 +9428,8 @@ class learner_assessment_line(models.Model):
 #                             if ul.id not in unit_lst:
 #                                 unit_lst.append(ul.id)
 #                 l1.append(l.learner_qualification_parent_id.id)
-#         
-#         
+#
+#
 #         res.update({
 #                     'value':{
 #                                 'learner_identity_number' : learner_data.learner_reg_no,
@@ -9067,8 +9438,8 @@ class learner_assessment_line(models.Model):
 # #                             'unit_standards_learner_assessment_line_id':[(6,0,[])],
 #                              },
 # #                    'domain':{'unit_standards_learner_assessment_line_id':[('id','in',unit_lst)]}
-#                     }) 
-#         return res       
+#                     })
+#         return res
 	@api.multi
 	def onchange_learner_reg_no(self, learner_identity_number):
 		res = {}
@@ -9089,10 +9460,10 @@ class learner_assessment_line(models.Model):
 #         res = {}
 #         if not identification_id:
 #             return res
-# 
+#
 #         learner_obj = self.env['hr.employee'].search([('identification_id','=',identification_id)])
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_obj.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -9101,7 +9472,7 @@ class learner_assessment_line(models.Model):
 #                         if ul.id not in unit_lst:
 #                             unit_lst.append(ul.id)
 #             l1.append(l.learner_qualification_parent_id.id)
-#         
+#
 #         res.update({
 #                     'value':{
 #                              'learner_id':learner_obj.id,
@@ -9264,7 +9635,7 @@ class provider_assessment(models.Model):
 #                     learners_assessor_id = learner_qual.assessors_id.id
 #                     learners_moderator_id = learner_qual.moderators_id.id
 #                     for unit_line in learner_qual.learner_registration_line_ids:
-#                         if unit_line.achieve == False and unit_line.selection:   
+#                         if unit_line.achieve == False and unit_line.selection:
 #                             # pro_qual_id = self.env['provider.qualification.line'].search([('title', '=', unit_line.title)]).id
 #                             pro_qual_id = self.env['provider.qualification.line'].search([('title', '=', unit_line.title)]).id
 #                             if pro_qual_id:
@@ -10783,120 +11154,120 @@ class provider_assessment(models.Model):
 			dbg(whole_table)
 			self.unit_standard_library_variance = whole_table
 
-	@api.one
-	def check_unit_upline_lp(self):
-		if self.qual_skill_assessment == 'lp':
-			dbg("check_unit_standard_upline")
-			# for this in self:
-			this_us_list = []
-			this_us_id_list = []
-			this_mod_us_list = []
-			this_mod_us_id_list = []
-			this_prov_us_list = []
-			this_ass_us_list = []
-			list_of_dict = []
-			lps_list = []
-			lib_lps = []
-			big_dic = {}
-			text_guy = ""
-			moderator_name = ""
-			assessor_name = ""
-			provider_name = self.provider_id.name
-			for x in self.env['etqe.learning.programme'].search([]):
-				list_of_dict.append({'name': x.name,
-				                     'code': x.saqa_qual_id,
-				                     'skill_code': x.code,
-				                     'list_of_us': [z.id_no for z in x.unit_standards_line]
-				                     })
-				lib_quals.append(x.saqa_qual_id)
-			lib_us_list = [x.id_no for x in self.env['etqe.learning.programme.unit.standards'].search([])]
-			big_dic.update({'lib_lps': lib_lps, 'lib_us': lib_us_list})
-			if self.learner_achieved_ids_for_lp:
-				for prov_lps in self.provider_id.learning_programme_ids:
-					for prov_us in prov_lps.unit_standards_line:
-						if prov_us.id_no not in this_prov_us_list and prov_us.selection:
-							# this_prov_us_list.append([x.id_data for x in prov_us])
-							this_prov_us_list.append(prov_us.id_no)
-				big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
-				for achieved_ids in self.learner_achieved_ids_for_lp:
-					# build qualifications list from assessment
-					for lpz in achieved_ids.qual_learner_assessment_achieved_line_id:
-						if lpz.saqa_qual_id not in lps_list:
-							lps_list.append(lpz.saqa_qual_id)
-					# build assessment US list
-					for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
-						# build list of US db ids to compare US in specific qualification
-						if us not in this_us_id_list:
-							this_us_id_list.append(us)
-						if us.id_no not in this_us_list:
-							this_us_list.append(us.id_no)
-					if achieved_ids.moderators_id:
-						moderator_name = achieved_ids.moderators_id.name
-						# build moderator US list
-						for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
-							for mod_us in mod_qualifications.qualification_line_hr:
-								if mod_us not in this_mod_us_id_list:
-									this_mod_us_id_list.append(mod_us)
-								if mod_us.id_no not in this_mod_us_list:
-									this_mod_us_list.append(mod_us.id_no)
-					if achieved_ids.assessors_id:
-						assessor_name = achieved_ids.assessors_id.name
-						for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
-							for ass_us in ass_qualifications.qualification_line_hr:
-								if ass_us.id_no not in this_ass_us_list:
-									this_ass_us_list.append(ass_us.id_no)
-				big_dic.update({'assessment_quals': quals_list,
-				                'assessment_unit_standards': this_us_list,
-				                'moderator_unit_standards': this_mod_us_list,
-				                'assessor_unit_standards': this_ass_us_list,
-				                'assessor_name': assessor_name,
-				                'moderator_name': moderator_name,
-				                })
-				mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
-				ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
-				prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
-				rows = ''
-				style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
-				start_table = '<table id="lib_units">'
-				header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
-				for x in this_us_list:
-					if x in this_prov_us_list:
-						prov_x = 'x'
-					else:
-						prov_x = x
-					if x in this_ass_us_list:
-						ass_x = 'x'
-					else:
-						ass_x = x
-					if x in this_mod_us_list:
-						mod_x = 'x'
-					else:
-						mod_x = x
-					if x in lib_us_list:
-						lib_x = 'x'
-					else:
-						lib_x = x
-					# dbg(prov_x)
-					# dbg(mod_x)
-					rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
-				# dbg(rows)
-				end_table = '</table>'
-				whole_table = style + start_table + header + rows + end_table
-				dbg(whole_table)
-				self.unit_standard_library_variance = whole_table
-				text_guy += "<h1>Provider:" + provider_name + "</h1>"
-				text_guy += "<h3>In assessment, not in Provider:</h3>"
-				for x in prov_diff:
-					text_guy += "<div>" + str(x) + "</div>"
-				text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
-				text_guy += "<h3>In assessment, not in Moderator:</h3>"
-				for x in mod_diff:
-					text_guy += "<div>" + str(x) + "</div>"
-				text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
-				text_guy += "<h3>In assessment, not in Assessor:</h3>"
-				for x in ass_diff:
-					text_guy += "<div>" + str(x) + "</div>"
-				self.unit_standard_variance = text_guy
+	# @api.one
+	# def check_unit_upline_lp(self):
+	# 	if self.qual_skill_assessment == 'lp':
+	# 		dbg("check_unit_standard_upline")
+	# 		# for this in self:
+	# 		this_us_list = []
+	# 		this_us_id_list = []
+	# 		this_mod_us_list = []
+	# 		this_mod_us_id_list = []
+	# 		this_prov_us_list = []
+	# 		this_ass_us_list = []
+	# 		list_of_dict = []
+	# 		lps_list = []
+	# 		lib_lps = []
+	# 		big_dic = {}
+	# 		text_guy = ""
+	# 		moderator_name = ""
+	# 		assessor_name = ""
+	# 		provider_name = self.provider_id.name
+	# 		for x in self.env['etqe.learning.programme'].search([]):
+	# 			list_of_dict.append({'name': x.name,
+	# 			                     'code': x.saqa_qual_id,
+	# 			                     'skill_code': x.code,
+	# 			                     'list_of_us': [z.id_no for z in x.unit_standards_line]
+	# 			                     })
+	# 			lib_quals.append(x.saqa_qual_id)
+	# 		lib_us_list = [x.id_no for x in self.env['etqe.learning.programme.unit.standards'].search([])]
+	# 		big_dic.update({'lib_lps': lib_lps, 'lib_us': lib_us_list})
+	# 		if self.learner_achieved_ids_for_lp:
+	# 			for prov_lps in self.provider_id.learning_programme_ids:
+	# 				for prov_us in prov_lps.unit_standards_line:
+	# 					if prov_us.id_no not in this_prov_us_list and prov_us.selection:
+	# 						# this_prov_us_list.append([x.id_data for x in prov_us])
+	# 						this_prov_us_list.append(prov_us.id_no)
+	# 			big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
+	# 			for achieved_ids in self.learner_achieved_ids_for_lp:
+	# 				# build qualifications list from assessment
+	# 				for lpz in achieved_ids.qual_learner_assessment_achieved_line_id:
+	# 					if lpz.saqa_qual_id not in lps_list:
+	# 						lps_list.append(lpz.saqa_qual_id)
+	# 				# build assessment US list
+	# 				for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
+	# 					# build list of US db ids to compare US in specific qualification
+	# 					if us not in this_us_id_list:
+	# 						this_us_id_list.append(us)
+	# 					if us.id_no not in this_us_list:
+	# 						this_us_list.append(us.id_no)
+	# 				if achieved_ids.moderators_id:
+	# 					moderator_name = achieved_ids.moderators_id.name
+	# 					# build moderator US list
+	# 					for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
+	# 						for mod_us in mod_qualifications.qualification_line_hr:
+	# 							if mod_us not in this_mod_us_id_list:
+	# 								this_mod_us_id_list.append(mod_us)
+	# 							if mod_us.id_no not in this_mod_us_list:
+	# 								this_mod_us_list.append(mod_us.id_no)
+	# 				if achieved_ids.assessors_id:
+	# 					assessor_name = achieved_ids.assessors_id.name
+	# 					for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
+	# 						for ass_us in ass_qualifications.qualification_line_hr:
+	# 							if ass_us.id_no not in this_ass_us_list:
+	# 								this_ass_us_list.append(ass_us.id_no)
+	# 			big_dic.update({'assessment_quals': quals_list,
+	# 			                'assessment_unit_standards': this_us_list,
+	# 			                'moderator_unit_standards': this_mod_us_list,
+	# 			                'assessor_unit_standards': this_ass_us_list,
+	# 			                'assessor_name': assessor_name,
+	# 			                'moderator_name': moderator_name,
+	# 			                })
+	# 			mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
+	# 			ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
+	# 			prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
+	# 			rows = ''
+	# 			style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
+	# 			start_table = '<table id="lib_units">'
+	# 			header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
+	# 			for x in this_us_list:
+	# 				if x in this_prov_us_list:
+	# 					prov_x = 'x'
+	# 				else:
+	# 					prov_x = x
+	# 				if x in this_ass_us_list:
+	# 					ass_x = 'x'
+	# 				else:
+	# 					ass_x = x
+	# 				if x in this_mod_us_list:
+	# 					mod_x = 'x'
+	# 				else:
+	# 					mod_x = x
+	# 				if x in lib_us_list:
+	# 					lib_x = 'x'
+	# 				else:
+	# 					lib_x = x
+	# 				# dbg(prov_x)
+	# 				# dbg(mod_x)
+	# 				rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
+	# 			# dbg(rows)
+	# 			end_table = '</table>'
+	# 			whole_table = style + start_table + header + rows + end_table
+	# 			dbg(whole_table)
+	# 			self.unit_standard_library_variance = whole_table
+	# 			text_guy += "<h1>Provider:" + provider_name + "</h1>"
+	# 			text_guy += "<h3>In assessment, not in Provider:</h3>"
+	# 			for x in prov_diff:
+	# 				text_guy += "<div>" + str(x) + "</div>"
+	# 			text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
+	# 			text_guy += "<h3>In assessment, not in Moderator:</h3>"
+	# 			for x in mod_diff:
+	# 				text_guy += "<div>" + str(x) + "</div>"
+	# 			text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
+	# 			text_guy += "<h3>In assessment, not in Assessor:</h3>"
+	# 			for x in ass_diff:
+	# 				text_guy += "<div>" + str(x) + "</div>"
+	# 			self.unit_standard_variance = text_guy
 
 	@api.one
 	def check_unit_standard_upline(self):
@@ -11740,7 +12111,7 @@ class provider_assessment(models.Model):
 #             assessors_list = [assessors_rel.assessors_id and assessors_rel.assessors_id.id for assessors_rel in provider_data.assessors_ids]
 #             moderators_list = [moderators_rel.moderators_id and moderators_rel.moderators_id.id for moderators_rel in provider_data.moderators_ids]
 #             return {'domain': {'assessors_id': [('id', 'in', assessors_list)], 'moderators_id': [('id', 'in', moderators_list)] } , 'value':{'provider_accreditation_num': provider_accreditation_num, 'qualification_id':provider_data.qualification_id and provider_data.qualification_id.id, 'learner_ids':learner_line, 'learner_timetables':learner_line, 'learner_verification_ids':learner_line}}
- 
+
 
 #         if provider_id and employer_id:
 #             employee_pool=self.env['hr.employee']
@@ -11816,7 +12187,7 @@ class provider_assessment(models.Model):
 		raise Warning(_('Sorry! You cannot delete the Assessment'))
 		return super(provider_assessment, self).unlink()
 provider_assessment()
-# This class is created to add One2many field in hr.employee  
+# This class is created to add One2many field in hr.employee
 class learner_master_status(models.Model):
 	_name = 'learner.master.status'
 	_description = 'Learner Master Status'
@@ -11827,7 +12198,7 @@ class learner_master_status(models.Model):
 	learner_master_comment = fields.Char(string="Comment")
 	learner_master_date = fields.Datetime(string="Date")
 learner_master_status()
-# This class is created to add One2many field of history in learner.registration  
+# This class is created to add One2many field of history in learner.registration
 class learner_status(models.Model):
 	_name = 'learner.status'
 	_description = 'Learner Status'
@@ -13451,7 +13822,7 @@ class learner_assessment(models.Model):
 	moderators_id = fields.Many2one("hr.employee", 'Moderator', domain=[('is_moderators', '=', True)])
 	pro_learner_id = fields.Many2one('hr.employee', string='Learner')
 	status = fields.Selection([('new', 'New'), ('done', 'Done')], string='Status')
-learner_assessment() 
+learner_assessment()
 
 class learner_provider_rel(models.Model):
 	_name = 'learner.provider.rel'
@@ -13607,7 +13978,7 @@ class hr_employee(models.Model):
 #             moderator_ids = map(lambda x:x[0], self._cr.fetchall())
 #             print "--------moderator_ids--------",moderator_ids
 #             args.append(('id', 'in', moderator_ids))
-#             args.append(('user_id', '=', user))               
+#             args.append(('user_id', '=', user))
 			self._cr.execute("select id from hr_employee where assessor_seq_no='%s'" % (user_data.assessor_moderator_id.assessor_seq_no,))
 			assessor_ids = map(lambda x:x[0], self._cr.fetchall())
 			args.append(('id', 'in', assessor_ids))
@@ -13712,7 +14083,7 @@ class hr_employee(models.Model):
 	logged_provider_id_for_lp = fields.Many2one(related="learning_programme_ids.provider_id")
 #     _sql_constraints = [('am_idno_uniq', 'unique(assessor_moderator_identification_id)',
 #         'R.S.A.Identification No must be unique per Assessor/Moderator!'),]
-#     
+#
 #     _sql_constraints = [('learner_idno_uniq', 'unique(learner_identification_id)',
 #             'Learner Identification Number must be unique per Learner!'), ]
 	# method of Set As Active Button to change state
@@ -14398,13 +14769,13 @@ class learner_assessment_line_for_skills(models.Model):
 #                     for line in load_learner.proj_enrolled_ids:
 #                         for l in line:
 #                             if l.provider_id.id==provider_id:
-#                                 provider_list.append(load_learner.id) 
+#                                 provider_list.append(load_learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 #         return True
-  
+
 #         learner_obj = self.env['hr.employee'].search([('is_learner', '=', True)])
 #         for learner in learner_obj:
-#             provider_list.append(learner.id) 
+#             provider_list.append(learner.id)
 #         return {'domain': {'learner_id': [('id', 'in', provider_list)]}}
 
 		# This code is used to filter and show only logged user's learner on 06/10/2016
@@ -14437,7 +14808,7 @@ class learner_assessment_line_for_skills(models.Model):
 				for qualification_campus_id in provider_obj.qualification_campus_ids:
 					for quali_id in qualification_campus_id.qualification_id:
 						qualification.append(quali_id.id)
-#         load skill programme as per provider        
+#         load skill programme as per provider
 		skill_programme = []
 		if self._uid == 1:
 			skill_obj = self.env['skills.programme'].search([])
@@ -14498,7 +14869,7 @@ class learner_assessment_line_for_skills(models.Model):
 #             return res
 #         learner_data = self.env['hr.employee'].browse(learner_id)
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_data.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -14516,8 +14887,8 @@ class learner_assessment_line_for_skills(models.Model):
 #                             if ul.id not in unit_lst:
 #                                 unit_lst.append(ul.id)
 #                 l1.append(l.learner_qualification_parent_id.id)
-#         
-#         
+#
+#
 #         res.update({
 #                     'value':{
 #                                 'learner_identity_number' : learner_data.learner_reg_no,
@@ -14526,8 +14897,8 @@ class learner_assessment_line_for_skills(models.Model):
 # #                             'unit_standards_learner_assessment_line_id':[(6,0,[])],
 #                              },
 # #                    'domain':{'unit_standards_learner_assessment_line_id':[('id','in',unit_lst)]}
-#                     }) 
-#         return res       
+#                     })
+#         return res
 	@api.multi
 	def onchange_learner_reg_no(self, learner_identity_number):
 		res = {}
@@ -14548,10 +14919,10 @@ class learner_assessment_line_for_skills(models.Model):
 #         res = {}
 #         if not identification_id:
 #             return res
-# 
+#
 #         learner_obj = self.env['hr.employee'].search([('identification_id','=',identification_id)])
 #         l1 =[]
-#         unit_lst=[] 
+#         unit_lst=[]
 #         for l in learner_obj.learner_qualification_ids:
 #             ulst = self.env['learner.registration.qualification.line'].search([('learner_reg_id','=',l.id)])
 #             if ulst:
@@ -14560,7 +14931,7 @@ class learner_assessment_line_for_skills(models.Model):
 #                         if ul.id not in unit_lst:
 #                             unit_lst.append(ul.id)
 #             l1.append(l.learner_qualification_parent_id.id)
-#         
+#
 #         res.update({
 #                     'value':{
 #                              'learner_id':learner_obj.id,

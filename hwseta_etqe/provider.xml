@@ -1410,9 +1410,12 @@
 					<field name="email" widget="email" />
 					<field name="provider_register_date" />
 					<field name="provider_approval_date" />
-					<field name="is_extension_of_scope"/>
-					<field name="is_existing_provider"/>
-					<field name="final_state" />  
+					<field name="is_extension_of_scope" invisible="1"/>
+					<field name="is_existing_provider" invisible="1"/>
+					<field name="reapproval" invisible="1"/>
+					<field name="optYesNo" invisible="1"/>
+					<field name="final_state" />
+					<field name="transaction_type" />
 					<!-- <field name="approved"/> -->
 				</tree>
 			</field>
@@ -1432,7 +1435,10 @@
 						<field name="recommended1" invisible="1" />
 						<field name="validate" invisible="1" />
 						<field name="recommended2" invisible="1" />
-						<!-- <button name="action_submit_button" string="Submit" type="object" 
+						<field name="type_visibility" invisible="1" />
+						<field name="related_provider" invisible="1" />
+						<field name="optYesNo" invisible="1" />
+						<!-- <button name="action_submit_button" string="Submit" type="object"
 							class="oe_highlight" attrs="{'invisible':['|',('submitted','=',True)]}"/> 
 							<button name="action_approve_button" states="pending" string="Approve" type="object" 
 							class="oe_highlight" attrs="{'invisible':['|',('approved','=',True),('submitted','=',False)]}"/> -->
@@ -1472,9 +1478,7 @@
 							type="object" class="oe_highlight"
 						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
 							attrs="{'invisible':[('state','not in',['denied'])]}" />
-						<!--<field name="state" widget="statusbar" clickable="True"
-							statusbar_visible="general_details,qualification,campus,recommended2,approved,denied"
-							statusbar_colors='{"general_details":"blue"}' attrs="{'invisible':[('is_extension_of_scope','=',False)]}"/>-->
+
 						<field name="state" widget="statusbar" clickable="True"
 							statusbar_visible="general_details,general_business_information,address_info,qualification, campus,verification,evaluation,recommended1,validated,recommended2,approved,denied"
 							statusbar_colors='{"campus":"blue"}'/>
@@ -1485,21 +1489,30 @@
 						<div class="oe_title oe_left"
 							attrs="{'invisible':[('state','in',['general_business_information','address_info','campus','qualification','verification','evaluation','recommended1','validated','recommended2'])]}">
 							<div class="oe_edit_only">
-								<field name="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])]}"
+								<field name="type_visibility"/>
+								<field name="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['existing','ext_and_exist'])]}"
 									on_change="onchange_is_existing_provider(is_existing_provider)"
-									invisible="context.get('active')" />
-								<label for="is_existing_provider" invisible="context.get('active')" />
-								<field name="is_extension_of_scope" invisible="not context.get('active')" attrs="{'readonly':[('state','not in',['general_details'])]}"
+									/>
+								<label for="is_existing_provider" attrs="{'invisible':[('type_visibility','not in',['existing','ext_and_exist'])]}" />
+							</div>
+							<div class="oe_edit_only">
+								<field name="is_extension_of_scope" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['extension','ext_and_exist','ext_and_reapp'])]}"
 									on_change="onchange_is_extension_of_scope(is_extension_of_scope)" />
-								<label for="is_extension_of_scope" invisible="not context.get('active')" />
+								<label for="is_extension_of_scope" attrs="{'invisible':[('type_visibility','not in',['extension','ext_and_exist','ext_and_reapp'])]}" />
+							</div>
+							<div class="oe_edit_only">
+								<field name="reapproval" on_change="onchange_reapproval(reapproval)"
+                                       attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['reapproval','ext_and_reapp'])]}"
+									/>
+								<label for="reapproval" attrs="{'invisible':[('type_visibility','not in',['reapproval','ext_and_reapp'])]}" string="Programme Re-Approval"/>
 							</div>
 
 							<div class="oe_edit_only"
-								attrs="{'invisible':[('is_existing_provider','=',False),('is_extension_of_scope','=',False)]}">
+								attrs="{'invisible':[('is_existing_provider','=',False),('is_extension_of_scope','=',False),('reapproval','=',False)]}">
 								<label for="accreditation_number" />
 								<field name="accreditation_number"
 									attrs="{'required':['|',('is_existing_provider','=',True),('is_extension_of_scope','=',True)],'readonly':[('approved','=',True)]}"
-									on_change="onchange_accreditation_number(accreditation_number,is_existing_provider,is_extension_of_scope)"
+									on_change="onchange_accreditation_number(accreditation_number,is_existing_provider,is_extension_of_scope,reapproval)"
 									placeholder="Accreditation Number" />
 							</div>
 							<div class="oe_edit_only">
@@ -2613,6 +2626,7 @@
 						<filter string="Province Physical Address" icon="terp-personal" domain="[]" context="{'group_by':'province_code_physical'}"/>
 						<filter string="Postal Province" icon="terp-personal" domain="[]" context="{'group_by':'province_code_postal'}"/>
 						<filter string="Provider Accreditation Date" icon="terp-personal" domain="[]" context="{'group_by':'provider_register_date'}"/>
+						<filter string="Transaction Type" icon="terp-personal" domain="[]" context="{'group_by':'transaction_type'}"/>
 						<filter string="Provider Approval Date" icon="terp-personal" domain="[]" context="{'group_by':'provider_approval_date'}"/>
 						<filter string="Extension of Scope" icon="terp-personal" domain="[('is_extension_of_scope','=',True)]" context="{'group_by':'is_extension_of_scope'}"/>
 						<filter string="Re-Accreditation" icon="terp-personal" domain="[('is_existing_provider','=',True)]" context="{'group_by':'is_existing_provider'}"/>

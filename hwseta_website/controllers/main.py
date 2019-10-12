@@ -15,6 +15,19 @@ import ast
 from openerp.addons.web.controllers.main import ensure_db
 from openerp.addons.web.controllers.main import Home
 from operator import itemgetter
+DEBUG = True
+
+if DEBUG:
+	import logging
+
+	logger = logging.getLogger(__name__)
+
+
+	def dbg(msg):
+		logger.info(msg)
+else:
+	def dbg(msg):
+		pass
 
 class Website(openerp.addons.website.controllers.main.Website):
     qualification=[]
@@ -340,6 +353,10 @@ class Website(openerp.addons.website.controllers.main.Website):
                 if str(post.get('optYesNo'))=='yes':
                     values['optYesNo']=True
                     values['alternate_acc_number']=post.get('SETA')
+                    values['accreditation_number'] = post.get('SETA')
+                    # values['reapproval'] = True
+                    dbg(values['alternate_acc_number'])
+                    dbg(values['accreditation_number'])
                 elif str(post.get('optYesNo'))=='no':
                     values['optYesNo']=False                
             values['street'] = post.get('txtCmpStreet1','')
@@ -917,6 +934,8 @@ class Website(openerp.addons.website.controllers.main.Website):
             todays_date = str(datetime.datetime.now().date())
             values['provider_register_date'] = datetime.datetime.strptime(todays_date, "%Y-%m-%d").date()                
             context.update({'from_website':True})
+            dbg(values)
+            # raise Warning(_(values))
             res = provider_accreditation_obj.create(cr,SUPERUSER_ID,values,context)
 #             if q_vals_line:
 #                 provider_accreditation_obj.browse(cr,SUPERUSER_ID,res).write({'qualification_ids':q_vals_line,'skills_programme_ids':s_vals_line,'provider_accreditation_ref':post.get('provider_accreditation_ref',''),'acc_multi_doc_upload_ids':doc_vals})
