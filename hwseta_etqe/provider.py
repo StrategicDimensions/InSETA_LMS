@@ -9172,26 +9172,32 @@ class provider_accreditation(models.Model):
 			self = self.with_context(qualification_ids=self.qualification_ids)
 		if self.state in ['verification','evaluation','recommended1','recommended2','validated','approved','denied'] and self.env.user.partner_id.provider == True:
 			raise Warning(_('Sorry! you are not authorized to view evaluation process'))
-		if self.state == "verification" and self.submitted == False:
-			raise Warning(_('Sorry! you can not change status to verification first submit application.'))
-		if self.state == "evaluation" and self.verify == False:
-			raise Warning(_('Sorry! you can not change status to evaluation first verify application.'))
-		if self.state == "approved" and self.evaluate == False:
-			raise Warning(_('Sorry! you can not change status to approve first evaluate application.'))
+		# if self.state == "verification" and self.submitted == False:
+		if self.state in ['verification','evaluation','recommended1','recommended2','validated','approved','denied'] and self.submitted == False:
+			raise Warning(_('Sorry! you can not change status to %s first submit application.'%self.state))
+		# if self.state == "evaluation" and self.verify == False:
+		if self.state in ['evaluation','recommended1','recommended2','validated','approved','denied'] and self.verify == False:
+			raise Warning(_('Sorry! you can not change status to %s first verify application.'%self.state))
+		# if self.state == "approved" and self.evaluate == False:
+		if self.state in ['recommended1','recommended2','validated','approved','denied'] and self.evaluate == False:
+			raise Warning(_('Sorry! you can not change status to %s first evaluate application.'%self.state))
 		if self.state == "approved" and self.denied == True:
 			raise Warning(_('Sorry! you can not change status to Approved.'))
 		if self.state == "approved" and self.approved == False:
-			raise Warning(_('Sorry! you can not change status to Approved first Approve application.'))
+			raise Warning(_('Sorry! you can not change status to Approved first Approve application by clicking the button.'))
 		if self.state == "denied" and self.approved == True:
-			raise Warning(_('Sorry! you can not change status to Rejected.'))
+			raise Warning(_('Sorry! you can not change status to Rejected. First reject by clicking the button'))
 		if self.state == "denied" and self.denied == False:
 			raise Warning(_('Sorry! you can not change status to Rejected first Reject application..'))
-		if self.state == "recommended1" and self.evaluate == False:
-			raise Warning(_('Sorry! you can not change status to Recommended first Recommended application..'))
-		if self.state == "validated" and self.recommended1 == False:
-			raise Warning(_('Sorry! you can not change status to Validated first Validate application..'))
-		if self.state == "recommended2" and self.validate == False:
-			raise Warning(_('Sorry! you can not change status to Recommended first Recommended application..'))
+		# made redundant by a line above
+		# if self.state == "recommended1" and self.evaluate == False:
+		# 	raise Warning(_('Sorry! you can not change status to Recommended first Recommended application..'))
+		# if self.state == "validated" and self.recommended1 == False:
+		if self.state in ['validated','recommended2','approved','denied'] and self.recommended1 == False:
+			raise Warning(_('Sorry! you can not change status to %s first Recommend application..'%self.state))
+		# if self.state == "recommended2" and self.validate == False:
+		if self.state in ['recommended2','approved','denied'] and self.validate == False:
+			raise Warning(_('Sorry! you can not change status to %s first Validate application..'%self.state))
 		if not self.is_extension_of_scope and not self.is_existing_provider and not self.reapproval:
 			for line in self.qualification_ids:
 				if line.qualification_id.is_exit_level_outcomes == False:
@@ -11147,120 +11153,120 @@ class provider_assessment(models.Model):
 			dbg(whole_table)
 			self.unit_standard_library_variance = whole_table
 
-	@api.one
-	def check_unit_upline_lp(self):
-		if self.qual_skill_assessment == 'lp':
-			dbg("check_unit_standard_upline")
-			# for this in self:
-			this_us_list = []
-			this_us_id_list = []
-			this_mod_us_list = []
-			this_mod_us_id_list = []
-			this_prov_us_list = []
-			this_ass_us_list = []
-			list_of_dict = []
-			lps_list = []
-			lib_lps = []
-			big_dic = {}
-			text_guy = ""
-			moderator_name = ""
-			assessor_name = ""
-			provider_name = self.provider_id.name
-			for x in self.env['etqe.learning.programme'].search([]):
-				list_of_dict.append({'name': x.name,
-				                     'code': x.saqa_qual_id,
-				                     'skill_code': x.code,
-				                     'list_of_us': [z.id_no for z in x.unit_standards_line]
-				                     })
-				lib_quals.append(x.saqa_qual_id)
-			lib_us_list = [x.id_no for x in self.env['etqe.learning.programme.unit.standards'].search([])]
-			big_dic.update({'lib_lps': lib_lps, 'lib_us': lib_us_list})
-			if self.learner_achieved_ids_for_lp:
-				for prov_lps in self.provider_id.learning_programme_ids:
-					for prov_us in prov_lps.unit_standards_line:
-						if prov_us.id_no not in this_prov_us_list and prov_us.selection:
-							# this_prov_us_list.append([x.id_data for x in prov_us])
-							this_prov_us_list.append(prov_us.id_no)
-				big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
-				for achieved_ids in self.learner_achieved_ids_for_lp:
-					# build qualifications list from assessment
-					for lpz in achieved_ids.qual_learner_assessment_achieved_line_id:
-						if lpz.saqa_qual_id not in lps_list:
-							lps_list.append(lpz.saqa_qual_id)
-					# build assessment US list
-					for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
-						# build list of US db ids to compare US in specific qualification
-						if us not in this_us_id_list:
-							this_us_id_list.append(us)
-						if us.id_no not in this_us_list:
-							this_us_list.append(us.id_no)
-					if achieved_ids.moderators_id:
-						moderator_name = achieved_ids.moderators_id.name
-						# build moderator US list
-						for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
-							for mod_us in mod_qualifications.qualification_line_hr:
-								if mod_us not in this_mod_us_id_list:
-									this_mod_us_id_list.append(mod_us)
-								if mod_us.id_no not in this_mod_us_list:
-									this_mod_us_list.append(mod_us.id_no)
-					if achieved_ids.assessors_id:
-						assessor_name = achieved_ids.assessors_id.name
-						for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
-							for ass_us in ass_qualifications.qualification_line_hr:
-								if ass_us.id_no not in this_ass_us_list:
-									this_ass_us_list.append(ass_us.id_no)
-				big_dic.update({'assessment_quals': quals_list,
-				                'assessment_unit_standards': this_us_list,
-				                'moderator_unit_standards': this_mod_us_list,
-				                'assessor_unit_standards': this_ass_us_list,
-				                'assessor_name': assessor_name,
-				                'moderator_name': moderator_name,
-				                })
-				mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
-				ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
-				prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
-				rows = ''
-				style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
-				start_table = '<table id="lib_units">'
-				header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
-				for x in this_us_list:
-					if x in this_prov_us_list:
-						prov_x = 'x'
-					else:
-						prov_x = x
-					if x in this_ass_us_list:
-						ass_x = 'x'
-					else:
-						ass_x = x
-					if x in this_mod_us_list:
-						mod_x = 'x'
-					else:
-						mod_x = x
-					if x in lib_us_list:
-						lib_x = 'x'
-					else:
-						lib_x = x
-					# dbg(prov_x)
-					# dbg(mod_x)
-					rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
-				# dbg(rows)
-				end_table = '</table>'
-				whole_table = style + start_table + header + rows + end_table
-				dbg(whole_table)
-				self.unit_standard_library_variance = whole_table
-				text_guy += "<h1>Provider:" + provider_name + "</h1>"
-				text_guy += "<h3>In assessment, not in Provider:</h3>"
-				for x in prov_diff:
-					text_guy += "<div>" + str(x) + "</div>"
-				text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
-				text_guy += "<h3>In assessment, not in Moderator:</h3>"
-				for x in mod_diff:
-					text_guy += "<div>" + str(x) + "</div>"
-				text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
-				text_guy += "<h3>In assessment, not in Assessor:</h3>"
-				for x in ass_diff:
-					text_guy += "<div>" + str(x) + "</div>"
-				self.unit_standard_variance = text_guy
+	# @api.one
+	# def check_unit_upline_lp(self):
+	# 	if self.qual_skill_assessment == 'lp':
+	# 		dbg("check_unit_standard_upline")
+	# 		# for this in self:
+	# 		this_us_list = []
+	# 		this_us_id_list = []
+	# 		this_mod_us_list = []
+	# 		this_mod_us_id_list = []
+	# 		this_prov_us_list = []
+	# 		this_ass_us_list = []
+	# 		list_of_dict = []
+	# 		lps_list = []
+	# 		lib_lps = []
+	# 		big_dic = {}
+	# 		text_guy = ""
+	# 		moderator_name = ""
+	# 		assessor_name = ""
+	# 		provider_name = self.provider_id.name
+	# 		for x in self.env['etqe.learning.programme'].search([]):
+	# 			list_of_dict.append({'name': x.name,
+	# 			                     'code': x.saqa_qual_id,
+	# 			                     'skill_code': x.code,
+	# 			                     'list_of_us': [z.id_no for z in x.unit_standards_line]
+	# 			                     })
+	# 			lib_quals.append(x.saqa_qual_id)
+	# 		lib_us_list = [x.id_no for x in self.env['etqe.learning.programme.unit.standards'].search([])]
+	# 		big_dic.update({'lib_lps': lib_lps, 'lib_us': lib_us_list})
+	# 		if self.learner_achieved_ids_for_lp:
+	# 			for prov_lps in self.provider_id.learning_programme_ids:
+	# 				for prov_us in prov_lps.unit_standards_line:
+	# 					if prov_us.id_no not in this_prov_us_list and prov_us.selection:
+	# 						# this_prov_us_list.append([x.id_data for x in prov_us])
+	# 						this_prov_us_list.append(prov_us.id_no)
+	# 			big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
+	# 			for achieved_ids in self.learner_achieved_ids_for_lp:
+	# 				# build qualifications list from assessment
+	# 				for lpz in achieved_ids.qual_learner_assessment_achieved_line_id:
+	# 					if lpz.saqa_qual_id not in lps_list:
+	# 						lps_list.append(lpz.saqa_qual_id)
+	# 				# build assessment US list
+	# 				for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
+	# 					# build list of US db ids to compare US in specific qualification
+	# 					if us not in this_us_id_list:
+	# 						this_us_id_list.append(us)
+	# 					if us.id_no not in this_us_list:
+	# 						this_us_list.append(us.id_no)
+	# 				if achieved_ids.moderators_id:
+	# 					moderator_name = achieved_ids.moderators_id.name
+	# 					# build moderator US list
+	# 					for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
+	# 						for mod_us in mod_qualifications.qualification_line_hr:
+	# 							if mod_us not in this_mod_us_id_list:
+	# 								this_mod_us_id_list.append(mod_us)
+	# 							if mod_us.id_no not in this_mod_us_list:
+	# 								this_mod_us_list.append(mod_us.id_no)
+	# 				if achieved_ids.assessors_id:
+	# 					assessor_name = achieved_ids.assessors_id.name
+	# 					for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
+	# 						for ass_us in ass_qualifications.qualification_line_hr:
+	# 							if ass_us.id_no not in this_ass_us_list:
+	# 								this_ass_us_list.append(ass_us.id_no)
+	# 			big_dic.update({'assessment_quals': quals_list,
+	# 			                'assessment_unit_standards': this_us_list,
+	# 			                'moderator_unit_standards': this_mod_us_list,
+	# 			                'assessor_unit_standards': this_ass_us_list,
+	# 			                'assessor_name': assessor_name,
+	# 			                'moderator_name': moderator_name,
+	# 			                })
+	# 			mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
+	# 			ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
+	# 			prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
+	# 			rows = ''
+	# 			style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
+	# 			start_table = '<table id="lib_units">'
+	# 			header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
+	# 			for x in this_us_list:
+	# 				if x in this_prov_us_list:
+	# 					prov_x = 'x'
+	# 				else:
+	# 					prov_x = x
+	# 				if x in this_ass_us_list:
+	# 					ass_x = 'x'
+	# 				else:
+	# 					ass_x = x
+	# 				if x in this_mod_us_list:
+	# 					mod_x = 'x'
+	# 				else:
+	# 					mod_x = x
+	# 				if x in lib_us_list:
+	# 					lib_x = 'x'
+	# 				else:
+	# 					lib_x = x
+	# 				# dbg(prov_x)
+	# 				# dbg(mod_x)
+	# 				rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
+	# 			# dbg(rows)
+	# 			end_table = '</table>'
+	# 			whole_table = style + start_table + header + rows + end_table
+	# 			dbg(whole_table)
+	# 			self.unit_standard_library_variance = whole_table
+	# 			text_guy += "<h1>Provider:" + provider_name + "</h1>"
+	# 			text_guy += "<h3>In assessment, not in Provider:</h3>"
+	# 			for x in prov_diff:
+	# 				text_guy += "<div>" + str(x) + "</div>"
+	# 			text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
+	# 			text_guy += "<h3>In assessment, not in Moderator:</h3>"
+	# 			for x in mod_diff:
+	# 				text_guy += "<div>" + str(x) + "</div>"
+	# 			text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
+	# 			text_guy += "<h3>In assessment, not in Assessor:</h3>"
+	# 			for x in ass_diff:
+	# 				text_guy += "<div>" + str(x) + "</div>"
+	# 			self.unit_standard_variance = text_guy
 
 	@api.one
 	def check_unit_standard_upline(self):
