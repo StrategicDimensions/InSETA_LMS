@@ -1491,6 +1491,7 @@
 						<div class="oe_title oe_left"
 							attrs="{'invisible':[('state','in',['general_business_information','address_info','campus','qualification','verification','evaluation','recommended1','validated','recommended2'])]}">
 							<div class="oe_edit_only">
+								<field name="type_visibility"/>
 								<field name="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['existing','ext_and_exist'])]}"
 									on_change="onchange_is_existing_provider(is_existing_provider)"
 									/>

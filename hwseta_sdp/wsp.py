@@ -14,6 +14,19 @@ import xlsxwriter
 import re
 import unicodedata
 import xlwt
+DEBUG = True
+
+if DEBUG:
+	import logging
+
+	logger = logging.getLogger(__name__)
+
+
+	def dbg(msg):
+		logger.info(msg)
+else:
+	def dbg(msg):
+		pass
 
 ## Defining Global Function for getting specialization.##
 
@@ -4370,6 +4383,8 @@ class wsp_plan(models.Model):
 
         return res
 
+    
+
     @api.multi
     def write(self, vals):
         res = super(wsp_plan, self).write(vals)
@@ -4470,6 +4485,7 @@ class wsp_plan(models.Model):
                                 {type_training.id: {'no_of_learner': no_of_learner, 'total_cost': total_cost}})
             # Updating Variance Tab Non Pivotal.
             for variance_data in self.variance_ids:
+                dbg(variance_data.type_training.name)
                 # Updating last year planned values.
                 if variance_data.type_training.id in training_last_actual_dict.keys():
                     variance_data.write({
@@ -4483,8 +4499,13 @@ class wsp_plan(models.Model):
                         'total_cost_actual': training_actual_dict[variance_data.type_training.id].get('total_cost', 0),
                     })
                 if variance_data.wsp_planned != 0:
+                    dbg('variance percentage')
+                    dbg('actual:' + str(variance_data.atr_actual) + '-planned:' + str(variance_data.wsp_planned))
+                    dbg((float(variance_data.atr_actual) / float(variance_data.wsp_planned)) * 100)
                     variance_data.write({'variance_percentage': (
                         float(variance_data.atr_actual) / float(variance_data.wsp_planned)) * 100})
+                else:
+                    dbg('no variance percentage')
             # Updating Variance Tab Pivotal.
             for variance_data in self.variance_pivotal_ids:
                 # Updating last year planned values.
