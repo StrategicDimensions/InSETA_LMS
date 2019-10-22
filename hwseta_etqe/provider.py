@@ -11717,6 +11717,7 @@ class provider_assessment(models.Model):
 		self.achieve_qual(keep=True)
 		self.achieve_skill(keep=True)
 		self.achieve_lp(keep=True)
+		self.ammended = False
 
 	@api.multi
 	def action_achieved_button(self):
@@ -12013,6 +12014,7 @@ class provider_assessment(models.Model):
 		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
 		#
 		# 	return True
+		self.ammended = False
 
 	@api.multi
 	def onchange_provider(self, provider_id):
