@@ -10789,6 +10789,7 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
+		history_text = ''
 		if provider.qualification_ids:
 			qual_dict = {}
 			for qual in provider.qualification_ids:
@@ -10820,6 +10821,7 @@ class provider_assessment(models.Model):
 						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
 							start = reg_qual.start_date
 							end = reg_qual.end_date
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_skill.certificate_no + ',date:' + str(reg_skill.certificate_date)
 							self.env['learner.historical.achieved'].create({'learner_id':learner.id,'assessment_id':self.id,'learner_certificate_no':reg_qual.certificate_no,'learner_certificate_date':reg_qual.certificate_date})
 							reg_qual.unlink()
 							units_list = []
@@ -10888,6 +10890,7 @@ class provider_assessment(models.Model):
 					achieved.unlink()
 		else:
 			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+		self.chatter(self.env.user,history_text)
 
 	@api.multi
 	def fix_nic_mpilo_skills(self):
@@ -10899,6 +10902,7 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
+		history_text = ''
 		if provider.skills_programme_ids:
 			skill_dict = {}
 			for skill in provider.skills_programme_ids:
@@ -10925,6 +10929,11 @@ class provider_assessment(models.Model):
 						if reg_skill.batch_id == batch and reg_skill.skills_programme_id.saqa_qual_id == skill_id.saqa_qual_id:
 							start = reg_skill.start_date
 							end = reg_skill.end_date
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_skill.certificate_no + ',date:' + str(reg_skill.certificate_date)
+							self.env['learner.historical.achieved'].create(
+								{'learner_id': learner.id, 'assessment_id': self.id,
+								 'learner_certificate_no': reg_skill.certificate_no,
+								 'learner_certificate_date': reg_skill.certificate_date})
 							reg_skill.unlink()
 							units_list = []
 							dbg(skill_dict.get(skill_id.code))
@@ -10972,6 +10981,7 @@ class provider_assessment(models.Model):
 					achieved.unlink()
 		else:
 			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+		self.chatter(self.env.user,history_text)
 
 	@api.multi
 	def fix_nic_mpilo_lp(self):
@@ -10983,6 +10993,7 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
+		history_text = ''
 		if provider.learning_programme_ids:
 			lp_dict = {}
 			for lp in provider.learning_programme_ids:
@@ -11008,6 +11019,11 @@ class provider_assessment(models.Model):
 						if reg_lp.batch_id == batch and reg_lp.learning_programme_id.saqa_qual_id == lp_id.saqa_qual_id:
 							start = reg_lp.start_date
 							end = reg_lp.end_date
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_lp.certificate_no + ',date:' + str(reg_lp.certificate_date)
+							self.env['learner.historical.achieved'].create(
+								{'learner_id': learner.id, 'assessment_id': self.id,
+								 'learner_certificate_no': reg_lp.certificate_no,
+								 'learner_certificate_date': reg_lp.certificate_date})
 							reg_lp.unlink()
 							units_list = []
 							dbg('-----------------------------!!!!!!!!!!!!!!!!')
@@ -11051,8 +11067,10 @@ class provider_assessment(models.Model):
 			if self.learner_achieved_ids_for_lp:
 				for achieved in self.learner_achieved_ids_for_lp:
 					achieved.unlink()
+
 		else:
 			raise Warning(_('The selected provider has no Learning Programmes attached to profile.'))
+		self.chatter(self.env.user, history_text)
 
 	@api.multi
 	def fix_nic_mpilo(self):
@@ -11724,7 +11742,7 @@ class provider_assessment(models.Model):
 		if self.ammended:
 			self.chatter(self.env.user, "User has clicked achieve and chosen NOT to keep the certificate numbers & dates")
 		else:
-			self.chatter(self.env.user, "User has clicked achieve without an ammendement")
+			self.chatter(self.env.user, "User has clicked achieve.")
 		context = self._context
 		if context is None:
 			context = {}
