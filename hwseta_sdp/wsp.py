@@ -898,6 +898,7 @@ class wsp_plan(models.Model):
     @api.one
     def _get_total_mf_tep(self):
         self.total_mf_tep = self.total_male_tep + self.total_female_tep
+        self.duplicate_total_mf_tep = self.total_male_tep + self.total_female_tep
 
     # Total Counts====> Actual Training
     @api.depends(
@@ -1214,6 +1215,8 @@ class wsp_plan(models.Model):
     total_female_tep = fields.Integer(
         string='Total Female', compute='_get_total_female_tep')
     total_mf_tep = fields.Integer(
+        string='Total Employees', compute='_get_total_mf_tep')
+    duplicate_total_mf_tep = fields.Integer(
         string='Total Employees', compute='_get_total_mf_tep')
 
     # Fields for Races and Gender total calculations(Actual Training).
@@ -1698,7 +1701,8 @@ class wsp_plan(models.Model):
 #             raise Warning(_('Please provide authorization page in document upload'))
         if self.save_some_record:
             raise Warning(_('Please uncheck partial save!'))
-
+        if self.duplicate_total_mf_tep <= 0:
+			raise Warning(_('you have no computed value for total number of employees. please check again or contact administrator'))
         # Avoiding SDF to submit the WSP if he already submit the WSP for the
         # same year and for the same employer.
         fiscal_year_data = self.fiscal_year
