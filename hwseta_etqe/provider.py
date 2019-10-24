@@ -10821,7 +10821,7 @@ class provider_assessment(models.Model):
 						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
 							start = reg_qual.start_date
 							end = reg_qual.end_date
-							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_skill.certificate_no + ',date:' + str(reg_skill.certificate_date)
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_qual.certificate_no + ',date:' + str(reg_qual.certificate_date)
 							self.env['learner.historical.achieved'].create({'learner_id':learner.id,'assessment_id':self.id,'learner_certificate_no':reg_qual.certificate_no,'learner_certificate_date':reg_qual.certificate_date})
 							reg_qual.unlink()
 							units_list = []
@@ -11511,7 +11511,7 @@ class provider_assessment(models.Model):
 									line.is_learner_achieved = True
 									if self.ammended and kwargs.get('keep'):
 										history = self.env['learner.historical.achieved'].search(
-											[('assessment_id', '=', self.id), ('learner_id', '=', line.learner_id.id)])
+											[('assessment_id', '=', self.id), ('learner_id', '=', line.skills_programme_learner_rel_ids.id)])
 										# raise Warning(_(history.learner_certificate_no))
 										line.certificate_date = history.learner_certificate_date
 										line.certificate_no = history.learner_certificate_no
@@ -11684,7 +11684,7 @@ class provider_assessment(models.Model):
 									line.is_learner_achieved = True
 									if self.ammended and kwargs.get('keep'):
 										history = self.env['learner.historical.achieved'].search(
-											[('assessment_id', '=', self.id), ('learner_id', '=', line.learner_id.id)])
+											[('assessment_id', '=', self.id), ('learner_id', '=', line.learning_programme_learner_rel_ids.id)])
 										# raise Warning(_(history.learner_certificate_no))
 										line.certificate_date = history.learner_certificate_date
 										line.certificate_no = history.learner_certificate_no
