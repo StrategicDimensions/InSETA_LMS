@@ -4731,10 +4731,10 @@
 							type="object" class="oe_highlight"
 							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
 							attrs="{'invisible':[('state','not in',['verify'])]}" />
-						<button name="action_achieved_button" string="Achieve"
+						<button name="action_achieved_button" string="Achieve / New"
 							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
 							attrs="{'invisible':[('state','not in',['evaluate'])]}" />
-                        <button name="action_achieved_button_keep" string="Achieve &amp; keep num"
+                        <button name="action_achieved_button_keep" string="Achieve / Keep"
 							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
 							attrs="{'invisible':['|',('state','not in',['evaluate']),('ammended','!=',True)]}" />
 						
