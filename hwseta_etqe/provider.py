@@ -10141,7 +10141,7 @@ class provider_assessment(models.Model):
 	unit_standard_library_variance = fields.Text()
 
 	provider_province = fields.Many2one(related="provider_id.state_id", store=True)
-
+	ammended = fields.Boolean(default=False)
 
 
 	@api.onchange('select_all')
@@ -10789,6 +10789,7 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
+		history_text = ''
 		if provider.qualification_ids:
 			qual_dict = {}
 			for qual in provider.qualification_ids:
@@ -10820,6 +10821,8 @@ class provider_assessment(models.Model):
 						if reg_qual.batch_id == batch and reg_qual.learner_qualification_parent_id.saqa_qual_id == qual_id.saqa_qual_id:
 							start = reg_qual.start_date
 							end = reg_qual.end_date
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_qual.certificate_no + ',date:' + str(reg_qual.certificate_date)
+							self.env['learner.historical.achieved'].create({'learner_id':learner.id,'assessment_id':self.id,'learner_certificate_no':reg_qual.certificate_no,'learner_certificate_date':reg_qual.certificate_date})
 							reg_qual.unlink()
 							units_list = []
 							dbg('-----------------------------!!!!!!!!!!!!!!!!')
@@ -10887,6 +10890,7 @@ class provider_assessment(models.Model):
 					achieved.unlink()
 		else:
 			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+		self.chatter(self.env.user,history_text)
 
 	@api.multi
 	def fix_nic_mpilo_skills(self):
@@ -10898,6 +10902,7 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
+		history_text = ''
 		if provider.skills_programme_ids:
 			skill_dict = {}
 			for skill in provider.skills_programme_ids:
@@ -10924,6 +10929,11 @@ class provider_assessment(models.Model):
 						if reg_skill.batch_id == batch and reg_skill.skills_programme_id.saqa_qual_id == skill_id.saqa_qual_id:
 							start = reg_skill.start_date
 							end = reg_skill.end_date
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_skill.certificate_no + ',date:' + str(reg_skill.certificate_date)
+							self.env['learner.historical.achieved'].create(
+								{'learner_id': learner.id, 'assessment_id': self.id,
+								 'learner_certificate_no': reg_skill.certificate_no,
+								 'learner_certificate_date': reg_skill.certificate_date})
 							reg_skill.unlink()
 							units_list = []
 							dbg(skill_dict.get(skill_id.code))
@@ -10971,6 +10981,7 @@ class provider_assessment(models.Model):
 					achieved.unlink()
 		else:
 			raise Warning(_('The selected provider has no qualifications attached to profile.'))
+		self.chatter(self.env.user,history_text)
 
 	@api.multi
 	def fix_nic_mpilo_lp(self):
@@ -10982,6 +10993,7 @@ class provider_assessment(models.Model):
 			provider = self.provider_id
 		else:
 			raise Warning(_('you cant ammend without a provider on this form'))
+		history_text = ''
 		if provider.learning_programme_ids:
 			lp_dict = {}
 			for lp in provider.learning_programme_ids:
@@ -11007,6 +11019,11 @@ class provider_assessment(models.Model):
 						if reg_lp.batch_id == batch and reg_lp.learning_programme_id.saqa_qual_id == lp_id.saqa_qual_id:
 							start = reg_lp.start_date
 							end = reg_lp.end_date
+							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_lp.certificate_no + ',date:' + str(reg_lp.certificate_date)
+							self.env['learner.historical.achieved'].create(
+								{'learner_id': learner.id, 'assessment_id': self.id,
+								 'learner_certificate_no': reg_lp.certificate_no,
+								 'learner_certificate_date': reg_lp.certificate_date})
 							reg_lp.unlink()
 							units_list = []
 							dbg('-----------------------------!!!!!!!!!!!!!!!!')
@@ -11050,8 +11067,10 @@ class provider_assessment(models.Model):
 			if self.learner_achieved_ids_for_lp:
 				for achieved in self.learner_achieved_ids_for_lp:
 					achieved.unlink()
+
 		else:
 			raise Warning(_('The selected provider has no Learning Programmes attached to profile.'))
+		self.chatter(self.env.user, history_text)
 
 	@api.multi
 	def fix_nic_mpilo(self):
@@ -11068,6 +11087,7 @@ class provider_assessment(models.Model):
 		self.assessed = False
 		self.evaluated = False
 		self.verified = False
+		self.ammended = True
 
 		self.chatter(self.env.user, 'The "Amend Assessment & LR" button was pressed')
 		# raise Warning(_('done'))
@@ -11154,120 +11174,6 @@ class provider_assessment(models.Model):
 			dbg(whole_table)
 			self.unit_standard_library_variance = whole_table
 
-	# @api.one
-	# def check_unit_upline_lp(self):
-	# 	if self.qual_skill_assessment == 'lp':
-	# 		dbg("check_unit_standard_upline")
-	# 		# for this in self:
-	# 		this_us_list = []
-	# 		this_us_id_list = []
-	# 		this_mod_us_list = []
-	# 		this_mod_us_id_list = []
-	# 		this_prov_us_list = []
-	# 		this_ass_us_list = []
-	# 		list_of_dict = []
-	# 		lps_list = []
-	# 		lib_lps = []
-	# 		big_dic = {}
-	# 		text_guy = ""
-	# 		moderator_name = ""
-	# 		assessor_name = ""
-	# 		provider_name = self.provider_id.name
-	# 		for x in self.env['etqe.learning.programme'].search([]):
-	# 			list_of_dict.append({'name': x.name,
-	# 			                     'code': x.saqa_qual_id,
-	# 			                     'skill_code': x.code,
-	# 			                     'list_of_us': [z.id_no for z in x.unit_standards_line]
-	# 			                     })
-	# 			lib_quals.append(x.saqa_qual_id)
-	# 		lib_us_list = [x.id_no for x in self.env['etqe.learning.programme.unit.standards'].search([])]
-	# 		big_dic.update({'lib_lps': lib_lps, 'lib_us': lib_us_list})
-	# 		if self.learner_achieved_ids_for_lp:
-	# 			for prov_lps in self.provider_id.learning_programme_ids:
-	# 				for prov_us in prov_lps.unit_standards_line:
-	# 					if prov_us.id_no not in this_prov_us_list and prov_us.selection:
-	# 						# this_prov_us_list.append([x.id_data for x in prov_us])
-	# 						this_prov_us_list.append(prov_us.id_no)
-	# 			big_dic.update({'provider_unit_standards': this_prov_us_list, 'provider_name': provider_name})
-	# 			for achieved_ids in self.learner_achieved_ids_for_lp:
-	# 				# build qualifications list from assessment
-	# 				for lpz in achieved_ids.qual_learner_assessment_achieved_line_id:
-	# 					if lpz.saqa_qual_id not in lps_list:
-	# 						lps_list.append(lpz.saqa_qual_id)
-	# 				# build assessment US list
-	# 				for us in achieved_ids.unit_standards_learner_assessment_achieved_line_id:
-	# 					# build list of US db ids to compare US in specific qualification
-	# 					if us not in this_us_id_list:
-	# 						this_us_id_list.append(us)
-	# 					if us.id_no not in this_us_list:
-	# 						this_us_list.append(us.id_no)
-	# 				if achieved_ids.moderators_id:
-	# 					moderator_name = achieved_ids.moderators_id.name
-	# 					# build moderator US list
-	# 					for mod_qualifications in achieved_ids.moderators_id.moderator_qualification_ids:
-	# 						for mod_us in mod_qualifications.qualification_line_hr:
-	# 							if mod_us not in this_mod_us_id_list:
-	# 								this_mod_us_id_list.append(mod_us)
-	# 							if mod_us.id_no not in this_mod_us_list:
-	# 								this_mod_us_list.append(mod_us.id_no)
-	# 				if achieved_ids.assessors_id:
-	# 					assessor_name = achieved_ids.assessors_id.name
-	# 					for ass_qualifications in achieved_ids.assessors_id.qualification_ids:
-	# 						for ass_us in ass_qualifications.qualification_line_hr:
-	# 							if ass_us.id_no not in this_ass_us_list:
-	# 								this_ass_us_list.append(ass_us.id_no)
-	# 			big_dic.update({'assessment_quals': quals_list,
-	# 			                'assessment_unit_standards': this_us_list,
-	# 			                'moderator_unit_standards': this_mod_us_list,
-	# 			                'assessor_unit_standards': this_ass_us_list,
-	# 			                'assessor_name': assessor_name,
-	# 			                'moderator_name': moderator_name,
-	# 			                })
-	# 			mod_diff = [x for x in this_us_list if x not in this_mod_us_list]
-	# 			ass_diff = [x for x in this_us_list if x not in this_ass_us_list]
-	# 			prov_diff = [x for x in this_us_list if x not in this_prov_us_list]
-	# 			rows = ''
-	# 			style = '<style>#lib_units table, #lib_units th, #lib_units td {border: 1px solid black;text-align: center;}</style>'
-	# 			start_table = '<table id="lib_units">'
-	# 			header = '<tr><th>Assessment</th><th>library</th><th>provider</th><th>moderator</th><th>assessor</th></tr>'
-	# 			for x in this_us_list:
-	# 				if x in this_prov_us_list:
-	# 					prov_x = 'x'
-	# 				else:
-	# 					prov_x = x
-	# 				if x in this_ass_us_list:
-	# 					ass_x = 'x'
-	# 				else:
-	# 					ass_x = x
-	# 				if x in this_mod_us_list:
-	# 					mod_x = 'x'
-	# 				else:
-	# 					mod_x = x
-	# 				if x in lib_us_list:
-	# 					lib_x = 'x'
-	# 				else:
-	# 					lib_x = x
-	# 				# dbg(prov_x)
-	# 				# dbg(mod_x)
-	# 				rows += '<tr><td>' + x + '</td><td>' + lib_x + '</td><td>' + prov_x + '</td><td>' + mod_x + '</td><td>' + ass_x + '</td></tr>'
-	# 			# dbg(rows)
-	# 			end_table = '</table>'
-	# 			whole_table = style + start_table + header + rows + end_table
-	# 			dbg(whole_table)
-	# 			self.unit_standard_library_variance = whole_table
-	# 			text_guy += "<h1>Provider:" + provider_name + "</h1>"
-	# 			text_guy += "<h3>In assessment, not in Provider:</h3>"
-	# 			for x in prov_diff:
-	# 				text_guy += "<div>" + str(x) + "</div>"
-	# 			text_guy += "<h1>Moderator:" + moderator_name + "</h1>"
-	# 			text_guy += "<h3>In assessment, not in Moderator:</h3>"
-	# 			for x in mod_diff:
-	# 				text_guy += "<div>" + str(x) + "</div>"
-	# 			text_guy += "<h1>Assessor:" + assessor_name + "</h1>"
-	# 			text_guy += "<h3>In assessment, not in Assessor:</h3>"
-	# 			for x in ass_diff:
-	# 				text_guy += "<div>" + str(x) + "</div>"
-	# 			self.unit_standard_variance = text_guy
 
 	@api.one
 	def check_unit_standard_upline(self):
@@ -11383,7 +11289,7 @@ class provider_assessment(models.Model):
 			self.unit_standard_variance = text_guy
 
 	@api.multi
-	def achieve_qual(self):
+	def achieve_qual(self,**kwargs):
 		provider = self.provider_id
 		if self.qual_skill_assessment == 'qual':
 			learner_achieved = []
@@ -11478,8 +11384,16 @@ class provider_assessment(models.Model):
 										selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and elo and master_us_list == registration_units or \
 										selected_line > 0 and achieved_line > 0 and min_qual_creds <= min_creds_found and not missing_required and not elo:
 									line.is_learner_achieved = True
-									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
-									line.certificate_date = str(datetime.today().date())
+									if self.ammended and kwargs.get('keep'):
+										history = self.env['learner.historical.achieved'].search([('assessment_id','=',self.id),('learner_id','=',line.learner_id.id)])
+										# raise Warning(_(history.learner_certificate_no))
+										line.certificate_date = history.learner_certificate_date
+										line.certificate_no = history.learner_certificate_no
+										history.unlink()
+										self.ammended = False
+									else:
+										line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+										line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.qual_status = 'Achieved'
 									qual_line_obj.learner_status = 'Achieved'
@@ -11511,7 +11425,7 @@ class provider_assessment(models.Model):
 			return True
 
 	@api.multi
-	def achieve_skill(self):
+	def achieve_skill(self, **kwargs):
 		dbg('achieve skill!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 		provider = self.provider_id
 		if self.qual_skill_assessment == 'skill':
@@ -11595,8 +11509,17 @@ class provider_assessment(models.Model):
 								# raise Warning(_('selected lines:' + str(selected_line) + '-achieved_line:' + str(achieved_line)))
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and ach == True:
 									line.is_learner_achieved = True
-									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
-									line.certificate_date = str(datetime.today().date())
+									if self.ammended and kwargs.get('keep'):
+										history = self.env['learner.historical.achieved'].search(
+											[('assessment_id', '=', self.id), ('learner_id', '=', line.skills_programme_learner_rel_ids.id)])
+										# raise Warning(_(history.learner_certificate_no))
+										line.certificate_date = history.learner_certificate_date
+										line.certificate_no = history.learner_certificate_no
+										history.unlink()
+										self.ammended = False
+									else:
+										line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+										line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.skill_status = 'Achieved'
 									qual_line_obj.learner_status = 'Achieved'
@@ -11633,7 +11556,7 @@ class provider_assessment(models.Model):
 			return True
 
 	@api.multi
-	def achieve_lp(self):
+	def achieve_lp(self,**kwargs):
 		provider = self.provider_id
 		if self.qual_skill_assessment == 'lp':
 			learner_achieved = []
@@ -11759,8 +11682,17 @@ class provider_assessment(models.Model):
 								if selected_line > 0 and achieved_line > 0 and selected_line == achieved_line and not missing_required and ach and not below or\
 										selected_line > 0 and achieved_line > 0 and not missing_required and ach and not below:
 									line.is_learner_achieved = True
-									line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
-									line.certificate_date = str(datetime.today().date())
+									if self.ammended and kwargs.get('keep'):
+										history = self.env['learner.historical.achieved'].search(
+											[('assessment_id', '=', self.id), ('learner_id', '=', line.learning_programme_learner_rel_ids.id)])
+										# raise Warning(_(history.learner_certificate_no))
+										line.certificate_date = history.learner_certificate_date
+										line.certificate_no = history.learner_certificate_no
+										history.unlink()
+										self.ammended = False
+									else:
+										line.certificate_no = self.env['ir.sequence'].get('learner.certificate.no')
+										line.certificate_date = str(datetime.today().date())
 									line.approval_date = str(datetime.today().date())
 									line.lp_status = 'Achieved'
 									learner_obj.learner_status = 'Achieved'
@@ -11793,7 +11725,24 @@ class provider_assessment(models.Model):
 			return True
 
 	@api.multi
+	def action_achieved_button_keep(self):
+		self.chatter(self.env.user, "User has clicked achieve and chosen to keep the certificate numbers & dates")
+		context = self._context
+		if context is None:
+			context = {}
+		self = self.with_context(assessed=True)
+		provider = self.provider_id
+		self.achieve_qual(keep=True)
+		self.achieve_skill(keep=True)
+		self.achieve_lp(keep=True)
+		self.ammended = False
+
+	@api.multi
 	def action_achieved_button(self):
+		if self.ammended:
+			self.chatter(self.env.user, "User has clicked achieve and chosen NOT to keep the certificate numbers & dates")
+		else:
+			self.chatter(self.env.user, "User has clicked achieve.")
 		context = self._context
 		if context is None:
 			context = {}
@@ -12083,6 +12032,7 @@ class provider_assessment(models.Model):
 		# 		raise Warning(_("You haven't achieved any learner! Please achieve atleast one learner to continue.."))
 		#
 		# 	return True
+		self.ammended = False
 
 	@api.multi
 	def onchange_provider(self, provider_id):
@@ -12187,6 +12137,17 @@ class provider_assessment(models.Model):
 		raise Warning(_('Sorry! You cannot delete the Assessment'))
 		return super(provider_assessment, self).unlink()
 provider_assessment()
+# This class is created to add One2many field in hr.employee
+class learner_historical_achieved(models.Model):
+	_name = 'learner.historical.achieved'
+	_description = 'Learner historical achieved'
+
+	learner_id = fields.Many2one('hr.employee')
+	assessment_id = fields.Many2one('provider.assessment')
+	learner_certificate_no = fields.Char()
+	learner_certificate_date = fields.Date(string="Date")
+
+learner_historical_achieved()
 # This class is created to add One2many field in hr.employee
 class learner_master_status(models.Model):
 	_name = 'learner.master.status'

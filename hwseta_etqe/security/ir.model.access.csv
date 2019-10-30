@@ -1,5 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
+access_learner_cert_history,learner.cert.history,model_learner_historical_achieved,hwseta_etqe.group_assess_rollback,1,1,1,1
+access_learner_cert_history_seta,learner.cert.history,model_learner_historical_achieved,hwseta_etqe.group_seta_administrator,1,1,1,1
+
 access_learner_dropout_status_provider,learner.dropout.status,model_learner_dropout_status,hwseta_etqe.group_providers,1,1,1,1
 access_learner_dropout_status_employer,learner.dropout.status,model_learner_dropout_status,hwseta_finance.group_employer_user,1,0,0,0
 access_learner_dropout_status_accmanager,learner.dropout.status,model_learner_dropout_status,account.group_account_manager,1,1,1,1

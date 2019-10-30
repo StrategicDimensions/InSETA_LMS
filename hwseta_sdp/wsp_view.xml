@@ -111,6 +111,7 @@
 							<!-- <field name="approved_by" readonly="1"/> -->
 							<field name="request_extension_date" invisible="1" />
 							<field name="approve_extension_date" invisible="1" />
+							<field name="duplicate_total_mf_tep" readonly="1"/>
 						</group>
 					</group>
 					<group>
