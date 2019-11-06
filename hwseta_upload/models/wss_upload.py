@@ -251,8 +251,8 @@ class wss_draft(models.Model):
         # end = datetime.strptime(wss_settings.submission_end, '%Y-%m-%d').date()
         # ext = datetime.strptime(wss_settings.submission_ext, '%Y-%m-%d').date()
         start = datetime.strptime('2019/07/14','%Y/%m/%d').date()
-        end = datetime.strptime('2019/08/30','%Y/%m/%d').date()
-        ext = datetime.strptime('2019/09/14','%Y/%m/%d').date()
+        end = datetime.strptime('2019/12/30','%Y/%m/%d').date()
+        ext = datetime.strptime('2019/12/30','%Y/%m/%d').date()
         # if wss_settings.submission_start and wss_settings.submission_end and wss_settings.submission_ext and ext_state:
         if start and end and ext and ext_state:
             dbg('found all extension dates')
