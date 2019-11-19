@@ -513,13 +513,13 @@ class res_partner(models.Model):
     @api.one
     @api.depends('employees_count')
     def _get_organisation_size(self):
-        if not self.env['res.users'].has_group('hwseta_etqe.group_providers'):
-            if self.employees_count <= 49:
-                self.organisation_size= 'small'
-            elif self.organisation_size > 49 or self.organisation_size <=149:
-                self.organisation_size = 'medium'
-            else:
-                self.organisation_size = 'large'
+        if self.employees_count <= 49:
+            self.organisation_size = 'small'
+        elif self.employees_count > 49 or self.employees_count <= 149:
+            self.organisation_size = 'medium'
+        else:
+            self.organisation_size = 'large'
+
             
     ## Employer Fields
     employer = fields.Boolean(string='Employer')
