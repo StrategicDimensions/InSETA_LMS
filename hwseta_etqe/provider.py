@@ -11019,7 +11019,7 @@ class provider_assessment(models.Model):
 						if reg_lp.batch_id == batch and reg_lp.learning_programme_id.saqa_qual_id == lp_id.saqa_qual_id:
 							start = reg_lp.start_date
 							end = reg_lp.end_date
-							history_text += 'reg:' + learner.learner_reg_no + ',cert:' + reg_lp.certificate_no + ',date:' + str(reg_lp.certificate_date)
+							history_text += 'reg:' + str(learner.learner_reg_no) + ',cert:' + str(reg_lp.certificate_no) + ',date:' + str(reg_lp.certificate_date)
 							self.env['learner.historical.achieved'].create(
 								{'learner_id': learner.id, 'assessment_id': self.id,
 								 'learner_certificate_no': reg_lp.certificate_no,
