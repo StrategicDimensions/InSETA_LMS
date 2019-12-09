@@ -9085,9 +9085,7 @@ class provider_accreditation(models.Model):
 			self.write({'comment_box':''})
 			self.write({'state':'approved', 'approved':True, 'final_state':'Approved', 'provider_approval_date':datetime.today().date()})
 
-			mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_provider_extension_of_scope')
-			if mail_template_id:
-				self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
+			
 		if self.reapproval:
 			provider_obj = self.env['res.partner'].search(
 				[('alternate_acc_number', '=', self.accreditation_number)])
@@ -9108,6 +9106,9 @@ class provider_accreditation(models.Model):
 			# raise Warning(_('found alt and opt' + str(self.optYesNo) + str(self.alternate_acc_number)))
 			self.write({'sequence_num': self.alternate_acc_number})
 		# raise Warning(_(str(self.read())))
+		mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_provider_extension_of_scope')
+		if mail_template_id:
+			self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
 		return True
 
 	@api.multi
