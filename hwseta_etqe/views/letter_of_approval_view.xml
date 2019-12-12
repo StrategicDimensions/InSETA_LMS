@@ -50,20 +50,25 @@
 										</strong>
 									</td>
 								</tr>
-								<tr>
-									<td>
-										<span>Accreditation Number</span>
-									</td>
-									<td>
-										<![CDATA[&nbsp;&nbsp;]]><b>:</b><![CDATA[&nbsp;&nbsp;]]>
-									</td>
-									<td align="left">
-										<strong>
-											<t t-if="o.sequence_num ">
-												<span t-field="o.sequence_num" />
-											</t>
-										</strong>
-									</td>
+
+                <tr>
+									  <td>
+										    <span>Accreditation Number</span>
+									  </td>
+									  <td>
+										    &amp;nbsp;&amp;nbsp;<b>:</b>&amp;nbsp;&amp;nbsp;
+									  </td>
+									  <td align="left">
+										    <strong>
+                            <t t-if="o.optYesNo">
+												        <span t-field="o.alternate_acc_number"/>
+											      </t>
+
+                            <t t-if="not o.optYesNo">
+												        <span t-field="o.sequence_num"/>
+											      </t>
+										    </strong>
+									  </td>
 								</tr>
 								<tr>
 									<td>
