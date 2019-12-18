@@ -10998,10 +10998,11 @@ class provider_assessment(models.Model):
 		if provider.learning_programme_ids:
 			lp_dict = {}
 			for lp in provider.learning_programme_ids:
-				lp_dict.update({lp.lp_saqa_id: []})
+				lp_code = lp.learning_programme_id.code
+				lp_dict.update({lp_code: []})
 				for us in lp.unit_standards_line:
-					if us.id_no not in lp_dict.get(lp.lp_saqa_id) and us.selection:
-						lp_dict.get(lp.lp_saqa_id).append(us.id_no)
+					if us.id_no not in lp_dict.get(lp_code) and us.selection:
+						lp_dict.get(lp_code).append(us.id_no)
 			for learner_id in self.learner_ids_for_lp:
 				learner_id.unlink()
 			for verify in self.learner_verify_ids_for_lp:
@@ -11013,7 +11014,7 @@ class provider_assessment(models.Model):
 				learner = ass_lp_line.learner_id
 				mod = ass_lp_line.moderators_id
 				ass = ass_lp_line.assessors_id
-				# raise Warning(_(qual_dict.get(qual_id.saqa_qual_id)))
+				# raise Warning(_(lp_id.code))
 				dbg('--------------------------------------------------')
 				for reg_lp in learner.learning_programme_ids:
 					if reg_lp.batch_id:
@@ -11028,10 +11029,13 @@ class provider_assessment(models.Model):
 							reg_lp.unlink()
 							units_list = []
 							dbg('-----------------------------!!!!!!!!!!!!!!!!')
-							for unitz in lp_dict.get(lp_id.saqa_qual_id):
+							for unitz in lp_dict.get(lp_id.code):
 								dbg(unitz)
+								dbg(lp_id.code)
+								dbg(lp_dict.get(lp_id.code))
 								lib_unit = self.env['etqe.learning.programme.unit.standards'].search(
-									[('id_no', '=', unitz), ('learning_programme_id.saqa_qual_id', '=', lp_id.saqa_qual_id)])
+									[('id_no', '=', unitz), ('learning_programme_id.code', '=', lp_id.code)])
+								dbg('lib_unit=====================================' + str(lib_unit))
 								unit_vals = {
 									'provider_id': self.provider_id,
 									# 'id_data': lib_unit.id_no,
