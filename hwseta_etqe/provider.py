@@ -1327,7 +1327,9 @@ class assessors_moderators_register(models.Model):
 					if ase_lst:
 						assessor_obj = self.env['hr.employee'].search([('id', '=', max(ase_lst))])
 					if assessor_obj:
-						if already_registered and str(datetime.today().date()) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
+						future_6_months = datetime.today().date() + relativedelta(months=+6)
+						# if already_registered and str(datetime.today().date()) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
+						if already_registered and str(future_6_months) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
 							return {'value': {'existing_assessor_moderator':'', 'search_by':'', 'already_registered': False, 'existing_assessor_id':''}, 'warning': {'title': 'Already Registered', 'message': "You are already registered, Your end date is %s" % (assessor_obj.end_date)}}
 						if already_registered:
 							if assessor_obj.qualification_ids:
