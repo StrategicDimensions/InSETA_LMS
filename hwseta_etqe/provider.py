@@ -1330,7 +1330,7 @@ class assessors_moderators_register(models.Model):
 						future_with_months = datetime.today().date() + relativedelta(months=+3)
 						# if already_registered and str(datetime.today().date()) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
 						if already_registered and str(future_with_months) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
-							return {'value': {'existing_assessor_moderator':'', 'search_by':'', 'already_registered': False, 'existing_assessor_id':''}, 'warning': {'title': 'Already Registered', 'message': "You are already registered, Your end date is %s" % (assessor_obj.end_date)}}
+							return {'value': {'existing_assessor_moderator':'', 'search_by':'', 'already_registered': False, 'existing_assessor_id':''}, 'warning': {'title': 'Already Registered', 'message': "You are already registered, Your end date is %s and the date allowed is %s" % (assessor_obj.end_date,future_with_months)}}
 						if already_registered:
 							if assessor_obj.qualification_ids:
 								for q_lines in assessor_obj.qualification_ids:
@@ -1800,7 +1800,9 @@ class assessors_moderators_register(models.Model):
 				if not moderator_obj:
 						return {'value':{'existing_assessor_moderator':'','already_registered': False, 'search_by':'', 'existing_moderator_id':''}, 'warning':{'title':'Invalid Identification Number','message':'Please Enter Correct Moderator Identification Number'}}
 				elif moderator_obj:
-					if already_registered and str(datetime.today().date()) < moderator_obj.moderator_end_date:
+					future_with_months = datetime.today().date() + relativedelta(months=+3)
+					if already_registered and str(future_with_months) < moderator_obj.moderator_end_date:
+					# if already_registered and str(datetime.today().date()) < moderator_obj.moderator_end_date:
 						return {'value': {'existing_assessor_moderator':'', 'search_by':'', 'already_registered': False, 'existing_moderator_id':''}, 'warning': {'title': 'Already Registered', 'message': "You are already registered, Your end date is %s" % (moderator_obj.moderator_end_date)}}
 					q_vals_line = []
 					if already_registered:
