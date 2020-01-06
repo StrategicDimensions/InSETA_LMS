@@ -2707,6 +2707,7 @@
 									attrs="{'invisible':[('state','not in','general_info')],'readonly':[('approved','=',True)]}" />
 								<field name="existing_assessor_moderator"
 									on_change="onchange_existing_assessor_moderator(existing_assessor_moderator)"
+									   required="1"
 									attrs="{'invisible':['|',('state','not in','general_info'),('already_registered','=',False),('is_extension_of_scope','=',False)]}" />
 								<field name="search_by"
 									attrs="{'invisible':['|',('state','not in','general_info'),('existing_assessor_moderator','not in',['ex_assessor','ex_moderator'])]}"
