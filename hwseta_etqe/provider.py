@@ -1563,7 +1563,9 @@ class assessors_moderators_register(models.Model):
 					for ase_obj in assessor_objects:
 						ase_lst.append(ase_obj.id)
 					assessor_obj = self.env['hr.employee'].search([('id', '=', max(ase_lst))])
-					if already_registered and str(datetime.today().date()) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
+					future_with_months = datetime.today().date() + relativedelta(months=+3)
+					if already_registered and str(future_with_months) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
+					# if already_registered and str(datetime.today().date()) < assessor_obj.end_date and existing_assessor_moderator == 'ex_assessor':
 						return {'value': {'existing_assessor_moderator':'', 'search_by':'', 'already_registered': False, 'existing_assessor_number':''}, 'warning': {'title': 'Already Registered', 'message': "You are already registered, Your end date is %s" % (assessor_obj.end_date)}}
 					q_vals_line = []
 					if already_registered:
@@ -2063,7 +2065,9 @@ class assessors_moderators_register(models.Model):
 				if not moderator_obj:
 					return {'value': {'already_registered': False, 'existing_moderator_number':'', 'search_by':'', 'existing_assessor_moderator':''}, 'warning':{'title': 'Invalid Moderator Number','message':'Please Enter Valid Moderator Number'}}
 				elif moderator_obj:
-					if already_registered and str(datetime.today().date()) < moderator_obj.moderator_end_date:
+					future_with_months = datetime.today().date() + relativedelta(months=+3)
+					if already_registered and str(future_with_months) < moderator_obj.moderator_end_date:
+					# if already_registered and str(datetime.today().date()) < moderator_obj.moderator_end_date:
 						return {'value': {'existing_assessor_moderator':'', 'search_by':'', 'already_registered': False, 'existing_moderator_number':''}, 'warning': {'title': 'Already Registered', 'message': "You are already registered, Your end date is %s" % (moderator_obj.moderator_end_date)}}
 					q_vals_line = []
 					if already_registered:
