@@ -2652,7 +2652,7 @@ class assessors_moderators_register(models.Model):
 		if not self.comment_line:
 			raise Warning(_("Please enter status comment"))
 		self.write({'assessors_moderators_status_ids':[(0, 0, {'am_name':self.env['res.users'].browse(self._uid).name, 'am_date':datetime.now(), 'am_status':'Re-Evaluated', 'am_updation_date':self.write_date, 'am_comment':self.comment_line})]})
-		self.write({'state':'verification', 'evaluate':False, 'verify':False, 'denied':False, 'comment_line':''})
+		self.write({'state':'verification', 'evaluate':False, 'verify':False, 'approved':False, 'denied':False, 'comment_line':''})
 		return True
 
 	@api.model
