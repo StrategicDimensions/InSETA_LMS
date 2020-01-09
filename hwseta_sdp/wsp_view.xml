@@ -176,7 +176,8 @@
 										attrs="{'required':[('socio_economic_status','=','employed'),('save_actual_planned_record','=',False)]}" />
 									<field name="code" on_change="onchange_code(code)"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}"
-										attrs="{'required':[('save_actual_planned_record','=',False)]}" />
+										attrs="{'required':[('save_actual_planned_record','=',False)]}"
+										domain="[('name','ilike','2017')]"/>
 									<field name="occupation"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}"
 										attrs="{'required':[('save_actual_planned_record','=',False)]}"
@@ -412,7 +413,8 @@
 									<field name="dob" attrs="{'required':[('save_total_employed_record','=',False)]}" />
 									<field name="ofo_code" on_change="onchange_code(ofo_code)"
 										options="{'no_create_edit': True, 'no_quick_create': True}"
-										attrs="{'required':[('save_total_employed_record','=',False)]}" />
+										attrs="{'required':[('save_total_employed_record','=',False)]}"
+										domain="[('name','ilike','2019')]"/>
 									<field name="occupation"
 										options="{'no_create_edit': True, 'no_quick_create': True}"
 										attrs="{'required':[('save_total_employed_record','=',False)]}" domain="[('id','=',None)]" />
@@ -479,7 +481,8 @@
 										attrs="{'required':[('socio_economic_status','=','employed'),('save_planned_record','=',False)]}" />
 									<field name="code" on_change="onchange_code(code)"
 										options="{'no_create_edit': True, 'no_quick_create': True}"
-										attrs="{'required':[('save_planned_record','=',False)]}" />
+										attrs="{'required':[('save_planned_record','=',False)]}"
+										domain="[('name','ilike','2019')]"/>
 									<field name="occupation"
 										options="{'no_create_edit': True, 'no_quick_create': True}"
 										attrs="{'required':[('save_planned_record','=',False)]}"
@@ -644,7 +647,8 @@
 									<field name="save_variance_record" invisible="1" />
 									<field name="ofo_code" on_change="onchange_code(ofo_code)"
 										options="{'no_create_edit': True, 'no_quick_create': True}"
-										attrs="{'required':[('save_variance_record','=',False)]}" />
+										attrs="{'required':[('save_variance_record','=',False)]}"
+										domain="[('name','ilike','2019')]"/>
 									<!-- <field name="name"/> -->
 									<!-- <field name="surname"/> -->
 									<field name="occupation"
@@ -1351,6 +1355,7 @@
 			<field name="model">ofo.code</field>
 			<field name="arch" type="xml">
 				<form string="OFO Code">
+					<button name="copy_old_ofo" type="object" string="copy old ofo"/>
 					<group>
 						<field name="ofo_year" />
 						<field name="name" required="1" />

@@ -140,12 +140,28 @@ class ofo_code(models.Model):
                 [('name', operator, name)] + args, limit=limit)
         return ofo_data.name_get()
 
+    @api.multi
+    def copy_old_ofo(self):
+        for old in self.env['ofo.code'].search([('ofo_year','=','2017')]):
+            spec_list = []
+            for spec in old.specialization_ids:
+                spec_list.append(spec.id)
+            new_name = old.name.replace('2017','2019-')
+            dbg(new_name)
+            occupation = self.env['occupation.ofo'].create({'name':'2019-' + old.occupation.name})
+            old_val = {'ofo_year':'2019',
+                       'name':new_name,
+                       'occupation':occupation.id,
+                       'specialization_ids':[(6,0,spec_list)]}
+            dbg(old_val)
+            self.env['ofo.code'].create(old_val)
+
     @api.model
     def create(self, vals):
         res = super(ofo_code, self).create(vals)
         occupation_data = res.occupation
         ofo_record_exist = self.env['ofo.code'].search(
-            [('occupation', '=', occupation_data.id)])
+            [('occupation', '=', occupation_data.id),('ofo_year','=',res.ofo_year)])
         if len(ofo_record_exist) > 1:
             raise Warning(
                 _('OFO Code for the occupation %s is already exists!') % (occupation_data.name))
