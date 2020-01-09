@@ -45,6 +45,7 @@ class SETAReport(models.TransientModel):
     from_date = fields.Date("From", required=True)
     to_date = fields.Date("To", required=True)
     report_type = fields.Selection([('_accreditation_analysis', 'Accreditation Analysis'),
+                                    ('_assessment_analysis', 'Assessment Analysis'),
                                     ('_sale_report', 'Sale Report')], string="Report Type", required=True)
 
     headers = fields.Char("Headers")
@@ -89,6 +90,30 @@ class SETAReport(models.TransientModel):
 
         return "/report_export/accreditation_analysis/%s"
 
+    def _assessment_analysis(self):
+        assessments = self.env['provider.assessment'].search(
+            [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        # vals = []
+        headers = [_('NAME'), _('provider'), _('batch'), _('fiscal'), _('start dt'), _('state'), _('province'), _('final state')]
+
+        for assessment in assessments:
+            val = {
+                'name':assessment.name,
+                'provider_id':assessment.provider_id.id,
+                'qual_skill_assessment':assessment.qual_skill_assessment,
+                'batch_id':assessment.batch_id.id,
+                'fiscal_year':assessment.fiscal_year.name,
+                'start_date':assessment.start_date,
+                'state':assessment.state,
+                'provider_province':assessment.provider_province.id,
+                'report_id':self.id
+            }
+
+            self.env['seta.reports.assessment'].create(val)
+        self.headers = pprint.saferepr(headers)
+
+        return "/report_export/assessment_analysis/%s"
+
 
 class SETAReportAccreditations(models.TransientModel):
     _name = 'seta.reports.accreditations'
@@ -102,5 +127,28 @@ class SETAReportAccreditations(models.TransientModel):
     provider_approval_date = fields.Date(string='Provider Accreditation Date')
     is_extension_of_scope = fields.Boolean()
     is_existing_provider = fields.Boolean()
+
+    report_id = fields.Many2one("seta.reports", "Report Id")
+
+
+class SETAReportAssessment(models.TransientModel):
+    _name = 'seta.reports.assessment'
+
+    name = fields.Char()
+    provider_id = fields.Many2one('res.partner')
+    qual_skill_assessment = fields.Selection([('qual', 'qual'),
+                              ('skill', 'skill'),
+                              ('lp', 'lp')])
+    batch_id = fields.Many2one('batch.master')
+    fiscal_year = fields.Many2one('account.fiscalyear')
+    start_date = fields.Date()
+    state = fields.Selection([('draft', 'draft'),
+                              ('submitted', 'submitted'),
+                              ('learners', 'learners'),
+                              ('verify', 'verify'),
+                              ('evaluate', 'evaluate'),
+                              ('achieved', 'achieved'),
+                              ])
+    provider_province = fields.Many2one('res.country.state')
 
     report_id = fields.Many2one("seta.reports", "Report Id")

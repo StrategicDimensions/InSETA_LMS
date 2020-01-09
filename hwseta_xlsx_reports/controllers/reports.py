@@ -82,7 +82,62 @@ class ReportExporter(http.Controller):
         response = request.make_response(None,
                                          headers=[('Content-Type', 'application/vnd.ms-excel'),
                                                   ('Content-Disposition',
-                                                   'attachment; filename=pipeline_analysis.xls;')],
+                                                   'attachment; filename=accreditation_analysis.xls;')],
+                                         cookies={})
+        workbook.save(response.stream)
+
+        return response
+
+    @http.route(['/report_export/assessment_analysis/<int:report_id>'], type='http', auth="user")
+    def assessment_analysis(self, report_id, **kw):
+        # jdata = json.loads(data)
+
+        report = request.env['seta.reports'].search([('id', '=', report_id)])
+        assessments = request.env['seta.reports.assessment'].search([('report_id', '=', report_id)])
+        headers = ast.literal_eval(report.headers)
+
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet(report[0].name)
+        # worksheet = workbook.add_worksheet(report[0].name)
+        header_bold_blue = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour blue; align: vert center, horiz center;")
+        header_bold_lightblue = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour blue; align: horiz center;")
+        header_bold_yellow = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
+        header_bold_lightyellow = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
+        header_plain = xlwt.easyxf("pattern: pattern solid, fore_colour blue;")
+        bold = xlwt.easyxf("font: bold on;")
+        normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
+        # Step 1: writing headers
+        worksheet.write_merge(0, 0, 0, 23, _("assessment report FROM %s TO %s") % (report.from_date, report.to_date),
+                              header_bold_blue)
+        worksheet.write_merge(0, 0, 24, 27, _("QUARTERS"), header_bold_yellow)
+
+        for i, header in enumerate(headers):
+            worksheet.write(1, i, header, header_bold_lightblue)
+
+        for i, assessment in enumerate(assessments):
+
+            worksheet.write(i + 2, 0, assessment.name)
+            worksheet.write(i + 2, 1, assessment.provider_id)
+            worksheet.write(i + 2, 2, accred.qual_skill_assessment)
+            worksheet.write(i + 2, 3, accred.batch_id)
+            worksheet.write(i + 2, 4, accred.fiscal_year)
+            worksheet.write(i + 2, 5, accred.start_date)
+            worksheet.write(i + 2, 6, accred.state)
+
+        # num_leads = len(leads)
+        # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)
+        # worksheet.write(num_leads + 2, 24, xlwt.Formula("SUM($X$3:$X$%s)" % (num_leads + 2)), header_bold_yellow)
+        # worksheet.write(num_leads + 2, 25, xlwt.Formula("SUM($Y$3:$Y$%s)" % (num_leads + 2)), header_bold_yellow)
+        # worksheet.write(num_leads + 2, 26, xlwt.Formula("SUM($Z$3:$Z$%s)" % (num_leads + 2)), header_bold_yellow)
+        # worksheet.write(num_leads + 2, 27, xlwt.Formula("SUM($AA$3:$AA$%s)" % (num_leads + 2)), header_bold_yellow)
+        response = request.make_response(None,
+                                         headers=[('Content-Type', 'application/vnd.ms-excel'),
+                                                  ('Content-Disposition',
+                                                   'attachment; filename=assessment_analysis.xls;')],
                                          cookies={})
         workbook.save(response.stream)
 
