@@ -121,12 +121,13 @@ class ReportExporter(http.Controller):
         for i, assessment in enumerate(assessments):
 
             worksheet.write(i + 2, 0, assessment.name)
-            worksheet.write(i + 2, 1, assessment.provider_id)
-            worksheet.write(i + 2, 2, accred.qual_skill_assessment)
-            worksheet.write(i + 2, 3, accred.batch_id)
-            worksheet.write(i + 2, 4, accred.fiscal_year)
-            worksheet.write(i + 2, 5, accred.start_date)
-            worksheet.write(i + 2, 6, accred.state)
+            worksheet.write(i + 2, 1, assessment.provider_id.name)
+            worksheet.write(i + 2, 2, assessment.qual_skill_assessment)
+            worksheet.write(i + 2, 3, assessment.batch_id.batch_name)
+            worksheet.write(i + 2, 4, assessment.fiscal_year.name)
+            worksheet.write(i + 2, 5, assessment.start_date)
+            worksheet.write(i + 2, 6, assessment.state)
+            worksheet.write(i + 2, 7, assessment.provider_province.name)
 
         # num_leads = len(leads)
         # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)

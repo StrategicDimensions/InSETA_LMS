@@ -94,7 +94,7 @@ class SETAReport(models.TransientModel):
         assessments = self.env['provider.assessment'].search(
             [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
         # vals = []
-        headers = [_('NAME'), _('provider'), _('batch'), _('fiscal'), _('start dt'), _('state'), _('province'), _('final state')]
+        headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('fiscal'), _('start dt'), _('state'), _('province')]
 
         for assessment in assessments:
             val = {
@@ -102,7 +102,7 @@ class SETAReport(models.TransientModel):
                 'provider_id':assessment.provider_id.id,
                 'qual_skill_assessment':assessment.qual_skill_assessment,
                 'batch_id':assessment.batch_id.id,
-                'fiscal_year':assessment.fiscal_year.name,
+                'fiscal_year':assessment.fiscal_year.id,
                 'start_date':assessment.start_date,
                 'state':assessment.state,
                 'provider_province':assessment.provider_province.id,
