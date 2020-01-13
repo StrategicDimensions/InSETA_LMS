@@ -939,7 +939,14 @@ class Website(openerp.addons.website.controllers.main.Website):
             res = provider_accreditation_obj.create(cr,SUPERUSER_ID,values,context)
 #             if q_vals_line:
 #                 provider_accreditation_obj.browse(cr,SUPERUSER_ID,res).write({'qualification_ids':q_vals_line,'skills_programme_ids':s_vals_line,'provider_accreditation_ref':post.get('provider_accreditation_ref',''),'acc_multi_doc_upload_ids':doc_vals})
-            provider_accreditation_obj.browse(cr,SUPERUSER_ID,res).write({'qualification_ids':q_vals_line,'skills_programme_ids':s_vals_line,'learning_programme_ids':l_vals_line,'provider_accreditation_ref':post.get('provider_accreditation_ref',''),'acc_multi_doc_upload_ids':doc_vals})
+            provider_accreditation_obj.browse(cr,SUPERUSER_ID,res).write({'qualification_ids':q_vals_line,
+                                                                          'skills_programme_ids':s_vals_line,
+                                                                          'learning_programme_ids':l_vals_line,
+                                                                          'provider_accreditation_ref':post.get('provider_accreditation_ref',''),
+                                                                          'acc_multi_doc_upload_ids':doc_vals
+                                                                          'submitted': True,
+                                                                          'final_state': 'Submitted'
+                                                                          })
         
             dict.update({'provider_accreditation_ref':post.get('provider_accreditation_ref','NA')})
         return request.website.render("website.RegistrationConfirmationMessage",dict)
@@ -1246,7 +1253,7 @@ class Website(openerp.addons.website.controllers.main.Website):
             values['assessor_moderator_register_date'] = datetime.datetime.strptime(todays_date, "%Y-%m-%d").date()
             res=assessors_moderators_register_obj.create(cr,SUPERUSER_ID,values,context)
             assessors_moderators_register_obj.write(cr,SUPERUSER_ID,res,{'qualification_ids':q_vals_line,'assessors_moderators_ref':post.get('assessors_moderators_ref','')})
-            
+            assessors_moderators_register_obj.browse(cr, SUPERUSER_ID, res).action_submit_button()
             dict.update({'assessors_moderators_ref':post.get('assessors_moderators_ref','NA')})
             if post.get('radioAssMod') == 'assessor':
                 dict['assessor'] = True
