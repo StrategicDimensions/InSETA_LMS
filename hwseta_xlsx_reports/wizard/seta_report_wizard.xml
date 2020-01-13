@@ -10,10 +10,16 @@
                 <form string="Custom Reports">
                     <group>
                         <field name="name"/>
+                        <field name="report_type"/>
                         <field name="from_date"/>
                         <field name="to_date"/>
-                        <field name="state"/>
-                        <field name="report_type"/>
+<!--                        <field name="state"/>-->
+
+
+                    </group>
+                    <group attrs="{'invisible':[('report_type','!=','_assessment_analysis')]}">
+                        <field name="assessment_state"/>
+                        <field name="qual_skill_assessment"/>
                     </group>
                     <footer>
                         <button name="extract" string="Extract" type="object" default_focus="1" class="btn-primary"/>

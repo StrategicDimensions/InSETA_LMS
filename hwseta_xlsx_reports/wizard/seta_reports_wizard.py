@@ -52,6 +52,16 @@ class SETAReport(models.TransientModel):
     state = fields.Selection([('active', 'Active'),
                               ('cancel', 'Cancelled'),
                               ('all', 'All')], string="State", default='active')
+    assessment_state = fields.Selection([('draft', 'Draft'),
+                                        ('submitted', 'Submitted'),
+                                        ('learners', 'Learners'),
+                                        ('verify', 'Verify'),
+                                        ('evaluate', 'Evaluate'),
+                                        ('achieved', 'Achieved'),
+                                        ])
+    qual_skill_assessment = fields.Selection([('qual', 'qual'),
+                              ('skill', 'skill'),
+                              ('lp', 'lp')])
 
     @api.multi
     def extract(self):
@@ -91,13 +101,19 @@ class SETAReport(models.TransientModel):
         return "/report_export/accreditation_analysis/%s"
 
     def _assessment_analysis(self):
-        assessments = self.env['provider.assessment'].search(
-            [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)]
+        if self.qual_skill_assessment:
+            domain.append(('qual_skill_assessment','=',self.qual_skill_assessment))
+        if self.assessment_state:
+            domain.append(('state','=',self.assessment_state))
+        dbg(domain)
+        assessments = self.env['provider.assessment'].search(domain)
         # vals = []
-        headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('fiscal'), _('start dt'), _('state'), _('province')]
+        headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('fiscal'), _('start dt'), _('state'), _('province'), _('learner'), _('rpl')]
 
         for assessment in assessments:
             val = {
+                'assessment':assessment.id,
                 'name':assessment.name,
                 'provider_id':assessment.provider_id.id,
                 'qual_skill_assessment':assessment.qual_skill_assessment,
@@ -134,6 +150,7 @@ class SETAReportAccreditations(models.TransientModel):
 class SETAReportAssessment(models.TransientModel):
     _name = 'seta.reports.assessment'
 
+    assessment = fields.Many2one('provider.assessment')
     name = fields.Char()
     provider_id = fields.Many2one('res.partner')
     qual_skill_assessment = fields.Selection([('qual', 'qual'),
@@ -142,13 +159,14 @@ class SETAReportAssessment(models.TransientModel):
     batch_id = fields.Many2one('batch.master')
     fiscal_year = fields.Many2one('account.fiscalyear')
     start_date = fields.Date()
-    state = fields.Selection([('draft', 'draft'),
-                              ('submitted', 'submitted'),
-                              ('learners', 'learners'),
-                              ('verify', 'verify'),
-                              ('evaluate', 'evaluate'),
-                              ('achieved', 'achieved'),
+    state = fields.Selection([('draft', 'Draft'),
+                              ('submitted', 'Submitted'),
+                              ('learners', 'Learners'),
+                              ('verify', 'Verify'),
+                              ('evaluate', 'Evaluate'),
+                              ('achieved', 'Achieved'),
                               ])
     provider_province = fields.Many2one('res.country.state')
+    # learner_ids = fields.One2many('learner.assessment.line',)
 
     report_id = fields.Many2one("seta.reports", "Report Id")
