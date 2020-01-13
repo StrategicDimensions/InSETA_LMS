@@ -75,6 +75,43 @@ class SETAReport(models.TransientModel):
             'res_id': self.id,
         }
 
+    def _register_approval_analysis(self):
+        registrations = self.env['assessors.moderators.register'].search(
+            [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        # vals = []
+        headers = [_('Province'),
+                   _('Number of applications submitted to Provincial Office'),
+                   _('Number of Moderator Registration Applications Approved '),
+                   _('Number of Moderator Registration Applications Declined '),
+                   _('% of Moderator Registration applications approved '),
+                   _('% of Moderator Registration applications declined ')]
+        provinces = {}
+        for reg in registrations:
+            if reg.work_province not in provinces.keys():
+                provinces.update(reg.work_province)
+                if reg.final_state == 'approved':
+                    provinces[reg.work_province]['approved_count'] += 1
+                if reg.final_state == 'approved':
+                    provinces[reg.work_province]['approved_count'] += 1
+            val = {
+                'provider_accreditation_ref': accred.provider_accreditation_ref,
+                'name':accred.name,
+                'phone':accred.phone,
+                'email':accred.email,
+                'provider_register_date':accred.provider_register_date,
+                'provider_approval_date':accred.provider_approval_date,
+                'is_extension_of_scope':accred.is_extension_of_scope,
+                'is_existing_provider':accred.is_existing_provider,
+                'final_state':accred.final_state,
+                'report_id':self.id
+            }
+
+            self.env['seta.reports.accreditations'].create(val)
+        self.headers = pprint.saferepr(headers)
+
+        return "/report_export/accreditation_analysis/%s"
+
+
     def _accreditation_analysis(self):
         accreds = self.env['provider.accreditation'].search(
             [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
