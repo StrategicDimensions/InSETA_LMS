@@ -12,6 +12,9 @@ HWSETA Report module covers.
     'depends' : ['hwseta_etqe'],
     'data': [
         'wizard/seta_report_wizard.xml',
+        'data/data.xml',
+        'security/hwseta_report_security.xml',
+        'security/ir.model.access.csv',
     ],
     'qweb' : [
 

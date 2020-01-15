@@ -21,6 +21,9 @@
                         <field name="assessment_state"/>
                         <field name="qual_skill_assessment"/>
                     </group>
+                    <group attrs="{'invisible':[('report_type','not in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}">
+                        <field name="register_assessor_or_moderator" attrs="{'required':[('report_type','in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}"/>
+                    </group>
                     <footer>
                         <button name="extract" string="Extract" type="object" default_focus="1" class="btn-primary"/>
                         or
