@@ -10246,11 +10246,30 @@ class provider_assessment(models.Model):
 								learners_moderator_id = learner_qual.moderators_id.id
 								for unit_line in learner_qual.learner_registration_line_ids:
 									if unit_line.achieve == False and unit_line.selection:
-										# print "unit_line.id_data====", unit_line.id_data
-										# print "unit_line.Title====", unit_line.title
-										pro_qual_id = self.env['provider.qualification.line'].search(
-											['|', ('id_no', '=', 'unit_line.id_data'), ('title', '=', unit_line.title),
-											 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)]).id
+										
+										pro_qual_obj = self.env['provider.qualification.line'].search(
+											['|',('id_no', '=', unit_line.id_data),('title', '=', unit_line.title),
+											 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)])
+										# for x in pro_qual_obj:
+										# 	dbg(x.id_no)
+										# 	dbg(x.title)
+										# 	dbg(x.line_id)
+										pro_qual_object2 = self.env['provider.qualification.line'].search(
+											[('id_no', '=', unit_line.id_data),
+											 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)])
+										dbg(pro_qual_object2)
+										for x in pro_qual_object2:
+											dbg(x.id_no)
+											dbg(x.title)
+											dbg(x.line_id)
+										# pro_qual_id = self.env['provider.qualification.line'].search(
+										# 	['|',('id_no', '=', unit_line.id_data),('title', '=', unit_line.title),
+										# 	 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)],limit=1).id
+										pro_qual_id = pro_qual_object2.id
+										
+										# raise Warning(pro_qual_obj)
+										# if len(pro_qual_obj) > 1:
+										# 	raise Warning(_("No doos - "+ str([x.id_no for x in pro_qual_obj])))
 										print "pro_qual_id==", pro_qual_id
 										if pro_qual_id:
 											unit_line_list.append(pro_qual_id)
