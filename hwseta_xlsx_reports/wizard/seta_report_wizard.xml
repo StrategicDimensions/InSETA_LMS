@@ -50,6 +50,6 @@
 <!--           <field name="target">new</field>-->
 <!--       </record>-->
 
-        <menuitem id="menu_seta_reports" name="SETA Extra Reports" action="action_seta_report"/>
+        <menuitem id="menu_seta_reports" name="SETA Extra Reports" action="action_seta_report" groups="hwseta_xlsx_reports.group_seta_reports"/>
     </data>
 </openerp>
