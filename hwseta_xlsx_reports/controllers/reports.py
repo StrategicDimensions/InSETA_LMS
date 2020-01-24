@@ -1,6 +1,7 @@
 from collections import deque
 import ast
 import csv
+import re
 from openerp import http, _
 from openerp.http import request
 from openerp.tools import ustr
@@ -162,60 +163,104 @@ class ReportExporter(http.Controller):
         report = request.env['seta.reports'].search([('id', '=', report_id)])
         assessments = request.env['seta.reports.assessment'].search([('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
-        with open('assessment_analysis.csv', 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=headers)
+
+        with open('/home/erpguy/Downloads/assessment_analysis.csv', 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter='~', quotechar='|')
 
             writer.writeheader()
             for assessment in assessments:
+                if assessment.qual_skill_assessment == 'qual':
+                    enrolled_count = len(assessment.assessment.learner_ids)
+                elif assessment.qual_skill_assessment == 'lp':
+                    enrolled_count = len(assessment.assessment.learner_ids_for_lp)
+                elif assessment.qual_skill_assessment == 'skill':
+                    enrolled_count = len(assessment.assessment.learner_ids_for_skills)
+
+                if not isinstance(assessment.batch_id.batch_name, bool):
+                    assessment.batch_id.batch_name = assessment.batch_id.batch_name.replace(u"\xa0", u" ")
+                    assessment.batch_id.batch_name = assessment.batch_id.batch_name.encode("utf-8")
+
                 writer.writerow({'NAME': assessment.assessment.name,
-                                 'provider': assessment.provider_id.name,
+                                 'provider': assessment.provider_id.name, 
                                  'type': assessment.qual_skill_assessment,
                                  'batch': assessment.batch_id.batch_name,
-                                 'fiscal': assessment.fiscal_year.name,
-                                 'start dt': assessment.start_date,
                                  'state': assessment.assessment.state,
                                  'province': assessment.provider_province.name,
-                                 'learner': '',
                                  })
+
                 if assessment.qual_skill_assessment == 'qual':
                     for learner in assessment.assessment.learner_ids:
                         rpl = False
+                        achieved = False
                         lnr = learner.learner_id
+                        lnr_count_qual = len(assessment.assessment.learner_ids)
+                      
                         for quals in lnr.learner_qualification_ids:
                             if assessment.batch_id == quals.batch_id:
                                 for units in quals.learner_registration_line_ids:
                                     if units.is_rpl_learner:
                                         rpl = True
+                                    if units.achieve:
+                                        achieved = True
                                 writer.writerow({'NAME': '',
                                                  'provider': '',
                                                  'type': '',
                                                  'batch': '',
-                                                 'fiscal': '',
-                                                 'start dt': '',
                                                  'state': '',
                                                  'province': '',
+                                                 'enrolled learners': lnr_count_qual,
                                                  'learner': learner.identification_id,
                                                  'rpl': rpl if rpl else '',
+                                                 'qualification': learner.qual_learner_assessment_line_id.name,
+                                                 'qualification id': quals.learner_qualification_parent_id.saqa_qual_id,
                                                  })
+                                
                 if assessment.qual_skill_assessment == 'lp':
-                    for learner in assessment.assessment.learner_ids_for_lps:
+                    for learner in assessment.assessment.learner_ids_for_lp:
+                        lnr_count_lp = len(assessment.assessment.learner_ids_for_lp)
+
                         rpl = False
+                        achieved = False
                         lnr = learner.learner_id
-                        for quals in lnr.learner_qualification_ids:
-                            if assessment.batch_id == quals.batch_id:
-                                for units in quals.learner_registration_line_ids:
-                                    if units.is_rpl_learner:
-                                        rpl = True
+                        
+                        for quals in lnr.learning_programme_ids:
+                            if assessment.batch_id == quals.batch_id:                        
                                 writer.writerow({'NAME': '',
                                                  'provider': '',
                                                  'type': '',
                                                  'batch': '',
-                                                 'fiscal': '',
-                                                 'start dt': '',
                                                  'state': '',
                                                  'province': '',
+                                                 'enrolled learners': lnr_count_lp,
                                                  'learner': learner.identification_id,
-                                                 'rpl': rpl if rpl else '',
+                                                 'achieved': achieved if achieved else '',
+                                                 'qualification': learner.lp_learner_assessment_line_id.name,
+                                                 'qualification id': quals.lp_saqa_id,
+                                                 })
+
+
+                if assessment.qual_skill_assessment == 'skill':
+                    for learner in assessment.assessment.learner_ids_for_skills:
+                        lnr_count_sp = len(assessment.assessment.learner_ids_for_skills)
+
+                        rpl = False
+                        achieved = False
+                        lnr = learner.learner_id
+
+                        
+                        for quals in lnr.skills_programme_ids:
+                            if assessment.batch_id == quals.batch_id:
+                                writer.writerow({'NAME': '',
+                                                 'provider': '',
+                                                 'type': '',
+                                                 'batch': '',
+                                                 'state': '',
+                                                 'province': '',
+                                                 'enrolled learners': lnr_count_sp,
+                                                 'learner': learner.identification_id,
+                                                 'achieved': achieved if achieved else '',
+                                                 'qualification': learner.skill_learner_assessment_line_id.name,
+                                                 'qualification id': quals.saqa_skill_id,
                                                  })
 
 
@@ -225,7 +270,9 @@ class ReportExporter(http.Controller):
                                                    'attachment; filename=assessment_analysis.csv;')],
                                          cookies={})
         dbg(response)
-        with open('assessment_analysis.csv', 'r') as f2:
+        import os 
+        dbg(os.getcwd())
+        with open('/home/erpguy/Downloads/assessment_analysis.csv', 'r') as f2:
             data = str.encode(f2.read(), 'utf-8')
             response.response=data
 

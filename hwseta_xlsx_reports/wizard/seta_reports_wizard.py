@@ -369,7 +369,12 @@ class SETAReport(models.TransientModel):
         dbg(domain)
         assessments = self.env['provider.assessment'].search(domain)
         # vals = []
-        headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('fiscal'), _('start dt'), _('state'), _('province'), _('learner'), _('rpl')]
+        if self.qual_skill_assessment == 'qual':
+            headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('state'), _('province'), _('enrolled learners'), _('learner'), _('rpl'), _('achieved'), _('qualification'), _('qualification id'), ]
+        if self.qual_skill_assessment in ['lp','skill']:
+            headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('state'), _('province'), _('enrolled learners'), _('learner'), _('rpl'), _('achieved'), _('qualification'), _('qualification id'), ]
+        if not self.qual_skill_assessment:
+            headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('state'), _('province'), _('enrolled learners'), _('learner'), _('rpl'), _('achieved'), _('qualification'), _('qualification id'),]
 
         for assessment in assessments:
             val = {
@@ -381,7 +386,7 @@ class SETAReport(models.TransientModel):
                 'fiscal_year':assessment.fiscal_year.id,
                 'start_date':assessment.start_date,
                 'state':assessment.state,
-                'provider_province':assessment.provider_province.id,
+                'provider_province':assessment.provider_province.id,  
                 'report_id':self.id
             }
 
