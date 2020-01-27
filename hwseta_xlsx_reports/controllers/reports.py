@@ -467,7 +467,7 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
+        worksheet.write_merge(0, 0, 0, 7, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
