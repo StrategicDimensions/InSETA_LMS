@@ -46,6 +46,7 @@ class SETAReport(models.TransientModel):
     to_date = fields.Date("To", required=True)
     report_type = fields.Selection([('_accreditation_analysis', 'Accreditation Analysis'),
                                     ('_assessment_analysis', 'Assessment Analysis'),
+                                    ('_etqa_sdps_no_learners', 'etqa_sdps_no_learners'),
                                     ('_register_approval_analysis', 'register approval analysis'),
                                     ('_late_assessment_accreditation_analysis', 'provider acrred 140 days'),
                                     ('_mod_ass_register_8week_analysis', '_mod_ass_register_8week_analysis'),
@@ -80,6 +81,31 @@ class SETAReport(models.TransientModel):
             'target': 'new',
             'res_id': self.id,
         }
+
+    def _etqa_sdps_no_learners(self):
+        domain = [('provider_end_date', '>=', self.from_date), ('provider_end_date', '<=', self.to_date)]
+        expirings = self.env['res.partner'].search(domain)
+        dbg(expirings)
+        headers = [ _('NAME'),_('Provider Accreditation Number'), ('Primary Accrediting Body'),
+                    ('Accreditation Start Date'), ('Accreditation Start Date'), ('Email Address'),
+                    ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
+                    ('Qualification ID')]
+
+        for expiring in expirings:
+            has_learners = False
+            for qualification in expiring.qualification_ids:
+                if self.env['learner.registration'].search([('provider_id','=',expiring.id),('learner_qualification_ids,learner_qualification_parent_id','=',qualification)]):
+                    has_learners = True
+            if not has_learners:
+                val = {
+                        'provider_id': expiring.id,
+                        'report_id': self.id
+                }
+
+            self.env['seta.reports.etqa.sdps.no.learners'].create(val)
+        self.headers = pprint.saferepr(headers)
+
+        return "/report_export/sdps_no_learners/%s"
 
     def _register_approval_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
@@ -558,6 +584,7 @@ class SETAReport8WeekRegister(models.TransientModel):
     final_state = fields.Char()
     report_id = fields.Many2one("seta.reports", "Report Id")
 
+
 class SETAReportetqaApprovalAccreditationAnalysis(models.TransientModel):
     _name = 'seta.reports.etqa.approval.accreditation.analysis'
 
@@ -569,3 +596,11 @@ class SETAReportetqaApprovalAccreditationAnalysis(models.TransientModel):
     approved_perc = fields.Float()
 
     report_id = fields.Many2one("seta.reports", "Report Id")
+
+
+class SETAReportetqaSDPsNoLearners(models.TransientModel):
+    _name = 'seta.reports.etqa.sdps.no.learners'
+
+    provider_id = fields.Many2one('res.partner')
+    report_id = fields.Many2one("seta.reports", "Report Id")
+

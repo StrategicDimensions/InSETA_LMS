@@ -491,3 +491,64 @@ class ReportExporter(http.Controller):
         workbook.save(response.stream)
 
         return response
+
+    @http.route(['/report_export/sdps_no_learners/<int:report_id>'], type='http', auth="user")
+    def sdps_no_learners(self, report_id, **kw):
+        # jdata = json.loads(data)
+
+        report = request.env['seta.reports'].search([('id', '=', report_id)])
+        providers = request.env['seta.reports.etqa.sdps.no.learners'].search([('report_id', '=', report_id)])
+        headers = ast.literal_eval(report.headers)
+
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet(report[0].name)
+        # worksheet = workbook.add_worksheet(report[0].name)
+        header_bold_blue = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour blue; align: vert center, horiz center;")
+        header_bold_lightblue = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour blue; align: horiz center;")
+        header_bold_yellow = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
+        header_bold_lightyellow = xlwt.easyxf(
+            "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
+        header_plain = xlwt.easyxf("pattern: pattern solid, fore_colour blue;")
+        bold = xlwt.easyxf("font: bold on;")
+        normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
+        # Step 1: writing headers
+        worksheet.write_merge(0, 0, 0, 5, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
+                              header_bold_blue)
+
+        for i, header in enumerate(headers):
+            worksheet.write(1, i, header, header_bold_lightblue)
+        #[_('NAME'), _('Provider Accreditation Number'), ('Primary Accrediting Body'),
+        # ('Accreditation Start Date'), ('Accreditation Start Date'), ('Email Address'),
+        # ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
+        # ('Qualification ID')]
+
+        # # for provider in providers:
+        # #     if provider.qualification_ids:
+        # #         worksheet.write()
+        # #         for qualification in provider.qualification_ids:
+        #
+        #     if provider.
+
+        for i, reg in enumerate(providers):
+            worksheet.write(i + 2, 0, reg.mod_id_no)
+            worksheet.write(i + 2, 1, reg.mod_name)
+            worksheet.write(i + 2, 2, reg.mod_surname)
+            worksheet.write(i + 2, 3, reg.province.name)
+            worksheet.write(i + 2, 4, reg.application_date)
+            worksheet.write(i + 2, 5, reg.update_date)
+            worksheet.write(i + 2, 6, reg.days_to_update)
+            worksheet.write(i + 2, 7, reg.final_state)
+
+        response = request.make_response(None,
+                                         headers=[('Content-Type', 'application/vnd.ms-excel'),
+                                                  ('Content-Disposition',
+                                                   'attachment; filename=sdps_no_learners.xls;')],
+                                         cookies={})
+        workbook.save(response.stream)
+
+        return response
+
+
