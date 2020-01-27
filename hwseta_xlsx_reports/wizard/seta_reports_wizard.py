@@ -84,16 +84,21 @@ class SETAReport(models.TransientModel):
     def _register_approval_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
         domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
+        ass_mod = ''
         if self.register_assessor_or_moderator:
             domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
+            if self.register_assessor_or_moderator == 'moderator':
+                ass_mod = 'Moderator'
+            elif self.register_assessor_or_moderator == 'assessor':
+                ass_mod = 'Assessor'
         registrations = self.env['assessors.moderators.register'].search(domain)
         # vals = []
         headers = [_('Province'),
                    _('Number of applications submitted to Provincial Office'),
-                   _('Number of Moderator Registration Applications Approved '),
-                   _('Number of Moderator Registration Applications Declined '),
-                   _('% of Moderator Registration applications approved '),
-                   _('% of Moderator Registration applications declined ')]
+                   _('Number of %s Registration Applications Approved ' % ass_mod),
+                   _('Number of %s Registration Applications Declined ' % ass_mod),
+                   _('Percentage of %s Registration applications approved ' % ass_mod),
+                   _('Percentage of %s Registration applications declined ' % ass_mod)]
         dbg(registrations)
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
@@ -220,17 +225,23 @@ class SETAReport(models.TransientModel):
     def _mod_ass_register_8week_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
         domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
+        ass_mod = ''
         if self.register_assessor_or_moderator:
             domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
+            if self.register_assessor_or_moderator == 'moderator':
+                ass_mod = 'Moderator'
+            elif self.register_assessor_or_moderator == 'assessor':
+                ass_mod = 'Assessor'
         registrations = self.env['assessors.moderators.register'].search(domain)
         # vals = []
-        headers = [_('Moderator ID No'),
-                   _('Moderator Name'),
-                   _('Moderator Surname'),
-                   _('Date of Moderator Application Submission'),
+        headers = [_('%s ID No' % ass_mod),
+                   _('%s Name' % ass_mod),
+                   _('%s Surname' %ass_mod),
+                   _('Province'),
+                   _('Date of %s Application Submission' % ass_mod),
                    _('Date Approved/Declined by Provincial Manager '),
-                   _('Number of days it took for the Provincial Office to approve/decline(<=8 weeks/35 days) a Moderator Application'),
-                   _('Moderator Application Status')]
+                   _('Number of days it took for the Provincial Office to approve/decline(<=8 weeks/35 days) a %s Application' % ass_mod),
+                   _('%s Application Status' % ass_mod)]
         broken_regs = []
         for reg in registrations:
             stat_dict = {}
