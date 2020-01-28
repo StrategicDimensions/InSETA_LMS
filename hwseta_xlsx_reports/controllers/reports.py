@@ -591,16 +591,13 @@ class ReportExporter(http.Controller):
         report = request.env['seta.reports'].search([('id', '=', report_id)])
         providers = request.env['seta.reports.etqa.sdps.no.learners'].search([('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
-
+        # using csv to avoid row limit and nesting crap(dont go back to trying xlsx for long list reports/master data lopps)
         with open('sdps_no_learners.csv', 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter=',', quotechar='"')
 
             writer.writeheader()
-            # [_('NAME'), _('Provider Accreditation Number'), ('Primary Accrediting Body'),
-            # ('Accreditation Start Date'), ('Accreditation End Date'), (''),
-            # ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
-            # ('Qualification ID')]
             for provider in providers:
+                # below used as lazy way to catch concat issues/side effect :may trigger data correction
                 if provider.provider_id.physical_address_1 and provider.provider_id.physical_address_2:
                     addr = provider.provider_id.physical_address_1 or '' + ',' + provider.provider_id.physical_address_2 or ''
                 else:
@@ -621,8 +618,12 @@ class ReportExporter(http.Controller):
                                  'Learners Enrolled': '',
                                  })
                 for qual in provider.qualification_ids:
+                    # todo: remove or buff to avoid misleading stats
                     learners = request.env['hr.employee'].search([('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
-                    learner_reg = request.env['learner.registration'].search([('learner_qualification_ids.create_date','>',start),('learner_qualification_ids.create_date','<',end),('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
+                    # gives incorrect total at first glance
+                    # learner_reg = request.env['learner.registration'].search([('learner_qualification_ids.create_date','>',start),('learner_qualification_ids.create_date','<',end),('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
+                    # dont use create date, seems to destroy expectations from imports
+                    learner_reg_lines = request.env['learner.registration.qualification'].search([('start_date','>',start),('start_date','<',end),('provider_id','=',provider.provider_id.id),('learner_qualification_parent_id','=',qual.qualification_id.id)])
                     writer.writerow({'NAME': '',
                                  'Provider Accreditation Number': '',
                                  'Primary Accrediting Body': '',
@@ -634,17 +635,22 @@ class ReportExporter(http.Controller):
                                  'Type': 'Qualification',
                                  'Accredited Qualification Title': qual.qualification_id.name,
                                  'Qualification ID': qual.saqa_qual_id,
-                                 'Learners Enrolled': len(learner_reg),
-                                 'Learners Total': len(learners),
+                                 'Learners Enrolled': len(learner_reg_lines),
+                                 'Learners Total': len(learners),#this needs to be removed,as for all types
                                  })
                 for skill in provider.skill_ids:
                     learners = request.env['hr.employee'].search(
                         [('skills_programme_ids.provider_id', '=', provider.provider_id.id),
                          ('skills_programme_ids.skills_programme_id', '=', skill.id)])
-                    learner_reg = request.env['hr.employee'].search(
-                        [('skills_programme_ids.create_date','>',start),('skills_programme_ids.create_date','<',end),
-                         ('skills_programme_ids.provider_id', '=', provider.provider_id.id),
-                         ('skills_programme_ids.skills_programme_id', '=', skill.id)])
+                    # learner_reg = request.env['hr.employee'].search(
+                    #     [('skills_programme_ids.create_date','>',start),('skills_programme_ids.create_date','<',end),
+                    #      ('skills_programme_ids.provider_id', '=', provider.provider_id.id),
+                    #      ('skills_programme_ids.skills_programme_id', '=', skill.id)])
+                    # dont use create date, seems to destroy expectations from imports
+                    learner_reg_lines = request.env['skills.programme.learner.rel'].search(
+                        [('start_date','>',start),('start_date','<',end),
+                         ('provider_id', '=', provider.provider_id.id),
+                         ('skills_programme_id', '=', skill.id)])
                     writer.writerow({'NAME': '',
                                      'Provider Accreditation Number': '',
                                      'Primary Accrediting Body': '',
@@ -656,17 +662,22 @@ class ReportExporter(http.Controller):
                                      'Type': 'Skill',
                                      'Accredited Qualification Title': skill.skills_programme_id.name,
                                      'Qualification ID': skill.skill_saqa_id,
-                                     'Learners Enrolled': len(learner_reg),
+                                     'Learners Enrolled': len(learner_reg_lines),
                                      'Learners Total': len(learners),
                                      })
                 for lp in provider.lp_ids:
                     learners = request.env['hr.employee'].search(
                         [('learning_programme_ids.provider_id', '=', provider.provider_id.id),
                          ('learning_programme_ids.learning_programme_id', '=', lp.id)])
-                    learner_reg = request.env['hr.employee'].search(
-                        [('learning_programme_ids.create_date','>',start),('learning_programme_ids.create_date','<',end),
-                         ('learning_programme_ids.provider_id', '=', provider.provider_id.id),
-                         ('learning_programme_ids.learning_programme_id', '=', lp.id)])
+                    # learner_reg = request.env['hr.employee'].search(
+                    #     [('learning_programme_ids.create_date','>',start),('learning_programme_ids.create_date','<',end),
+                    #      ('learning_programme_ids.provider_id', '=', provider.provider_id.id),
+                    #      ('learning_programme_ids.learning_programme_id', '=', lp.id)])
+                    # dont use create date, seems to destroy expectations from imports
+                    learner_reg_lines = request.env['learning.programme.learner.rel'].search(
+                        [('start_date','>',start),('start_date','<',end),
+                         ('provider_id', '=', provider.provider_id.id),
+                         ('learning_programme_id', '=', lp.id)])
                     writer.writerow({'NAME': '',
                                      'Provider Accreditation Number': '',
                                      'Primary Accrediting Body': '',
@@ -678,7 +689,7 @@ class ReportExporter(http.Controller):
                                      'Type': 'LP',
                                      'Accredited Qualification Title': lp.learning_programme_id.name,
                                      'Qualification ID': lp.lp_saqa_id,
-                                     'Learners Enrolled': len(learner_reg),
+                                     'Learners Enrolled': len(learner_reg_lines),
                                      'Learners Total': len(learners),
                                      })
         response = request.make_response(None,
