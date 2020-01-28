@@ -492,6 +492,98 @@ class ReportExporter(http.Controller):
 
         return response
 
+    # @http.route(['/report_export/sdps_no_learners/<int:report_id>'], type='http', auth="user")
+    # def sdps_no_learners(self, report_id, **kw):
+    #     # jdata = json.loads(data)
+    #
+    #     report = request.env['seta.reports'].search([('id', '=', report_id)])
+    #     providers = request.env['seta.reports.etqa.sdps.no.learners'].search([('report_id', '=', report_id)])
+    #     headers = ast.literal_eval(report.headers)
+    #
+    #     workbook = xlwt.Workbook()
+    #     worksheet = workbook.add_sheet(report[0].name)
+    #     # worksheet = workbook.add_worksheet(report[0].name)
+    #     header_bold_blue = xlwt.easyxf(
+    #         "font: bold on; pattern: pattern solid, fore_colour blue; align: vert center, horiz center;")
+    #     header_bold_lightblue = xlwt.easyxf(
+    #         "font: bold on; pattern: pattern solid, fore_colour blue; align: horiz center;")
+    #     header_bold_yellow = xlwt.easyxf(
+    #         "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
+    #     header_bold_lightyellow = xlwt.easyxf(
+    #         "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
+    #     header_plain = xlwt.easyxf("pattern: pattern solid, fore_colour blue;")
+    #     bold = xlwt.easyxf("font: bold on;")
+    #     normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
+    #     # Step 1: writing headers
+    #     worksheet.write_merge(0, 0, 0, 5, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
+    #                           header_bold_blue)
+    #
+    #     for i, header in enumerate(headers):
+    #         worksheet.write(1, i, header, header_bold_lightblue)
+    #     #[_('NAME'), _('Provider Accreditation Number'), ('Primary Accrediting Body'),
+    #     # ('Accreditation Start Date'), ('Accreditation Start Date'), ('Email Address'),
+    #     # ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
+    #     # ('Qualification ID')]
+    #
+    #     # # for provider in providers:
+    #     # #     if provider.qualification_ids:
+    #     # #         worksheet.write()
+    #     # #         for qualification in provider.qualification_ids:
+    #     #
+    #     #     if provider.
+    #     master = 2
+    #     for i, provider in enumerate(providers):
+    #         dbg('master i ')
+    #         dbg(master)
+    #         dbg(provider.provider_id.name)
+    #         if provider.provider_id.physical_address_1 and provider.provider_id.physical_address_2:
+    #             addr = provider.provider_id.physical_address_1 or '' + ',' + provider.provider_id.physical_address_2 or ''
+    #         else:
+    #             addr = 'problems!!!!!!!!!'
+    #         # worksheet.write(i + 2, 0, provider.provider_id.name)
+    #         # worksheet.write(i + 2, 1, provider.provider_id.provider_accreditation_num)
+    #         # worksheet.write(i + 2, 2, 'accred body?')
+    #         # worksheet.write(i + 2, 3, provider.provider_id.provider_start_date)
+    #         # worksheet.write(i + 2, 4, provider.provider_id.provider_end_date)
+    #         # worksheet.write(i + 2, 5, provider.provider_id.email)
+    #         # worksheet.write(i + 2, 6, addr)
+    #         # worksheet.write(i + 2, 7, provider.provider_id.province_code_physical.name)
+    #
+    #         worksheet.write(master, 0, provider.provider_id.name)
+    #         worksheet.write(master, 1, provider.provider_id.provider_accreditation_num)
+    #         worksheet.write(master, 2, 'accred body?')
+    #         worksheet.write(master, 3, provider.provider_id.provider_start_date)
+    #         worksheet.write(master, 4, provider.provider_id.provider_end_date)
+    #         worksheet.write(master, 5, provider.provider_id.email)
+    #         worksheet.write(master, 6, addr)
+    #         worksheet.write(master, 7, provider.provider_id.province_code_physical.name)
+    #         master += i
+    #         for j, qual in enumerate(provider.qualification_ids):
+    #             master += j
+    #             dbg('master j')
+    #             dbg(master)
+    #             dbg(qual.saqa_qual_id)
+    #             worksheet.write(master, 8, qual.qualification_id.name)
+    #             worksheet.write(master, 9, qual.saqa_qual_id)
+    #         # for qual in provider.qualification_ids:
+    #         #     worksheet.write(i + 2, 8, qual.qualification_id.name)
+    #         #     worksheet.write(i + 2, 9, qual.saqa_qual_id)
+    #         # for skill in provider.skill_ids:
+    #         #     worksheet.write(i + 2, 10, skill.skills_programme_id.name)
+    #         #     worksheet.write(i + 2, 11, skill.skill_saqa_id)
+    #         # for lp in provider.lp_ids:
+    #         #     worksheet.write(i + 2, 12, lp.learning_programme_id.name)
+    #         #     worksheet.write(i + 2, 13, lp.lp_saqa_id)
+    #
+    #     response = request.make_response(None,
+    #                                      headers=[('Content-Type', 'application/vnd.ms-excel'),
+    #                                               ('Content-Disposition',
+    #                                                'attachment; filename=sdps_no_learners.xls;')],
+    #                                      cookies={})
+    #     workbook.save(response.stream)
+    #
+    #     return response
+
     @http.route(['/report_export/sdps_no_learners/<int:report_id>'], type='http', auth="user")
     def sdps_no_learners(self, report_id, **kw):
         # jdata = json.loads(data)
@@ -500,55 +592,105 @@ class ReportExporter(http.Controller):
         providers = request.env['seta.reports.etqa.sdps.no.learners'].search([('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
 
-        workbook = xlwt.Workbook()
-        worksheet = workbook.add_sheet(report[0].name)
-        # worksheet = workbook.add_worksheet(report[0].name)
-        header_bold_blue = xlwt.easyxf(
-            "font: bold on; pattern: pattern solid, fore_colour blue; align: vert center, horiz center;")
-        header_bold_lightblue = xlwt.easyxf(
-            "font: bold on; pattern: pattern solid, fore_colour blue; align: horiz center;")
-        header_bold_yellow = xlwt.easyxf(
-            "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
-        header_bold_lightyellow = xlwt.easyxf(
-            "font: bold on; pattern: pattern solid, fore_colour yellow; align: horiz center;")
-        header_plain = xlwt.easyxf("pattern: pattern solid, fore_colour blue;")
-        bold = xlwt.easyxf("font: bold on;")
-        normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
-        # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
-                              header_bold_blue)
+        with open('sdps_no_learners.csv', 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter=',', quotechar='"')
 
-        for i, header in enumerate(headers):
-            worksheet.write(1, i, header, header_bold_lightblue)
-        #[_('NAME'), _('Provider Accreditation Number'), ('Primary Accrediting Body'),
-        # ('Accreditation Start Date'), ('Accreditation Start Date'), ('Email Address'),
-        # ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
-        # ('Qualification ID')]
-
-        # # for provider in providers:
-        # #     if provider.qualification_ids:
-        # #         worksheet.write()
-        # #         for qualification in provider.qualification_ids:
-        #
-        #     if provider.
-
-        for i, reg in enumerate(providers):
-            worksheet.write(i + 2, 0, reg.mod_id_no)
-            worksheet.write(i + 2, 1, reg.mod_name)
-            worksheet.write(i + 2, 2, reg.mod_surname)
-            worksheet.write(i + 2, 3, reg.province.name)
-            worksheet.write(i + 2, 4, reg.application_date)
-            worksheet.write(i + 2, 5, reg.update_date)
-            worksheet.write(i + 2, 6, reg.days_to_update)
-            worksheet.write(i + 2, 7, reg.final_state)
-
+            writer.writeheader()
+            # [_('NAME'), _('Provider Accreditation Number'), ('Primary Accrediting Body'),
+            # ('Accreditation Start Date'), ('Accreditation End Date'), (''),
+            # ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
+            # ('Qualification ID')]
+            for provider in providers:
+                if provider.provider_id.physical_address_1 and provider.provider_id.physical_address_2:
+                    addr = provider.provider_id.physical_address_1 or '' + ',' + provider.provider_id.physical_address_2 or ''
+                else:
+                    addr = 'Data Issue'
+                start = provider.start_date
+                end = provider.end_date
+                writer.writerow({'NAME': provider.provider_id.name,
+                                 'Provider Accreditation Number': provider.provider_id.provider_accreditation_num,
+                                 'Primary Accrediting Body': 'accred body?',
+                                 'Accreditation Start Date': provider.provider_id.provider_start_date,
+                                 'Accreditation End Date': provider.provider_id.provider_end_date,
+                                 'Email Address': provider.provider_id.email,
+                                 'Physical Address': addr,
+                                 'Province': provider.provider_id.province_code_physical.name,
+                                 'Type': '',
+                                 'Accredited Qualification Title': '',
+                                 'Qualification ID': '',
+                                 'Learners Enrolled': '',
+                                 })
+                for qual in provider.qualification_ids:
+                    learners = request.env['hr.employee'].search([('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
+                    learner_reg = request.env['learner.registration'].search([('learner_qualification_ids.create_date','>',start),('learner_qualification_ids.create_date','<',end),('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
+                    writer.writerow({'NAME': '',
+                                 'Provider Accreditation Number': '',
+                                 'Primary Accrediting Body': '',
+                                 'Accreditation Start Date': '',
+                                 'Accreditation End Date': '',
+                                 'Email Address': '',
+                                 'Physical Address': '',
+                                 'Province': '',
+                                 'Type': 'Qualification',
+                                 'Accredited Qualification Title': qual.qualification_id.name,
+                                 'Qualification ID': qual.saqa_qual_id,
+                                 'Learners Enrolled': len(learner_reg),
+                                 'Learners Total': len(learners),
+                                 })
+                for skill in provider.skill_ids:
+                    learners = request.env['hr.employee'].search(
+                        [('skills_programme_ids.provider_id', '=', provider.provider_id.id),
+                         ('skills_programme_ids.skills_programme_id', '=', skill.id)])
+                    learner_reg = request.env['hr.employee'].search(
+                        [('skills_programme_ids.create_date','>',start),('skills_programme_ids.create_date','<',end),
+                         ('skills_programme_ids.provider_id', '=', provider.provider_id.id),
+                         ('skills_programme_ids.skills_programme_id', '=', skill.id)])
+                    writer.writerow({'NAME': '',
+                                     'Provider Accreditation Number': '',
+                                     'Primary Accrediting Body': '',
+                                     'Accreditation Start Date': '',
+                                     'Accreditation End Date': '',
+                                     'Email Address': '',
+                                     'Physical Address': '',
+                                     'Province': '',
+                                     'Type': 'Skill',
+                                     'Accredited Qualification Title': skill.skills_programme_id.name,
+                                     'Qualification ID': skill.skill_saqa_id,
+                                     'Learners Enrolled': len(learner_reg),
+                                     'Learners Total': len(learners),
+                                     })
+                for lp in provider.lp_ids:
+                    learners = request.env['hr.employee'].search(
+                        [('learning_programme_ids.provider_id', '=', provider.provider_id.id),
+                         ('learning_programme_ids.learning_programme_id', '=', lp.id)])
+                    learner_reg = request.env['hr.employee'].search(
+                        [('learning_programme_ids.create_date','>',start),('learning_programme_ids.create_date','<',end),
+                         ('learning_programme_ids.provider_id', '=', provider.provider_id.id),
+                         ('learning_programme_ids.learning_programme_id', '=', lp.id)])
+                    writer.writerow({'NAME': '',
+                                     'Provider Accreditation Number': '',
+                                     'Primary Accrediting Body': '',
+                                     'Accreditation Start Date': '',
+                                     'Accreditation End Date': '',
+                                     'Email Address': '',
+                                     'Physical Address': '',
+                                     'Province': '',
+                                     'Type': 'LP',
+                                     'Accredited Qualification Title': lp.learning_programme_id.name,
+                                     'Qualification ID': lp.lp_saqa_id,
+                                     'Learners Enrolled': len(learner_reg),
+                                     'Learners Total': len(learners),
+                                     })
         response = request.make_response(None,
                                          headers=[('Content-Type', 'application/vnd.ms-excel'),
                                                   ('Content-Disposition',
-                                                   'attachment; filename=sdps_no_learners.xls;')],
+                                                   'attachment; filename=sdps_no_learners.csv;')],
                                          cookies={})
-        workbook.save(response.stream)
+        dbg(response)
+        import os
+        dbg(os.getcwd())
+        with open('sdps_no_learners.csv', 'r') as f2:
+            data = str.encode(f2.read(), 'utf-8')
+            response.response = data
 
         return response
-
-

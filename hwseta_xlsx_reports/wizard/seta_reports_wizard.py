@@ -84,25 +84,52 @@ class SETAReport(models.TransientModel):
 
     def _etqa_sdps_no_learners(self):
         domain = [('provider_end_date', '>=', self.from_date), ('provider_end_date', '<=', self.to_date)]
-        expirings = self.env['res.partner'].search(domain)
-        dbg(expirings)
+        providers = self.env['res.partner'].search(domain)
+        start = self.from_date
+        end = self.to_date
+        dbg(providers)
         headers = [ _('NAME'),_('Provider Accreditation Number'), ('Primary Accrediting Body'),
-                    ('Accreditation Start Date'), ('Accreditation Start Date'), ('Email Address'),
-                    ('Physical Address'), ('Province'), ('Accredited Qualification Title'),
-                    ('Qualification ID')]
+                    ('Accreditation Start Date'), ('Accreditation End Date'), ('Email Address'),
+                    ('Physical Address'), ('Province'), ('Type'), ('Accredited Qualification Title'),
+                    ('Qualification ID'),('Learners Enrolled'),('Learners Total')]
 
-        for expiring in expirings:
-            has_learners = False
-            for qualification in expiring.qualification_ids:
-                if self.env['learner.registration'].search([('provider_id','=',expiring.id),('learner_qualification_ids,learner_qualification_parent_id','=',qualification)]):
-                    has_learners = True
-            if not has_learners:
-                val = {
-                        'provider_id': expiring.id,
-                        'report_id': self.id
-                }
+        for provider in providers:
+            # vestigial: we dont use this anymore because the report should be consolidated
+            # has_learners = False
+            # for qualification in provider.qualification_ids:
+            #     if self.env['learner.registration'].search([('provider_id','=',provider.id),('learner_qualification_ids.learner_qualification_parent_id','=',qualification.id)]):
+            #         has_learners = True
+            # if not has_learners:
+            qual_list = []
+            skill_list = []
+            lp_list = []
+            for qual in provider.qualification_ids:
+                qual_list.append(qual.id)
+                dbg(qual.read())
+            for skill in provider.skills_programme_ids:
+                skill_list.append(skill.id)
+                dbg(skill.read())
+            for lp in provider.learning_programme_ids:
+                lp_list.append(lp.id)
+                dbg(lp.read())
+            dbg(skill_list)
+            dbg(lp_list)
+            dbg(qual_list)
+            val = {
+                    'provider_id': provider.id,
+                    'start_date': start,
+                    'end_date': end,
+                    'qualification_ids': [(6,0,qual_list)],
+                    'skill_ids': [(6,0,skill_list)],
+                    'lp_ids': [(6,0,lp_list)],
+                    'report_id': self.id
+            }
 
-            self.env['seta.reports.etqa.sdps.no.learners'].create(val)
+            rec = self.env['seta.reports.etqa.sdps.no.learners'].create(val)
+            # rec.write({'qualification_ids': [(0,0,qual_list)],
+            #            'skill_ids': [(0, 0, skill_list)],
+            #            'lp_ids': [(0, 0, lp_list)]
+            #            })
         self.headers = pprint.saferepr(headers)
 
         return "/report_export/sdps_no_learners/%s"
@@ -613,5 +640,10 @@ class SETAReportetqaSDPsNoLearners(models.TransientModel):
     _name = 'seta.reports.etqa.sdps.no.learners'
 
     provider_id = fields.Many2one('res.partner')
+    start_date = fields.Date()
+    end_date = fields.Date()
+    qualification_ids = fields.Many2many('provider.master.qualification','report_prov_quals','prov_id','qual_id')
+    skill_ids = fields.Many2many('skills.programme.master.rel','report_prov_skills','prov_id','skill_id')
+    lp_ids = fields.Many2many('learning.programme.master.rel','report_prov_lps','prov_id','lp_id')
     report_id = fields.Many2one("seta.reports", "Report Id")
 
