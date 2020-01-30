@@ -46,6 +46,7 @@ class SETAReport(models.TransientModel):
     to_date = fields.Date("To", required=True)
     report_type = fields.Selection([('_accreditation_analysis', 'Accreditation Analysis'),
                                     ('_assessment_analysis', 'Assessment Analysis'),
+                                    ('_etqa_sdps_no_learners', 'etqa_sdps_no_learners'),
                                     ('_register_approval_analysis', 'register approval analysis'),
                                     ('_late_assessment_accreditation_analysis', 'provider acrred 140 days'),
                                     ('_mod_ass_register_8week_analysis', '_mod_ass_register_8week_analysis'),
@@ -81,19 +82,77 @@ class SETAReport(models.TransientModel):
             'res_id': self.id,
         }
 
+    def _etqa_sdps_no_learners(self):
+        # todo: would be sick if we used a m2o filter in the wiz for selecting a single provider/res.partner
+        domain = [('provider_end_date', '>=', self.from_date), ('provider_end_date', '<=', self.to_date),('provider','=',True),('parent_id','=',None),('active','=',True)]
+        providers = self.env['res.partner'].search(domain)
+        start = self.from_date
+        end = self.to_date
+        dbg(providers)
+        headers = [ _('NAME'),_('Provider Accreditation Number'), ('Primary Accrediting Body'),
+                    ('Accreditation Start Date'), ('Accreditation End Date'), ('Email Address'),
+                    ('Physical Address'), ('Province'), ('Type'), ('Accredited Qualification Title'),
+                    ('Qualification ID'),('Learners Enrolled'),('Learners Total')]
+
+        for provider in providers:
+            # vestigial: we dont use this anymore because the report should be consolidated
+            # has_learners = False
+            # for qualification in provider.qualification_ids:
+            #     if self.env['learner.registration'].search([('provider_id','=',provider.id),('learner_qualification_ids.learner_qualification_parent_id','=',qualification.id)]):
+            #         has_learners = True
+            # if not has_learners:
+            qual_list = []
+            skill_list = []
+            lp_list = []
+            for qual in provider.qualification_ids:
+                qual_list.append(qual.id)
+                dbg(qual.read())
+            for skill in provider.skills_programme_ids:
+                skill_list.append(skill.id)
+                dbg(skill.read())
+            for lp in provider.learning_programme_ids:
+                lp_list.append(lp.id)
+                dbg(lp.read())
+            dbg(skill_list)
+            dbg(lp_list)
+            dbg(qual_list)
+            val = {
+                    'provider_id': provider.id,
+                    'start_date': start,
+                    'end_date': end,
+                    'qualification_ids': [(6,0,qual_list)],
+                    'skill_ids': [(6,0,skill_list)],
+                    'lp_ids': [(6,0,lp_list)],
+                    'report_id': self.id
+            }
+
+            rec = self.env['seta.reports.etqa.sdps.no.learners'].create(val)
+            # rec.write({'qualification_ids': [(0,0,qual_list)],
+            #            'skill_ids': [(0, 0, skill_list)],
+            #            'lp_ids': [(0, 0, lp_list)]
+            #            })
+        self.headers = pprint.saferepr(headers)
+
+        return "/report_export/sdps_no_learners/%s"
+
     def _register_approval_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
         domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
+        ass_mod = ''
         if self.register_assessor_or_moderator:
             domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
+            if self.register_assessor_or_moderator == 'moderator':
+                ass_mod = 'Moderator'
+            elif self.register_assessor_or_moderator == 'assessor':
+                ass_mod = 'Assessor'
         registrations = self.env['assessors.moderators.register'].search(domain)
         # vals = []
         headers = [_('Province'),
                    _('Number of applications submitted to Provincial Office'),
-                   _('Number of Moderator Registration Applications Approved '),
-                   _('Number of Moderator Registration Applications Declined '),
-                   _('% of Moderator Registration applications approved '),
-                   _('% of Moderator Registration applications declined ')]
+                   _('Number of %s Registration Applications Approved ' % ass_mod),
+                   _('Number of %s Registration Applications Declined ' % ass_mod),
+                   _('Percentage of %s Registration applications approved ' % ass_mod),
+                   _('Percentage of %s Registration applications declined ' % ass_mod)]
         dbg(registrations)
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
@@ -220,17 +279,23 @@ class SETAReport(models.TransientModel):
     def _mod_ass_register_8week_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
         domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
+        ass_mod = ''
         if self.register_assessor_or_moderator:
             domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
+            if self.register_assessor_or_moderator == 'moderator':
+                ass_mod = 'Moderator'
+            elif self.register_assessor_or_moderator == 'assessor':
+                ass_mod = 'Assessor'
         registrations = self.env['assessors.moderators.register'].search(domain)
         # vals = []
-        headers = [_('Moderator ID No'),
-                   _('Moderator Name'),
-                   _('Moderator Surname'),
-                   _('Date of Moderator Application Submission'),
+        headers = [_('%s ID No' % ass_mod),
+                   _('%s Name' % ass_mod),
+                   _('%s Surname' %ass_mod),
+                   _('Province'),
+                   _('Date of %s Application Submission' % ass_mod),
                    _('Date Approved/Declined by Provincial Manager '),
-                   _('Number of days it took for the Provincial Office to approve/decline(<=8 weeks/35 days) a Moderator Application'),
-                   _('Moderator Application Status')]
+                   _('Number of days it took for the Provincial Office to approve/decline(<=8 weeks/35 days) a %s Application' % ass_mod),
+                   _('%s Application Status' % ass_mod)]
         broken_regs = []
         for reg in registrations:
             stat_dict = {}
@@ -572,6 +637,7 @@ class SETAReport8WeekRegister(models.TransientModel):
     final_state = fields.Char()
     report_id = fields.Many2one("seta.reports", "Report Id")
 
+
 class SETAReportetqaApprovalAccreditationAnalysis(models.TransientModel):
     _name = 'seta.reports.etqa.approval.accreditation.analysis'
 
@@ -583,3 +649,16 @@ class SETAReportetqaApprovalAccreditationAnalysis(models.TransientModel):
     approved_perc = fields.Float()
 
     report_id = fields.Many2one("seta.reports", "Report Id")
+
+
+class SETAReportetqaSDPsNoLearners(models.TransientModel):
+    _name = 'seta.reports.etqa.sdps.no.learners'
+
+    provider_id = fields.Many2one('res.partner')
+    start_date = fields.Date()
+    end_date = fields.Date()
+    qualification_ids = fields.Many2many('provider.master.qualification','report_prov_quals','prov_id','qual_id')
+    skill_ids = fields.Many2many('skills.programme.master.rel','report_prov_skills','prov_id','skill_id')
+    lp_ids = fields.Many2many('learning.programme.master.rel','report_prov_lps','prov_id','lp_id')
+    report_id = fields.Many2one("seta.reports", "Report Id")
+

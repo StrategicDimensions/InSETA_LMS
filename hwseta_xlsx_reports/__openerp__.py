@@ -11,9 +11,9 @@ HWSETA Report module covers.
     'website': 'https://www.odoo.com/page/billing',
     'depends' : ['hwseta_etqe'],
     'data': [
+        'security/hwseta_report_security.xml',
         'wizard/seta_report_wizard.xml',
         'data/data.xml',
-        'security/hwseta_report_security.xml',
         'security/ir.model.access.csv',
     ],
     'qweb' : [
