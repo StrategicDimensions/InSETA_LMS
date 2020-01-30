@@ -168,7 +168,8 @@ class ReportExporter(http.Controller):
         headers = ast.literal_eval(report.headers)
 
 
-        with open('assessment_analysis.csv', 'w') as csvfile:
+        with open('/odoo_reports/assessment_analysis.csv', 'w') as csvfile:
+
             writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter='~', quotechar='|')
 
             writer.writeheader()
@@ -325,7 +326,7 @@ class ReportExporter(http.Controller):
         #dbg(response)
         #import os
         #dbg(os.getcwd())
-        with open('assessment_analysis.csv', 'r') as f2:
+        with open('/odoo_reports/assessment_analysis.csv', 'r') as f2:
             data = str.encode(f2.read(), 'utf-8')
             response.response=data
 
