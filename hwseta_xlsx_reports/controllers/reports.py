@@ -605,9 +605,13 @@ class ReportExporter(http.Controller):
                     addr = 'Data Issue'
                 start = provider.start_date
                 end = provider.end_date
+                if provider.provider_id.optYesNo:
+                    seta_opt = 'Other Seta'
+                else:
+                    seta_opt = 'HWSeta'
                 writer.writerow({'NAME': provider.provider_id.name,
                                  'Provider Accreditation Number': provider.provider_id.provider_accreditation_num,
-                                 'Primary Accrediting Body': 'accred body?',
+                                 'Primary Accrediting Body': seta_opt,
                                  'Accreditation Start Date': provider.provider_id.provider_start_date,
                                  'Accreditation End Date': provider.provider_id.provider_end_date,
                                  'Email Address': provider.provider_id.email,
