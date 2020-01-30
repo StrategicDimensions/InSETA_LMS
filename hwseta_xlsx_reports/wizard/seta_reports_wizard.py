@@ -370,12 +370,26 @@ class SETAReport(models.TransientModel):
         assessments = self.env['provider.assessment'].search(domain)
         # vals = []
         if self.qual_skill_assessment == 'qual':
-            headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('state'), _('province'), _('enrolled learners'), _('learner'), _('rpl'), _('achieved'), _('qualification'), _('qualification id'), ]
+            headers = [_('NAME'), _('provider'), _('type'), _('batch'),
+                       _('state'), _('province'), _('enrolled learners'), 
+                       _('learner ID'),_('foreign ID'),
+                       _('first name'),_('last name'),_('employed'),_('rpl'),
+                       _('achieved'), _('qualification'), _('qualification id'),
+                       _('learning programme id'), _('skills programme id') ]
         if self.qual_skill_assessment in ['lp','skill']:
-            headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('state'), _('province'), _('enrolled learners'), _('learner'), _('rpl'), _('achieved'), _('qualification'), _('qualification id'), ]
+            headers = [_('NAME'), _('provider'), _('type'), _('batch'),
+                       _('state'), _('province'), _('enrolled learners'), 
+                       _('learner ID'),_('foreign ID'),
+                       _('first name'),_('last name'),_('employed'),_('rpl'),
+                       _('achieved'), _('qualification'), _('qualification id'),
+                       _('learning programme id'), _('skills programme id') ]
         if not self.qual_skill_assessment:
-            headers = [_('NAME'), _('provider'), _('type'), _('batch'), _('state'), _('province'), _('enrolled learners'), _('learner'), _('rpl'), _('achieved'), _('qualification'), _('qualification id'),]
-
+            headers = [_('NAME'), _('provider'), _('type'), _('batch'),
+                       _('state'), _('province'), _('enrolled learners'), 
+                       _('learner ID'),_('foreign ID'),
+                       _('first name'),_('last name'),_('employed'),_('rpl'),
+                       _('achieved'), _('qualification'), _('qualification id'),
+                       _('learning programme id'), _('skills programme id') ]
         for assessment in assessments:
             val = {
                 'assessment':assessment.id,

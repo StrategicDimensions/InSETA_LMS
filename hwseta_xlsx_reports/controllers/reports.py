@@ -39,6 +39,9 @@ else:
     def dbg(msg):
         pass
 
+def remove_ascii(text):
+    return ''.join([i if ord(i) < 128 else ' ' for i in text])
+
 
 class ReportExporter(http.Controller):
     @http.route('/web/pivot/check_xlwt', type='json', auth='none')
@@ -164,11 +167,13 @@ class ReportExporter(http.Controller):
         assessments = request.env['seta.reports.assessment'].search([('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
 
+
         with open('assessment_analysis.csv', 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter='~', quotechar='|')
 
             writer.writeheader()
             for assessment in assessments:
+                dbg('-------->>>>> ' + str(assessment.batch_id.batch_name))
                 if assessment.qual_skill_assessment == 'qual':
                     enrolled_count = len(assessment.assessment.learner_ids)
                 elif assessment.qual_skill_assessment == 'lp':
@@ -186,42 +191,69 @@ class ReportExporter(http.Controller):
                                  'batch': assessment.batch_id.batch_name,
                                  'state': assessment.assessment.state,
                                  'province': assessment.provider_province.name,
+                                 'enrolled learners': enrolled_count,
                                  })
 
                 if assessment.qual_skill_assessment == 'qual':
                     for learner in assessment.assessment.learner_ids:
                         rpl = False
-                        achieved = False
+                        foreign = False
                         lnr = learner.learner_id
-                        lnr_count_qual = len(assessment.assessment.learner_ids)
+
+                        if lnr.alternate_id_type:
+                            foreign = True
+
+                        # special case where both fields are filled
+                        if lnr.learner_identification_id and lnr.national_id:
+                            foreign = False
+
+                        lnr.person_last_name = remove_ascii(lnr.person_last_name)
+                        lnr.name = remove_ascii(lnr.name)
                       
-                        for quals in lnr.learner_qualification_ids:
+                        for quals in lnr.learner_qualification_ids:   # can make this a set
+                            if assessment.batch_id != quals.batch_id and str(assessment.batch_id) == str(quals.batch_id):
+                                dbg(str(learner.display_name))
                             if assessment.batch_id == quals.batch_id:
                                 for units in quals.learner_registration_line_ids:
                                     if units.is_rpl_learner:
                                         rpl = True
-                                    if units.achieve:
-                                        achieved = True
+
                                 writer.writerow({'NAME': '',
                                                  'provider': '',
                                                  'type': '',
                                                  'batch': '',
                                                  'state': '',
                                                  'province': '',
-                                                 'enrolled learners': lnr_count_qual,
-                                                 'learner': learner.identification_id,
+                                                 'enrolled learners': '',
+                                                 'learner ID': lnr.learner_identification_id,
+                                                 'foreign ID': lnr.national_id if foreign else '',
+                                                 'first name': lnr.name,
+                                                 'last name': lnr.person_last_name,
+                                                 'employed': lnr.socio_economic_status,
                                                  'rpl': rpl if rpl else '',
+                                                 'achieved': quals.is_learner_achieved,
                                                  'qualification': learner.qual_learner_assessment_line_id.name,
                                                  'qualification id': quals.learner_qualification_parent_id.saqa_qual_id,
+                                                 'learning programme id': '',
+                                                 'skills programme id': '',
                                                  })
                                 
                 if assessment.qual_skill_assessment == 'lp':
                     for learner in assessment.assessment.learner_ids_for_lp:
-                        lnr_count_lp = len(assessment.assessment.learner_ids_for_lp)
 
-                        rpl = False
-                        achieved = False
+                        foreign = False
                         lnr = learner.learner_id
+
+                        if lnr.alternate_id_type:
+                            foreign = True
+
+
+                        # special case where both fields are filled
+                        if lnr.learner_identification_id and lnr.national_id:
+                            foreign = False
+
+                        lnr.person_last_name = remove_ascii(lnr.person_last_name)
+                        lnr.name = remove_ascii(lnr.name)
                         
                         for quals in lnr.learning_programme_ids:
                             if assessment.batch_id == quals.batch_id:                        
@@ -231,22 +263,37 @@ class ReportExporter(http.Controller):
                                                  'batch': '',
                                                  'state': '',
                                                  'province': '',
-                                                 'enrolled learners': lnr_count_lp,
-                                                 'learner': learner.identification_id,
-                                                 'achieved': achieved if achieved else '',
+                                                 'enrolled learners': '',
+                                                 'learner ID': lnr.learner_identification_id,
+                                                 'foreign ID': lnr.national_id if foreign else '',
+                                                 'first name': lnr.name,
+                                                 'last name': lnr.person_last_name,
+                                                 'employed': lnr.socio_economic_status,
+                                                 'achieved': quals.is_learner_achieved,
                                                  'qualification': learner.lp_learner_assessment_line_id.name,
                                                  'qualification id': quals.lp_saqa_id,
+                                                 'learning programme id': learner.lp_learner_assessment_line_id.code,
+                                                 'skills programme id': '',
                                                  })
-
 
                 if assessment.qual_skill_assessment == 'skill':
                     for learner in assessment.assessment.learner_ids_for_skills:
                         lnr_count_sp = len(assessment.assessment.learner_ids_for_skills)
 
-                        rpl = False
-                        achieved = False
+                        sa_citizen = False
+                        foreign = False
                         lnr = learner.learner_id
 
+                        if lnr.alternate_id_type:
+                            foreign = True
+
+
+                        # special case where both fields are filled
+                        if lnr.learner_identification_id and lnr.national_id:
+                            foreign = False
+
+                        lnr.person_last_name = remove_ascii(lnr.person_last_name)
+                        lnr.name = remove_ascii(lnr.name)
                         
                         for quals in lnr.skills_programme_ids:
                             if assessment.batch_id == quals.batch_id:
@@ -256,11 +303,17 @@ class ReportExporter(http.Controller):
                                                  'batch': '',
                                                  'state': '',
                                                  'province': '',
-                                                 'enrolled learners': lnr_count_sp,
-                                                 'learner': learner.identification_id,
-                                                 'achieved': achieved if achieved else '',
+                                                 'enrolled learners': '',
+                                                 'learner ID': lnr.learner_identification_id,
+                                                 'foreign ID': lnr.national_id if foreign else '',
+                                                 'first name': lnr.name,
+                                                 'last name': lnr.person_last_name,
+                                                 'employed': lnr.socio_economic_status,
+                                                 'achieved': quals.is_learner_achieved,
                                                  'qualification': learner.skill_learner_assessment_line_id.name,
                                                  'qualification id': quals.saqa_skill_id,
+                                                 'learning programme id': '',
+                                                 'skills programme id': learner.skill_learner_assessment_line_id.code,
                                                  })
 
 
@@ -269,9 +322,9 @@ class ReportExporter(http.Controller):
                                                   ('Content-Disposition',
                                                    'attachment; filename=assessment_analysis.csv;')],
                                          cookies={})
-        dbg(response)
-        import os 
-        dbg(os.getcwd())
+        #dbg(response)
+        #import os
+        #dbg(os.getcwd())
         with open('assessment_analysis.csv', 'r') as f2:
             data = str.encode(f2.read(), 'utf-8')
             response.response=data
