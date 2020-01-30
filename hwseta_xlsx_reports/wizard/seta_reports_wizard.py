@@ -84,7 +84,7 @@ class SETAReport(models.TransientModel):
 
     def _etqa_sdps_no_learners(self):
         # todo: would be sick if we used a m2o filter in the wiz for selecting a single provider/res.partner
-        domain = [('provider_end_date', '>=', self.from_date), ('provider_end_date', '<=', self.to_date)]
+        domain = [('provider_end_date', '>=', self.from_date), ('provider_end_date', '<=', self.to_date),('provider','=',True),('parent_id','=',None),('active','=',True)]
         providers = self.env['res.partner'].search(domain)
         start = self.from_date
         end = self.to_date

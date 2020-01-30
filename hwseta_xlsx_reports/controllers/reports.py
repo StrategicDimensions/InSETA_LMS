@@ -597,6 +597,7 @@ class ReportExporter(http.Controller):
 
             writer.writeheader()
             for provider in providers:
+                dbg('writing provider to file:' + str(provider.provider_id.name))
                 # below used as lazy way to catch concat issues/side effect :may trigger data correction
                 if provider.provider_id.physical_address_1 and provider.provider_id.physical_address_2:
                     addr = provider.provider_id.physical_address_1 or '' + ',' + provider.provider_id.physical_address_2 or ''
