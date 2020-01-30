@@ -673,6 +673,8 @@ class ReportExporter(http.Controller):
                                  'Type': '',
                                  'Accredited Qualification Title': '',
                                  'Qualification ID': '',
+                                 'Skill ID': '',
+                                 'LP ID': '',
                                  'Learners Enrolled': '',
                                  })
                 for qual in provider.qualification_ids:
@@ -693,6 +695,8 @@ class ReportExporter(http.Controller):
                                  'Type': 'Qualification',
                                  'Accredited Qualification Title': qual.qualification_id.name,
                                  'Qualification ID': qual.saqa_qual_id,
+                                 'Skill ID': '',
+                                 'LP ID': '',
                                  'Learners Enrolled': len(learner_reg_lines),
                                  'Learners Total': len(learners),#this needs to be removed,as for all types
                                  })
@@ -720,6 +724,8 @@ class ReportExporter(http.Controller):
                                      'Type': 'Skill',
                                      'Accredited Qualification Title': skill.skills_programme_id.name,
                                      'Qualification ID': skill.skill_saqa_id,
+                                     'Skill ID': skill.skills_programme_id.code,
+                                     'LP ID': '',
                                      'Learners Enrolled': len(learner_reg_lines),
                                      'Learners Total': len(learners),
                                      })
@@ -747,6 +753,8 @@ class ReportExporter(http.Controller):
                                      'Type': 'LP',
                                      'Accredited Qualification Title': lp.learning_programme_id.name,
                                      'Qualification ID': lp.lp_saqa_id,
+                                     'Skill ID': '',
+                                     'LP ID': lp.learning_programme_id.code,
                                      'Learners Enrolled': len(learner_reg_lines),
                                      'Learners Total': len(learners),
                                      })

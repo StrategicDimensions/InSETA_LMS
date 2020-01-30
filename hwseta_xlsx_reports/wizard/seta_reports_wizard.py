@@ -92,7 +92,7 @@ class SETAReport(models.TransientModel):
         headers = [ _('NAME'),_('Provider Accreditation Number'), ('Primary Accrediting Body'),
                     ('Accreditation Start Date'), ('Accreditation End Date'), ('Email Address'),
                     ('Physical Address'), ('Province'), ('Type'), ('Accredited Qualification Title'),
-                    ('Qualification ID'),('Learners Enrolled'),('Learners Total')]
+                    ('Qualification ID'),('Skill ID'),('LP ID'),('Learners Enrolled'),('Learners Total')]
 
         for provider in providers:
             # vestigial: we dont use this anymore because the report should be consolidated
