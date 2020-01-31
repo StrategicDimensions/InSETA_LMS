@@ -14,12 +14,13 @@
                         <field name="from_date"/>
                         <field name="to_date"/>
 <!--                        <field name="state"/>-->
-
-
                     </group>
                     <group attrs="{'invisible':[('report_type','!=','_assessment_analysis')]}">
                         <field name="assessment_state"/>
                         <field name="qual_skill_assessment"/>
+                    </group>
+                    <group attrs="{'invisible':[('report_type','!=','_etqa_sdps_no_learners')]}">
+                        <field name="provider_date" string="Provider End Date" attrs="{'required':[('report_type','=','_etqa_sdps_no_learners')]}"/>
                     </group>
                     <group attrs="{'invisible':[('report_type','not in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}">
                         <field name="register_assessor_or_moderator" attrs="{'required':[('report_type','in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}"/>

@@ -646,7 +646,7 @@ class ReportExporter(http.Controller):
         providers = request.env['seta.reports.etqa.sdps.no.learners'].search([('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
         # using csv to avoid row limit and nesting crap(dont go back to trying xlsx for long list reports/master data lopps)
-        with open('sdps_no_learners.csv', 'w') as csvfile:
+        with open('/odoo_reports/sdps_no_learners.csv', 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter=',', quotechar='"')
 
             writer.writeheader()
@@ -767,7 +767,7 @@ class ReportExporter(http.Controller):
         dbg(response)
         import os
         dbg(os.getcwd())
-        with open('sdps_no_learners.csv', 'r') as f2:
+        with open('/odoo_reports/sdps_no_learners.csv', 'r') as f2:
             data = str.encode(f2.read(), 'utf-8')
             response.response = data
 
