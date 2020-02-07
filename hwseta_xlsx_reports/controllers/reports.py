@@ -177,8 +177,7 @@ class ReportExporter(http.Controller):
 
             writer.writeheader()
             for assessment in assessments:
-                # only selected choices
-                dbg( '------------------>' + assessment.assessment.state + ' ' + assessment.qual_skill_assessment)  
+                # only selected choices  
                 if report.assessment_state != assessment.assessment.state and report.assessment_state:
                     continue
                 if report.qual_skill_assessment != assessment.qual_skill_assessment and report.qual_skill_assessment:
@@ -190,10 +189,12 @@ class ReportExporter(http.Controller):
                 
                 duplicates_watchdog.append(assessment.assessment.name)
 
+                enrolled_count = 0
+
                 if assessment.qual_skill_assessment == 'qual':
-                    enrolled_count = len(assessment.assessment.learner_ids)
+                    enrolled_count = len(list(set(assessment.assessment.learner_ids)))
                 elif assessment.qual_skill_assessment == 'lp':
-                    enrolled_count = len(assessment.assessment.learner_ids_for_lp)
+                    enrolled_count = len(list(set(assessment.assessment.learner_ids_for_lp)))
                 elif assessment.qual_skill_assessment == 'skill':
                     enrolled_count = len(list(set(assessment.assessment.learner_ids_for_skills))) #included set to remove duplicates
 
