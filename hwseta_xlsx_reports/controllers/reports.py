@@ -167,20 +167,35 @@ class ReportExporter(http.Controller):
         assessments = request.env['seta.reports.assessment'].search([('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
 
+        # remove duplicates
+        duplicates_watchdog = []
 
+        # /odoo_reports
         with open('/odoo_reports/assessment_analysis.csv', 'w') as csvfile:
 
             writer = csv.DictWriter(csvfile, fieldnames=headers, delimiter='~', quotechar='|')
 
             writer.writeheader()
             for assessment in assessments:
-                dbg('-------->>>>> ' + str(assessment.batch_id.batch_name))
+                # only selected choices
+                dbg( '------------------>' + assessment.assessment.state + ' ' + assessment.qual_skill_assessment)  
+                if report.assessment_state != assessment.assessment.state and report.assessment_state:
+                    continue
+                if report.qual_skill_assessment != assessment.qual_skill_assessment and report.qual_skill_assessment:
+                    continue
+
+                # check for duplicates 
+                if assessment.assessment.name in duplicates_watchdog:
+                    continue 
+                
+                duplicates_watchdog.append(assessment.assessment.name)
+
                 if assessment.qual_skill_assessment == 'qual':
                     enrolled_count = len(assessment.assessment.learner_ids)
                 elif assessment.qual_skill_assessment == 'lp':
                     enrolled_count = len(assessment.assessment.learner_ids_for_lp)
                 elif assessment.qual_skill_assessment == 'skill':
-                    enrolled_count = len(assessment.assessment.learner_ids_for_skills)
+                    enrolled_count = len(list(set(assessment.assessment.learner_ids_for_skills))) #included set to remove duplicates
 
                 if not isinstance(assessment.batch_id.batch_name, bool):
                     assessment.batch_id.batch_name = assessment.batch_id.batch_name.replace(u"\xa0", u" ")
@@ -279,7 +294,7 @@ class ReportExporter(http.Controller):
 
                 if assessment.qual_skill_assessment == 'skill':
                     for learner in assessment.assessment.learner_ids_for_skills:
-                        lnr_count_sp = len(assessment.assessment.learner_ids_for_skills)
+                        lnr_count_sp = len(list(set(assessment.assessment.learner_ids_for_skills)))
 
                         sa_citizen = False
                         foreign = False
