@@ -1042,8 +1042,7 @@
 			<field name="arch" type="xml">
 				<search string="res partner Search">
 					<field name="name"/>
-
-
+					<field name="employer_sdl_no"/>
 				</search>
 			</field>
 		</record>
