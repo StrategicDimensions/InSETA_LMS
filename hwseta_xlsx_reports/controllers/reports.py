@@ -229,7 +229,6 @@ class ReportExporter(http.Controller):
                       
                         for quals in lnr.learner_qualification_ids:   # can make this a set
                             if assessment.batch_id != quals.batch_id and str(assessment.batch_id) == str(quals.batch_id):
-                                dbg(str(learner.display_name))
                             if assessment.batch_id == quals.batch_id:
                                 for units in quals.learner_registration_line_ids:
                                     if units.is_rpl_learner:
