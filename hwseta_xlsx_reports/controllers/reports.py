@@ -10,6 +10,7 @@ from openerp.tools import ustr
 import openpyxl
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
+
 # wb = load_workbook('filename.xlsx')
 # wb = Workbook(write_only=True)
 # .
@@ -38,6 +39,7 @@ if DEBUG:
 else:
     def dbg(msg):
         pass
+
 
 def remove_ascii(text):
     return ''.join([i if ord(i) < 128 else ' ' for i in text])
@@ -78,8 +80,6 @@ class ReportExporter(http.Controller):
             worksheet.write(1, i, header, header_bold_lightblue)
 
         for i, accred in enumerate(accreds):
-
-
             worksheet.write(i + 2, 0, accred.provider_accreditation_ref)
             worksheet.write(i + 2, 1, accred.name)
             worksheet.write(i + 2, 2, accred.phone)
@@ -104,7 +104,6 @@ class ReportExporter(http.Controller):
 
         return response
 
-
     @http.route(['/report_export/late_accreditation_analysis/<int:report_id>'], type='http', auth="user")
     def late_accreditation_analysis(self, report_id, **kw):
         # jdata = json.loads(data)
@@ -128,7 +127,9 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 8, _("late accreditation report FROM %s TO %s") % (report.from_date, report.to_date),
+        worksheet.write_merge(0, 0, 0, 8,
+                              _("Moderator application approved_declined within 8_week period_the whole process_per "
+                                "province"),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
@@ -144,7 +145,10 @@ class ReportExporter(http.Controller):
             worksheet.write(i + 2, 6, accred.days_to_assess)
             worksheet.write(i + 2, 7, accred.update_date)
             worksheet.write(i + 2, 8, accred.final_state)
+            worksheet.write(i + 2, 9, accred.in_process)
             # worksheet.write(i + 2, 7, accred.is_existing_provider)
+            worksheet.write(i + 2, 10, accred.new_registrations)
+            worksheet.write(i + 2, 11, accred.reaccreditation)
 
         # num_leads = len(leads)
         # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)
@@ -185,8 +189,8 @@ class ReportExporter(http.Controller):
 
                 # check for duplicates 
                 if assessment.assessment.name in duplicates_watchdog:
-                    continue 
-                
+                    continue
+
                 duplicates_watchdog.append(assessment.assessment.name)
 
                 enrolled_count = 0
@@ -196,14 +200,15 @@ class ReportExporter(http.Controller):
                 elif assessment.qual_skill_assessment == 'lp':
                     enrolled_count = len(list(set(assessment.assessment.learner_ids_for_lp)))
                 elif assessment.qual_skill_assessment == 'skill':
-                    enrolled_count = len(list(set(assessment.assessment.learner_ids_for_skills))) #included set to remove duplicates
+                    enrolled_count = len(
+                        list(set(assessment.assessment.learner_ids_for_skills)))  # included set to remove duplicates
 
                 if not isinstance(assessment.batch_id.batch_name, bool):
                     assessment.batch_id.batch_name = assessment.batch_id.batch_name.replace(u"\xa0", u" ")
                     assessment.batch_id.batch_name = assessment.batch_id.batch_name.encode("utf-8")
 
                 writer.writerow({'NAME': assessment.assessment.name,
-                                 'provider': assessment.provider_id.name, 
+                                 'provider': assessment.provider_id.name,
                                  'type': assessment.qual_skill_assessment,
                                  'batch': assessment.batch_id.batch_name,
                                  'state': assessment.assessment.state,
@@ -226,9 +231,9 @@ class ReportExporter(http.Controller):
 
                         lnr.person_last_name = remove_ascii(lnr.person_last_name)
                         lnr.name = remove_ascii(lnr.name)
-                      
-                        for quals in lnr.learner_qualification_ids:   # can make this a set
-                            #if assessment.batch_id != quals.batch_id and str(assessment.batch_id) == str(quals.batch_id):
+
+                        for quals in lnr.learner_qualification_ids:  # can make this a set
+                            # if assessment.batch_id != quals.batch_id and str(assessment.batch_id) == str(quals.batch_id):
                             #    dbg(str(learner.display_name))
                             if assessment.batch_id == quals.batch_id:
                                 for units in quals.learner_registration_line_ids:
@@ -254,7 +259,7 @@ class ReportExporter(http.Controller):
                                                  'learning programme id': '',
                                                  'skills programme id': '',
                                                  })
-                                
+
                 if assessment.qual_skill_assessment == 'lp':
                     for learner in assessment.assessment.learner_ids_for_lp:
 
@@ -264,16 +269,15 @@ class ReportExporter(http.Controller):
                         if lnr.alternate_id_type:
                             foreign = True
 
-
                         # special case where both fields are filled
                         if lnr.learner_identification_id and lnr.national_id:
                             foreign = False
 
                         lnr.person_last_name = remove_ascii(lnr.person_last_name)
                         lnr.name = remove_ascii(lnr.name)
-                        
+
                         for quals in lnr.learning_programme_ids:
-                            if assessment.batch_id == quals.batch_id:                        
+                            if assessment.batch_id == quals.batch_id:
                                 writer.writerow({'NAME': '',
                                                  'provider': '',
                                                  'type': '',
@@ -304,14 +308,13 @@ class ReportExporter(http.Controller):
                         if lnr.alternate_id_type:
                             foreign = True
 
-
                         # special case where both fields are filled
                         if lnr.learner_identification_id and lnr.national_id:
                             foreign = False
 
                         lnr.person_last_name = remove_ascii(lnr.person_last_name)
                         lnr.name = remove_ascii(lnr.name)
-                        
+
                         for quals in lnr.skills_programme_ids:
                             if assessment.batch_id == quals.batch_id:
                                 writer.writerow({'NAME': '',
@@ -333,19 +336,17 @@ class ReportExporter(http.Controller):
                                                  'skills programme id': learner.skill_learner_assessment_line_id.code,
                                                  })
 
-
         response = request.make_response(None,
                                          headers=[('Content-Type', 'application/vnd.ms-excel'),
                                                   ('Content-Disposition',
                                                    'attachment; filename=assessment_analysis.csv;')],
                                          cookies={})
-        #dbg(response)
-        #import os
-        #dbg(os.getcwd())
+        # dbg(response)
+        # import os
+        # dbg(os.getcwd())
         with open('/odoo_reports/assessment_analysis.csv', 'r') as f2:
             data = str.encode(f2.read(), 'utf-8')
-            response.response=data
-
+            response.response = data
 
         return response
 
@@ -372,22 +373,21 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
+        worksheet.write_merge(0, 0, 0, 5, _("Learner Achievement recommendations from the Provinces Approved_Declined by ETQA Head Office"),
                               header_bold_blue)
-
 
         for i, header in enumerate(headers):
             worksheet.write(1, i, header, header_bold_lightblue)
 
         for i, assessment in enumerate(assessments):
-
+            in_progress = assessment.total - (assessment.approved_count + assessment.denied_count)
             worksheet.write(i + 2, 0, assessment.province.name)
             worksheet.write(i + 2, 1, assessment.total)
             worksheet.write(i + 2, 2, assessment.approved_count)
-            # worksheet.write(i + 2, 3, assessment.denied_count)
+            # worksheet.write(i + 2, 3, assessment.denied_count)        #TODO ASK why this was commented
             worksheet.write(i + 2, 4, assessment.approved_perc)
-            # worksheet.write(i + 2, 5, assessment.denied_perc)
-
+            # worksheet.write(i + 2, 5, assessment.denied_perc)         # As well as this
+            worksheet.write(i + 2, 6, in_progress)
 
         # num_leads = len(leads)
         # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)
@@ -409,7 +409,8 @@ class ReportExporter(http.Controller):
         # jdata = json.loads(data)
 
         report = request.env['seta.reports'].search([('id', '=', report_id)])
-        assessments = request.env['seta.reports.etqa.approval.accreditation.analysis'].search([('report_id', '=', report_id)])
+        assessments = request.env['seta.reports.etqa.approval.accreditation.analysis'].search(
+            [('report_id', '=', report_id)])
         headers = ast.literal_eval(report.headers)
 
         workbook = xlwt.Workbook()
@@ -430,19 +431,16 @@ class ReportExporter(http.Controller):
         worksheet.write_merge(0, 0, 0, 5, _("etqa approval report FROM %s TO %s") % (report.from_date, report.to_date),
                               header_bold_blue)
 
-
         for i, header in enumerate(headers):
             worksheet.write(1, i, header, header_bold_lightblue)
 
         for i, assessment in enumerate(assessments):
-
             worksheet.write(i + 2, 0, assessment.province.name)
             worksheet.write(i + 2, 1, assessment.total)
             worksheet.write(i + 2, 2, assessment.approved_count)
             worksheet.write(i + 2, 3, assessment.denied_count)
             worksheet.write(i + 2, 4, assessment.approved_perc)
             worksheet.write(i + 2, 5, assessment.denied_perc)
-
 
         # num_leads = len(leads)
         # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)
@@ -482,21 +480,26 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
-                              header_bold_blue)
 
+        worksheet.write_merge(0, 0, 0, 5, _("%% of Approvals and declines of %s per applications per province") %
+                              report.register_assessor_or_moderator, header_bold_blue)
 
         for i, header in enumerate(headers):
             worksheet.write(1, i, header, header_bold_lightblue)
 
         for i, reg in enumerate(registrations):
-            dbg(reg)
+            dbg('########  ' + str(reg))
+            in_progress = reg.total - (reg.approved_count + reg.denied_count)
             worksheet.write(i + 2, 0, reg.province.name)
             worksheet.write(i + 2, 1, reg.total)
             worksheet.write(i + 2, 2, reg.approved_count)
             worksheet.write(i + 2, 3, reg.denied_count)
             worksheet.write(i + 2, 4, reg.approved_perc)
             worksheet.write(i + 2, 5, reg.denied_perc)
+            worksheet.write(i + 2, 6, in_progress)
+            worksheet.write(i + 2, 7, reg.re_registration_count)
+            worksheet.write(i + 2, 8, reg.extension_of_scope_count)
+
 
 
         # num_leads = len(leads)
@@ -537,7 +540,8 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 7, _("registrations report FROM %s TO %s") % (report.from_date, report.to_date),
+        worksheet.write_merge(0, 0, 0, 7, _("%s applications approved_declined  within the 8_week period_the "
+                                            "whole process per province ") % (report.register_assessor_or_moderator),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
@@ -552,6 +556,9 @@ class ReportExporter(http.Controller):
             worksheet.write(i + 2, 5, reg.update_date)
             worksheet.write(i + 2, 6, reg.days_to_update)
             worksheet.write(i + 2, 7, reg.final_state)
+            worksheet.write(i + 2, 8, reg.in_process)
+            worksheet.write(i + 2, 9, reg.new_registrations)
+            worksheet.write(i + 2, 10, reg.reaccreditation)
 
         response = request.make_response(None,
                                          headers=[('Content-Type', 'application/vnd.ms-excel'),
@@ -696,27 +703,32 @@ class ReportExporter(http.Controller):
                                  })
                 for qual in provider.qualification_ids:
                     # todo: remove or buff to avoid misleading stats
-                    learners = request.env['hr.employee'].search([('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
+                    learners = request.env['hr.employee'].search(
+                        [('learner_qualification_ids.provider_id', '=', provider.provider_id.id),
+                         ('learner_qualification_ids.learner_qualification_parent_id', '=', qual.qualification_id.id)])
                     # gives incorrect total at first glance
                     # learner_reg = request.env['learner.registration'].search([('learner_qualification_ids.create_date','>',start),('learner_qualification_ids.create_date','<',end),('learner_qualification_ids.provider_id','=',provider.provider_id.id),('learner_qualification_ids.learner_qualification_parent_id','=',qual.qualification_id.id)])
                     # dont use create date, seems to destroy expectations from imports
-                    learner_reg_lines = request.env['learner.registration.qualification'].search([('start_date','>',start),('start_date','<',end),('provider_id','=',provider.provider_id.id),('learner_qualification_parent_id','=',qual.qualification_id.id)])
+                    learner_reg_lines = request.env['learner.registration.qualification'].search(
+                        [('start_date', '>', start), ('start_date', '<', end),
+                         ('provider_id', '=', provider.provider_id.id),
+                         ('learner_qualification_parent_id', '=', qual.qualification_id.id)])
                     writer.writerow({'NAME': '',
-                                 'Provider Accreditation Number': '',
-                                 'Primary Accrediting Body': '',
-                                 'Accreditation Start Date': '',
-                                 'Accreditation End Date': '',
-                                 'Email Address': '',
-                                 'Physical Address': '',
-                                 'Province': '',
-                                 'Type': 'Qualification',
-                                 'Accredited Qualification Title': qual.qualification_id.name,
-                                 'Qualification ID': qual.saqa_qual_id,
-                                 'Skill ID': '',
-                                 'LP ID': '',
-                                 'Learners Enrolled': len(learner_reg_lines),
-                                 'Learners Total': len(learners),#this needs to be removed,as for all types
-                                 })
+                                     'Provider Accreditation Number': '',
+                                     'Primary Accrediting Body': '',
+                                     'Accreditation Start Date': '',
+                                     'Accreditation End Date': '',
+                                     'Email Address': '',
+                                     'Physical Address': '',
+                                     'Province': '',
+                                     'Type': 'Qualification',
+                                     'Accredited Qualification Title': qual.qualification_id.name,
+                                     'Qualification ID': qual.saqa_qual_id,
+                                     'Skill ID': '',
+                                     'LP ID': '',
+                                     'Learners Enrolled': len(learner_reg_lines),
+                                     'Learners Total': len(learners),  # this needs to be removed,as for all types
+                                     })
                 for skill in provider.skill_ids:
                     learners = request.env['hr.employee'].search(
                         [('skills_programme_ids.provider_id', '=', provider.provider_id.id),
@@ -727,7 +739,7 @@ class ReportExporter(http.Controller):
                     #      ('skills_programme_ids.skills_programme_id', '=', skill.id)])
                     # dont use create date, seems to destroy expectations from imports
                     learner_reg_lines = request.env['skills.programme.learner.rel'].search(
-                        [('start_date','>',start),('start_date','<',end),
+                        [('start_date', '>', start), ('start_date', '<', end),
                          ('provider_id', '=', provider.provider_id.id),
                          ('skills_programme_id', '=', skill.id)])
                     writer.writerow({'NAME': '',
@@ -756,7 +768,7 @@ class ReportExporter(http.Controller):
                     #      ('learning_programme_ids.learning_programme_id', '=', lp.id)])
                     # dont use create date, seems to destroy expectations from imports
                     learner_reg_lines = request.env['learning.programme.learner.rel'].search(
-                        [('start_date','>',start),('start_date','<',end),
+                        [('start_date', '>', start), ('start_date', '<', end),
                          ('provider_id', '=', provider.provider_id.id),
                          ('learning_programme_id', '=', lp.id)])
                     writer.writerow({'NAME': '',
