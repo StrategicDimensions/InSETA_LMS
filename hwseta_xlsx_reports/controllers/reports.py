@@ -428,19 +428,24 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("etqa approval report FROM %s TO %s") % (report.from_date, report.to_date),
+        worksheet.write_merge(0, 0, 0, 5, _("Provider Accreditation recommendation from Provinces_Approved_Declined"),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
             worksheet.write(1, i, header, header_bold_lightblue)
 
         for i, assessment in enumerate(assessments):
+            in_progress = assessment.total - (assessment.approved_count + assessment.denied_count)
             worksheet.write(i + 2, 0, assessment.province.name)
             worksheet.write(i + 2, 1, assessment.total)
             worksheet.write(i + 2, 2, assessment.approved_count)
             worksheet.write(i + 2, 3, assessment.denied_count)
             worksheet.write(i + 2, 4, assessment.approved_perc)
             worksheet.write(i + 2, 5, assessment.denied_perc)
+            worksheet.write(i + 2, 6, in_progress)
+            worksheet.write(i + 2, 7, assessment.re_registration_count)
+            worksheet.write(i + 2, 8, assessment.extension_of_scope_count)
+
 
         # num_leads = len(leads)
         # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)

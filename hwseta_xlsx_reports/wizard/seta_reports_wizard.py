@@ -246,7 +246,7 @@ class SETAReport(models.TransientModel):
                    ]
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
-                                     'denied_perc': 0, 'total': 0, 'new_registration': 0, 're_accreditation': 0}
+                                     'denied_perc': 0, 'total': 0, 're_registration_count': 0, 're_accreditation_count': 0}
         for accred in accreds:
             dbg(accred.state)
             # if a new prov is found add a key with 0 values on ints
@@ -256,11 +256,17 @@ class SETAReport(models.TransientModel):
                                                  'denied_count': 0,
                                                  'approved_perc': 0,
                                                  'denied_perc': 0,
-                                                 'total': 0}
+                                                 'total': 0,
+                                                 're_registration_count': 0,
+                                                 're_accreditation_count': 0}
                 if accred.final_state == 'Approved':
                     provinces[accred.state_id.id]['approved_count'] += 1
                 if accred.final_state == 'Rejected':
                     provinces[accred.state_id.id]['denied_count'] += 1
+                if accred.is_existing_provider:
+                    provinces[accred.state_id.id]['re_registration_count'] += 1
+                if accred.is_extension_of_scope:
+                    provinces[accred.state_id.id]['re_accreditation_count'] += 1
                 provinces[accred.state_id.id]['total'] += 1
             # else it chooses the undefined province from data xml
             else:
@@ -269,12 +275,20 @@ class SETAReport(models.TransientModel):
                         provinces[undefined_prov]['approved_count'] += 1
                     if accred.final_state == 'Rejected':
                         provinces[undefined_prov]['denied_count'] += 1
+                    if accred.is_existing_provider:
+                        provinces[undefined_prov]['re_registration_count'] += 1
+                    if accred.is_extension_of_scope:
+                        provinces[undefined_prov]['re_accreditation_count'] += 1
                     provinces[undefined_prov]['total'] += 1
                 else:
                     if accred.final_state == 'Approved':
                         provinces[accred.state_id.id]['approved_count'] += 1
                     if accred.final_state == 'Rejected':
                         provinces[accred.state_id.id]['denied_count'] += 1
+                    if accred.is_existing_provider:
+                        provinces[accred.state_id.id]['re_registration_count'] += 1
+                    if accred.is_extension_of_scope:
+                        provinces[accred.state_id.id]['re_accreditation_count'] += 1
                     provinces[accred.state_id.id]['total'] += 1
         dbg(provinces)
         for province in provinces.keys():
@@ -295,7 +309,7 @@ class SETAReport(models.TransientModel):
                     'approved_perc': provinces[province]['approved_perc'],
                     'approved_count': provinces[province]['approved_count'],
                     're_registration_count': provinces[province]['re_registration_count'],
-                    'extension_of_scope_count': provinces[province]['extension_of_scope_count'],
+                    'extension_of_scope_count': provinces[province]['re_accreditation_count'],
                     'report_id': self.id
                     }
             self.env['seta.reports.etqa.approval.accreditation.analysis'].create(prov)
@@ -705,6 +719,7 @@ class SETAReportetqaApprovalAccreditationAnalysis(models.TransientModel):
     denied_perc = fields.Float()
     approved_perc = fields.Float()
     re_registration_count = fields.Float()
+    extension_of_scope_count = fields.Float()
 
     report_id = fields.Many2one("seta.reports", "Report Id")
 
