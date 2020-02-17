@@ -48,10 +48,10 @@ class SETAReport(models.TransientModel):
     report_type = fields.Selection([('_accreditation_analysis', 'Accreditation Analysis'),
                                     ('_assessment_analysis', 'Assessment Analysis'),
                                     ('_etqa_sdps_no_learners', 'etqa_sdps_no_learners'),
-                                    ('_register_approval_analysis', 'register approval analysis'),
-                                    ('_late_assessment_accreditation_analysis', 'provider acrred 140 days'),
-                                    ('_mod_ass_register_8week_analysis', '_mod_ass_register_8week_analysis'),
-                                    ('_assessment_approval_analysis', '_assessment_approval_analysis'),
+                                    ('_register_approval_analysis', '% of Assessor/Moderators of Registration that were approved or declined per province'),
+                                    ('_late_assessment_accreditation_analysis', 'Provider Acreditation application assessed in 140 days per province at Provincial Level'),
+                                    ('_mod_ass_register_8week_analysis', 'Assessor/Moderator Registration applications approved/declined within an 8-week period per province'),
+                                    ('_assessment_approval_analysis', 'Learner Achievement recommendations from the Provinces Approved/Declined by ETQA Head Office'),
                                     ('_accreditation_etqa_approval_analysis', 'Provider Accreditation application recommendations from Provinces Approved/Declined by ETQA Head Office.'),
                                     ('_sale_report', 'Sale Report')], string="Report Type", required=True)
 
