@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="seta_reports_wizard_view" model="ir.ui.view">
+            <field name="name">SETA Custom Reports Wizard</field>
+            <field name="model">seta.reports</field>
+            <field name="arch" type="xml">
+                <form string="Custom Reports">
+                    <group>
+                        <field name="name"/>
+                        <field name="report_type"/>
+                        <field name="from_date"/>
+                        <field name="to_date"/>
+<!--                        <field name="state"/>-->
+                    </group>
+                    <group attrs="{'invisible':[('report_type','!=','_assessment_analysis')]}">
+                        <field name="assessment_state"/>
+                        <field name="qual_skill_assessment"/>
+                    </group>
+                    <group attrs="{'invisible':[('report_type','!=','_etqa_sdps_no_learners')]}">
+                        <field name="provider_date" string="Provider End Date" attrs="{'required':[('report_type','=','_etqa_sdps_no_learners')]}"/>
+                    </group>
+                    <group attrs="{'invisible':[('report_type','not in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}">
+                        <field name="register_assessor_or_moderator" attrs="{'required':[('report_type','in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}"/>
+                    </group>
+                    <footer>
+                        <button name="extract" string="Extract" type="object" default_focus="1" class="btn-primary"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_seta_report" model="ir.actions.act_window">
+            <field name="name">SETA Custom Reports</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">seta.reports</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_reports_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+<!--        <record id="action_approve_learnes" model="ir.actions.act_window">-->
+<!--           <field name="name">Approve Learners</field>-->
+<!--           <field name="res_model">approve.learner.wizard</field>-->
+<!--           <field name="view_type">form</field>-->
+<!--           <field name="view_mode">form</field>-->
+<!--           <field name="view_id" ref="approve_learner_wizard_id"/>-->
+<!--           <field name="target">new</field>-->
+<!--       </record>-->
+
+        <menuitem id="menu_seta_reports" name="SETA Extra Reports" action="action_seta_report" groups="hwseta_xlsx_reports.group_seta_reports"/>
+    </data>
+</openerp>

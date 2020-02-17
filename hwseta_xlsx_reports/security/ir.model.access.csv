@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_seta_reports,hr.employee,hwseta_xlsx_reports.model_seta_reports,group_seta_reports,1,1,1,1
+seta_reports_late_accreditations,hr.employee,hwseta_xlsx_reports.model_seta_reports_late_accreditations,group_seta_reports,1,1,1,1
+seta_reports_accreditation,hr.employee,hwseta_xlsx_reports.model_seta_reports_accreditations,group_seta_reports,1,1,1,1
+seta_reports_assessment,hr.employee,hwseta_xlsx_reports.model_seta_reports_assessment,group_seta_reports,1,1,1,1
+seta_reports_register,hr.employee,hwseta_xlsx_reports.model_seta_reports_register,group_seta_reports,1,1,1,1
+seta_reports_8week_register,hr.employee,hwseta_xlsx_reports.model_seta_reports_8week_register,group_seta_reports,1,1,1,1
+seta_reports_etqa_approval_accreditation_analysis,hr.employee,hwseta_xlsx_reports.model_seta_reports_etqa_approval_accreditation_analysis,group_seta_reports,1,1,1,1
+
