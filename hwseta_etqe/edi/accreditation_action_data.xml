@@ -128,12 +128,12 @@
         <field name="email_to">${object.work_email}</field>
         <field name="email_from">no-reply@hwseta.org.za</field>
         <field name="model_id" ref="hwseta_etqe.model_assessors_moderators_register"/>
-        <field name="report_template" ref="hwseta_etqe.letter_of_approval_assessor"/>
+<!--        <field name="report_template" ref="hwseta_etqe.letter_of_approval_assessor"/>-->
         <field name="auto_delete" eval="False"/>
          <field name="lang">en_US</field> 
         <field name="body_html"><![CDATA[
         <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-        	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+        	<p>${user.name} has approved application.</p>
         	<br>
         	<br>
 			<p>Please use your login and password indicated below to access the HWSETA system:</p>
@@ -231,12 +231,12 @@
         <field name="email_to">${object.work_email}</field>
         <field name="email_from">no-reply@hwseta.org.za</field>
         <field name="model_id" ref="hwseta_etqe.model_assessors_moderators_register"/>
-		<field name="report_template" ref="hwseta_etqe.letter_of_approval_moderator"/>
+<!--		<field name="report_template" ref="hwseta_etqe.letter_of_approval_moderator"/>-->
         <field name="auto_delete" eval="False"/>
         <field name="lang">en_US</field> 
         <field name="body_html"><![CDATA[
          <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-        	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+        	<p>${user.name} has approved application.</p>
         	<br>
         	<br>
         	<br>
@@ -331,12 +331,12 @@
       <field name="email_to">${object.work_email}</field>
       <field name="email_from">no-reply@hwseta.org.za</field>
       <field name="model_id" ref="hwseta_etqe.model_assessors_moderators_register"/>
-	  <field name="report_template" ref="hwseta_etqe.assessor_extension_of_scope_id"/>
+<!--	  <field name="report_template" ref="hwseta_etqe.assessor_extension_of_scope_id"/>-->
       <field name="auto_delete" eval="False"/>
       <field name="lang">en_US</field> 
       <field name="body_html"><![CDATA[
        <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-      	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+      	<p>${user.name} has approved application.</p>
       	<br>
       	<br>
       	<br>
@@ -354,12 +354,12 @@
       <field name="email_to">${object.work_email}</field>
       <field name="email_from">no-reply@hwseta.org.za</field>
       <field name="model_id" ref="hwseta_etqe.model_assessors_moderators_register"/>
-	  <field name="report_template" ref="hwseta_etqe.moderator_extension_of_scope_id"/>
+<!--	  <field name="report_template" ref="hwseta_etqe.moderator_extension_of_scope_id"/>-->
       <field name="auto_delete" eval="False"/>
       <field name="lang">en_US</field> 
       <field name="body_html"><![CDATA[
        <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-      	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+      	<p>${user.name} has approved application.</p>
       	<br>
       	<br>
       	<br>
@@ -378,12 +378,12 @@
       <field name="email_to">${object.work_email}</field>
       <field name="email_from">no-reply@hwseta.org.za</field>
       <field name="model_id" ref="hwseta_etqe.model_assessors_moderators_register"/>
-	  <field name="report_template" ref="hwseta_etqe.assessor_reregistration_id"/>
+<!--	  <field name="report_template" ref="hwseta_etqe.assessor_reregistration_id"/>-->
       <field name="auto_delete" eval="False"/>
       <field name="lang">en_US</field> 
       <field name="body_html"><![CDATA[
        <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-      	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+      	<p>${user.name} has approved application.</p>
       	<br>
       	<br>
       	<br>
@@ -401,12 +401,12 @@
       <field name="email_to">${object.work_email}</field>
       <field name="email_from">no-reply@hwseta.org.za</field>
       <field name="model_id" ref="hwseta_etqe.model_assessors_moderators_register"/>
-	  <field name="report_template" ref="hwseta_etqe.moderator_reregistration_id"/>
+<!--	  <field name="report_template" ref="hwseta_etqe.moderator_reregistration_id"/>-->
       <field name="auto_delete" eval="False"/>
       <field name="lang">en_US</field> 
       <field name="body_html"><![CDATA[
        <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-      	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+      	<p>${user.name} has approved application.</p>
       	<br>
       	<br>
       	<br>
@@ -547,7 +547,7 @@
         <field name="email_to">${object.email}</field>
         <field name="email_from">no-reply@hwseta.org.za</field>
         <field name="model_id" ref="hwseta_etqe.model_provider_accreditation"/>
-        <field name="report_template" ref="hwseta_etqe.letter_of_approval_id"/>
+<!--        <field name="report_template" ref="hwseta_etqe.letter_of_approval_id"/>-->
         <field name="auto_delete" eval="False"/>
          <field name="lang">en_US</field> 
         <field name="body_html"><![CDATA[
@@ -581,12 +581,12 @@
       <field name="email_to">${object.email}</field>
       <field name="email_from">no-reply@hwseta.org.za</field>
       <field name="model_id" ref="hwseta_etqe.model_provider_accreditation"/>
-	  <field name="report_template" ref="hwseta_etqe.provider_extension_of_scope_id"/>
+<!--	  <field name="report_template" ref="hwseta_etqe.provider_extension_of_scope_id"/>-->
       <field name="auto_delete" eval="False"/>
       <field name="lang">en_US</field> 
       <field name="body_html"><![CDATA[
        <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-      	<p>${user.name} has approved application. Please find the attached copy of Approval Letter.</p>
+      	<p>${user.name} has approved application.</p>
       	<br>
       	<br>
       	<br>
