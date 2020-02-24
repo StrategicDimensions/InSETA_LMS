@@ -17,6 +17,15 @@ else:
     def dbg(msg):
         pass
 
+def get_transaction_type(this):
+    dbg(this)
+    #if this.is_existing_provider:
+    #    return 'Re registration'
+    if this.is_extension_of_scope:
+        return 'extention of scope'
+        #elif not this.is_extension_of_scope and this.is_existing_provider:
+    else:
+        return 'New registration'
 
 class SETAReport(models.TransientModel):
     _name = 'seta.reports'
@@ -155,17 +164,18 @@ class SETAReport(models.TransientModel):
                    _('Percentage of %s Registration applications approved ' % ass_mod),
                    _('Percentage of %s Registration applications declined ' % ass_mod),
                    _('In progress'),
-                   _('New Accreditation'),
-                   _('Re-Accreditation')]
+                   _('New Registration'),
+                   _('Re Registration'),
+                   _('Extension of scope')]
         dbg(registrations)
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
-                                     'denied_perc': 0, 'total': 0, 're_registration_count': 0, 'extension_of_scope_count': 0 }
+                                     'denied_perc': 0, 'total': 0, 'new_registration_count': 0, 're_registration_count': 0, 'extension_of_scope_count': 0 }
         for reg in registrations:
             if reg.work_province.id not in provinces.keys():
                 # raise Warning(_('no prvince selected in ' + str(reg)))
                 provinces[reg.work_province.id] = {'approved_count':0,'denied_count':0,'approved_perc':0,'denied_perc':0,
-                                                   'total':0, 're_registration_count': 0, 'extension_of_scope_count': 0}
+                                                   'total':0, 'new_registration_count': 0, 're_registration_count': 0, 'extension_of_scope_count': 0}
                 if reg.final_state == 'Approved':
                     provinces[reg.work_province.id]['approved_count'] += 1
                 if reg.final_state == 'Rejected':
@@ -174,6 +184,8 @@ class SETAReport(models.TransientModel):
                     provinces[reg.work_province.id]['re_registration_count'] += 1
                 if reg.is_extension_of_scope:
                     provinces[reg.work_province.id]['extension_of_scope_count'] += 1
+                if not reg.is_extension_of_scope and not reg.already_registered:
+                    provinces[reg.work_province.id]['new_registration_count'] += 1
                 provinces[reg.work_province.id]['total'] += 1
             else:
                 if not reg.work_province:
@@ -185,6 +197,8 @@ class SETAReport(models.TransientModel):
                         provinces[undefined_prov]['re_registration_count'] += 1
                     if reg.is_extension_of_scope:
                         provinces[reg.work_province.id]['extension_of_scope_count'] += 1
+                    if not reg.is_extension_of_scope and not reg.already_registered:
+                        provinces[reg.work_province.id]['new_registration_count'] += 1
                     provinces[undefined_prov]['total'] += 1
                 else:
                     if reg.final_state == 'Approved':
@@ -195,6 +209,8 @@ class SETAReport(models.TransientModel):
                         provinces[reg.work_province.id]['re_registration_count'] += 1
                     if reg.is_extension_of_scope:
                         provinces[reg.work_province.id]['extension_of_scope_count'] += 1
+                    if not reg.is_extension_of_scope and reg.already_registered:
+                        provinces[reg.work_province.id]['new_registration_count'] += 1
                     provinces[reg.work_province.id]['total'] += 1
         dbg(provinces)
         for province in provinces.keys():
@@ -219,6 +235,7 @@ class SETAReport(models.TransientModel):
                     'denied_count':provinces[province]['denied_count'],
                     'approved_perc':provinces[province]['approved_perc'],
                     'approved_count':provinces[province]['approved_count'],
+                    'new_registration_count': provinces[province]['new_registration_count'],
                     're_registration_count': provinces[province]['re_registration_count'],
                     'extension_of_scope_count': provinces[province]['extension_of_scope_count'],
                     'report_id':self.id
@@ -240,13 +257,17 @@ class SETAReport(models.TransientModel):
                    _('Number Declined by ETQA'),
                    _('% approved by ETQA '),
                    _('% Declined by ETQA '),
-                   _('In progress '),
-                   _('New Registration'),
-                   _('Re-Accreditation')
+                   _('In Progress '),
+                   _('New Accreditation '),
+                   _('New Program Approval'),
+                   _('Re Accreditation '),
+                   _('Extension of Scope ')
                    ]
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
-                                     'denied_perc': 0, 'total': 0, 're_registration_count': 0, 're_accreditation_count': 0}
+                                     'denied_perc': 0, 'total': 0, 'new': 0, 'new_prog_approval': 0,
+                                     'reaccred': 0, 'extension': 0 }
+
         for accred in accreds:
             dbg(accred.state)
             # if a new prov is found add a key with 0 values on ints
@@ -257,16 +278,24 @@ class SETAReport(models.TransientModel):
                                                  'approved_perc': 0,
                                                  'denied_perc': 0,
                                                  'total': 0,
-                                                 're_registration_count': 0,
-                                                 're_accreditation_count': 0}
+                                                 'new': 0,
+                                                 'new_prog_approval': 0,
+                                                 'reaccred': 0,
+                                                 'extension': 0
+                                                 }
                 if accred.final_state == 'Approved':
                     provinces[accred.state_id.id]['approved_count'] += 1
                 if accred.final_state == 'Rejected':
                     provinces[accred.state_id.id]['denied_count'] += 1
-                if accred.is_existing_provider:
-                    provinces[accred.state_id.id]['re_registration_count'] += 1
-                if accred.is_extension_of_scope:
-                    provinces[accred.state_id.id]['re_accreditation_count'] += 1
+                if accred.transaction_type == 'new':
+                    provinces[accred.state_id.id]['new'] += 1
+                if accred.transaction_type == 'new_prog_approval':
+                    provinces[accred.state_id.id]['new_prog_approval'] += 1
+                if accred.transaction_type == 'reaccred':
+                    provinces[accred.state_id.id]['reaccred'] += 1
+                if accred.transaction_type == 'extension':
+                    provinces[accred.state_id.id]['extension'] += 1
+
                 provinces[accred.state_id.id]['total'] += 1
             # else it chooses the undefined province from data xml
             else:
@@ -275,20 +304,28 @@ class SETAReport(models.TransientModel):
                         provinces[undefined_prov]['approved_count'] += 1
                     if accred.final_state == 'Rejected':
                         provinces[undefined_prov]['denied_count'] += 1
-                    if accred.is_existing_provider:
-                        provinces[undefined_prov]['re_registration_count'] += 1
-                    if accred.is_extension_of_scope:
-                        provinces[undefined_prov]['re_accreditation_count'] += 1
+                    if accred.transaction_type == 'new':
+                        provinces[accred.state_id.id]['new'] += 1
+                    if accred.transaction_type == 'new_prog_approval':
+                        provinces[accred.state_id.id]['new_prog_approval'] += 1
+                    if accred.transaction_type == 'reaccred':
+                        provinces[accred.state_id.id]['reaccred'] += 1
+                    if accred.transaction_type == 'extension':
+                        provinces[accred.state_id.id]['extension'] += 1
                     provinces[undefined_prov]['total'] += 1
                 else:
                     if accred.final_state == 'Approved':
                         provinces[accred.state_id.id]['approved_count'] += 1
                     if accred.final_state == 'Rejected':
                         provinces[accred.state_id.id]['denied_count'] += 1
-                    if accred.is_existing_provider:
-                        provinces[accred.state_id.id]['re_registration_count'] += 1
-                    if accred.is_extension_of_scope:
-                        provinces[accred.state_id.id]['re_accreditation_count'] += 1
+                    if accred.transaction_type == 'new':
+                        provinces[accred.state_id.id]['new'] += 1
+                    if accred.transaction_type == 'new_prog_approval':
+                        provinces[accred.state_id.id]['new_prog_approval'] += 1
+                    if accred.transaction_type == 'reaccred':
+                        provinces[accred.state_id.id]['reaccred'] += 1
+                    if accred.transaction_type == 'extension':
+                        provinces[accred.state_id.id]['extension'] += 1
                     provinces[accred.state_id.id]['total'] += 1
         dbg(provinces)
         for province in provinces.keys():
@@ -308,13 +345,16 @@ class SETAReport(models.TransientModel):
                     'denied_count': provinces[province]['denied_count'],
                     'approved_perc': provinces[province]['approved_perc'],
                     'approved_count': provinces[province]['approved_count'],
-                    're_registration_count': provinces[province]['re_registration_count'],
-                    'extension_of_scope_count': provinces[province]['re_accreditation_count'],
+                    'new_accred': provinces[province]['new'],
+                    'new_prog_approval': provinces[province]['new_prog_approval'],
+                    'reaccred': provinces[province]['reaccred'],
+                    'extension': provinces[province]['extension'],
                     'report_id': self.id
                     }
             self.env['seta.reports.etqa.approval.accreditation.analysis'].create(prov)
         self.headers = pprint.saferepr(headers)
         return "/report_export/accreditation_etqa_approval_analysis/%s"
+
 
     def _mod_ass_register_8week_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
@@ -337,8 +377,8 @@ class SETAReport(models.TransientModel):
                    _('Number of days it took for the Provincial Office to approve/decline(<=8 weeks/35 days) a %s Application' % ass_mod),
                    _('%s Application Status' % ass_mod),
                    _('In Progress'),
-                   _('New Registrations'),
-                   _('Reaccreditation')]
+                   _('Transaction_type'),
+                   ]
         broken_regs = []
         for reg in registrations:
             stat_dict = {}
@@ -377,8 +417,7 @@ class SETAReport(models.TransientModel):
                             'days_to_update':delta.days,
                             'final_state':reg.final_state,
                             'in_process': in_process,
-                            'new_registrations': reg.already_registered,
-                            'reaccreditation': reg.is_extension_of_scope,
+                            'transaction_type': get_transaction_type(reg),
                             'report_id':self.id
                             }
                     self.env['seta.reports.8week.register'].create(regs)
@@ -427,8 +466,7 @@ class SETAReport(models.TransientModel):
                    _('Date Application Recommended to ETQA / Declined  '),
                    _('final state'),
                    _('In Progress'),
-                   _('New Registrations'),
-                   _('Reaccreditation')]
+                   _('Transaction type')]
 
         broken_accreds = []
         for accred in accreds:
@@ -461,6 +499,7 @@ class SETAReport(models.TransientModel):
                     in_process = False
                     if accred.final_state not in ['Approved', 'Rejected']:
                         in_process = True
+
                     val = {
                         'provider_name': accred.name,
                         'provider_accreditation_ref': accred.provider_accreditation_ref,
@@ -472,8 +511,7 @@ class SETAReport(models.TransientModel):
                         'days_to_assess':delta.days,
                         'final_state':accred.final_state,
                         'in_process': in_process,
-                        'new_registrations': accred.is_existing_provider,
-                        'reaccreditation': accred.is_extension_of_scope,
+                        'transaction_status': accred.transaction_type,
                         'report_id':self.id
                     }
 
@@ -645,8 +683,7 @@ class SETAReportLateAccreditations(models.TransientModel):
     days_to_assess = fields.Integer()
     final_state = fields.Char()
     in_process = fields.Char()
-    new_registrations = fields.Char()
-    reaccreditation = fields.Char()
+    transaction_status = fields.Char()
     state_id = fields.Many2one('res.country.state')
 
     report_id = fields.Many2one("seta.reports", "Report Id")
@@ -686,8 +723,6 @@ class SETAReportRegister(models.TransientModel):
     denied_count = fields.Float()
     denied_perc = fields.Float()
     approved_perc = fields.Float()
-    re_registration_count = fields.Float()
-    extension_of_scope_count = fields.Float()
     report_id = fields.Many2one("seta.reports", "Report Id")
 
 
@@ -704,8 +739,7 @@ class SETAReport8WeekRegister(models.TransientModel):
     days_to_update = fields.Integer()
     final_state = fields.Char()
     in_process = fields.Char()
-    new_registrations = fields.Char()
-    reaccreditation = fields.Char()
+    transaction_type = fields.Char()
     report_id = fields.Many2one("seta.reports", "Report Id")
 
 
@@ -718,8 +752,10 @@ class SETAReportetqaApprovalAccreditationAnalysis(models.TransientModel):
     denied_count = fields.Float()
     denied_perc = fields.Float()
     approved_perc = fields.Float()
-    re_registration_count = fields.Float()
-    extension_of_scope_count = fields.Float()
+    new_prog_approval = fields.Float()
+    new_accred = fields.Float()
+    reaccred = fields.Float()
+    extension = fields.Float()
 
     report_id = fields.Many2one("seta.reports", "Report Id")
 

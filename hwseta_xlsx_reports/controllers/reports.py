@@ -146,9 +146,7 @@ class ReportExporter(http.Controller):
             worksheet.write(i + 2, 7, accred.update_date)
             worksheet.write(i + 2, 8, accred.final_state)
             worksheet.write(i + 2, 9, accred.in_process)
-            # worksheet.write(i + 2, 7, accred.is_existing_provider)
-            worksheet.write(i + 2, 10, accred.new_registrations)
-            worksheet.write(i + 2, 11, accred.reaccreditation)
+            worksheet.write(i + 2, 10, accred.transaction_status)
 
         # num_leads = len(leads)
         # worksheet.write_merge(num_leads + 2, num_leads + 2, 22, 23, "TOTAL", header_bold_blue)
@@ -443,8 +441,10 @@ class ReportExporter(http.Controller):
             worksheet.write(i + 2, 4, assessment.approved_perc)
             worksheet.write(i + 2, 5, assessment.denied_perc)
             worksheet.write(i + 2, 6, in_progress)
-            worksheet.write(i + 2, 7, assessment.re_registration_count)
-            worksheet.write(i + 2, 8, assessment.extension_of_scope_count)
+            worksheet.write(i + 2, 7, assessment.new_accred)
+            worksheet.write(i + 2, 8, assessment.new_prog_approval)
+            worksheet.write(i + 2, 9, assessment.reaccred)
+            worksheet.write(i + 2, 10, assessment.extension)
 
 
         # num_leads = len(leads)
@@ -502,8 +502,9 @@ class ReportExporter(http.Controller):
             worksheet.write(i + 2, 4, reg.approved_perc)
             worksheet.write(i + 2, 5, reg.denied_perc)
             worksheet.write(i + 2, 6, in_progress)
-            worksheet.write(i + 2, 7, reg.re_registration_count)
-            worksheet.write(i + 2, 8, reg.extension_of_scope_count)
+            worksheet.write(i + 2, 7, reg.new_registration_count)
+            worksheet.write(i + 2, 8, reg.re_registration_count)
+            worksheet.write(i + 2, 9, reg.extension_of_scope_count)
 
 
 
@@ -562,8 +563,7 @@ class ReportExporter(http.Controller):
             worksheet.write(i + 2, 6, reg.days_to_update)
             worksheet.write(i + 2, 7, reg.final_state)
             worksheet.write(i + 2, 8, reg.in_process)
-            worksheet.write(i + 2, 9, reg.new_registrations)
-            worksheet.write(i + 2, 10, reg.reaccreditation)
+            worksheet.write(i + 2, 9, reg.transaction_type)
 
         response = request.make_response(None,
                                          headers=[('Content-Type', 'application/vnd.ms-excel'),
