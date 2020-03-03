@@ -723,6 +723,9 @@ class SETAReportRegister(models.TransientModel):
     denied_count = fields.Float()
     denied_perc = fields.Float()
     approved_perc = fields.Float()
+    new_registration_count = fields.Float()
+    re_registration_count = fields.Float()
+    extension_of_scope_count = fields.Float()
     report_id = fields.Many2one("seta.reports", "Report Id")
 
 

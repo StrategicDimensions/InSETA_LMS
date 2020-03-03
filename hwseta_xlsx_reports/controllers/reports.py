@@ -127,9 +127,10 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
+        # report FROM %s TO %s") % (report.from_date, report.to_date)
         worksheet.write_merge(0, 0, 0, 8,
-                              _("Moderator application approved_declined within 8_week period_the whole process_per "
-                                "province"),
+                              _("Provider Accreditation application assessed in 140 days per province at Provincial Level "
+                                "province FROM %s TO %s") % (report.from_date, report.to_date),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
@@ -371,7 +372,9 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("Learner Achievement recommendations from the Provinces Approved_Declined by ETQA Head Office"),
+        #  FROM %s TO %s") % (report.from_date, report.to_date)
+        worksheet.write_merge(0, 0, 0, 8, _("Learner Achievement recommendations from the Provinces Approved_Declined by "
+                                            "ETQA Head Office FROM %s TO %s") % (report.from_date, report.to_date),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
@@ -426,8 +429,9 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 5, _("Provider Accreditation recommendation from Provinces_Approved_Declined"),
-                              header_bold_blue)
+        # report FROM %s TO %s") % (report.from_date, report.to_date)
+        worksheet.write_merge(0, 0, 0, 8, _("Provider Accreditation recommendation from Provinces_Approved_Declined"
+                              " FROM %s TO %s") % (report.from_date, report.to_date), header_bold_blue)
 
         for i, header in enumerate(headers):
             worksheet.write(1, i, header, header_bold_lightblue)
@@ -485,9 +489,9 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-
-        worksheet.write_merge(0, 0, 0, 5, _("%% of Approvals and declines of %s per applications per province") %
-                              report.register_assessor_or_moderator, header_bold_blue)
+        # FROM %s TO %s") % (report.from_date, report.to_date)
+        worksheet.write_merge(0, 0, 0, 7, _("%% of Approvals and declines of %s per applications per province FROM %s TO %s") %
+                             (report.register_assessor_or_moderator, report.from_date, report.to_date), header_bold_blue)
 
         for i, header in enumerate(headers):
             worksheet.write(1, i, header, header_bold_lightblue)
@@ -546,8 +550,9 @@ class ReportExporter(http.Controller):
         bold = xlwt.easyxf("font: bold on;")
         normal_yellow = xlwt.easyxf("pattern: pattern solid, fore_colour yellow; align: horiz right;")
         # Step 1: writing headers
-        worksheet.write_merge(0, 0, 0, 7, _("%s applications approved_declined  within the 8_week period_the "
-                                            "whole process per province ") % (report.register_assessor_or_moderator),
+        # FROM %s TO %s") % (report.from_date, report.to_date)
+        worksheet.write_merge(0, 0, 0, 9, _("%s applications approved_declined  within the 8_week period_the "
+                                            "whole process per province FROM %s TO %s") % (report.register_assessor_or_moderator, report.from_date, report.to_date),
                               header_bold_blue)
 
         for i, header in enumerate(headers):
