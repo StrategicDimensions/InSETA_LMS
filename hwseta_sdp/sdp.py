@@ -410,7 +410,7 @@ class hr_employee(models.Model):
             country_id = self.country_for_province(province)
             return {'value': {'country_postal': country_id }}
         return {}
-    
+
     @api.model
     def create(self, vals):
         user = self.env['res.users'].browse(self._uid)
@@ -443,12 +443,12 @@ class hr_employee(models.Model):
                 res.write({'user_id' : duplicate_match.id})
                 duplicate_match.write({'assessor_moderator_id':res.id,'groups_id':mainlist,})
                 return res
-            else:    
+            else:
                 related_user_data = self.env['res.users'].create({
                                                                   'name' : res.name,
                                                                   'image': res.image_medium,
-                                                                  'login' : res.work_email, 
-                                                                  'password':res.password, 
+                                                                  'login' : res.work_email,
+                                                                  'password':res.password,
                                                                   'assessor_moderator_id':res.id,
                                                                   'internal_external_users':'Assessors',
                                                                   })
@@ -456,35 +456,38 @@ class hr_employee(models.Model):
                 group_data = group_obj.search(['|', ('name', '=', 'Portal'), ('name', '=', 'Assessors')])
                 for data in group_data:
                     tup1 = (4, data.id)
-                    mainlist.append(tup1)                
+                    mainlist.append(tup1)
                 res.write({'user_id' : related_user_data.id})
                 related_user_data.partner_id.write({'email':res.work_email})
                 related_user_data.write({'groups_id':mainlist, })
-                
+
         if res.is_sdf == True:
             ## SDF User Creation after creating SDF.
-            group_list = [] 
+            group_list = []
             group_obj = self.env['res.groups']
             ## Applying Portal and SDF groups to SDF related user.
             group_data = group_obj.search(['|',('name','=','Portal'),('name','=','SDF')])
             for data in group_data:
                 tup = (4,data.id)
                 group_list.append(tup)
-            ## Removing Contact Creation and Employee group from SDF related user.   
+            ## Removing Contact Creation and Employee group from SDF related user.
             rem_group_data = group_obj.search(['|',('name', '=', 'Contact Creation'),('name','=','Employee')])
             for data in rem_group_data:
                 tup = (3,data.id)
-                group_list.append(tup)  
-            
+                group_list.append(tup)
+
             related_user_data = self.env['res.users'].create({
                                                                   'name' : res.name,
                                                                   'image': res.image_medium,
-                                                                  'login' : res.work_email, 
-                                                                  'password':res.password, 
+                                                                  'login' : res.work_email,
+                                                                  'password':res.password,
                                                                   'internal_external_users':'SDF',
                                                                   })
             related_user_data.write({'groups_id':group_list,'sdf_id':res.id})
             res.write({'user_id' : related_user_data.id})
+            # dbg('writing email to partner')
+            related_user_data.partner_id.write({'email': res.work_email})
+            # dbg(related_user_data.partner_id.email)
             ## Employer having the rights to create SDF and needs no approval.
             partner = user.partner_id
             if partner.employer :
