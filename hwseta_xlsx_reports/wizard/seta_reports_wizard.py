@@ -171,6 +171,7 @@ class SETAReport(models.TransientModel):
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
                                      'denied_perc': 0, 'total': 0, 'new_registration_count': 0, 're_registration_count': 0, 'extension_of_scope_count': 0 }
+
         for reg in registrations:
             if reg.work_province.id not in provinces.keys():
                 # raise Warning(_('no prvince selected in ' + str(reg)))
@@ -196,9 +197,9 @@ class SETAReport(models.TransientModel):
                     if reg.already_registered:
                         provinces[undefined_prov]['re_registration_count'] += 1
                     if reg.is_extension_of_scope:
-                        provinces[reg.work_province.id]['extension_of_scope_count'] += 1
+                        provinces[undefined_prov]['extension_of_scope_count'] += 1
                     if not reg.is_extension_of_scope and not reg.already_registered:
-                        provinces[reg.work_province.id]['new_registration_count'] += 1
+                        provinces[undefined_prov]['new_registration_count'] += 1
                     provinces[undefined_prov]['total'] += 1
                 else:
                     if reg.final_state == 'Approved':
@@ -209,7 +210,7 @@ class SETAReport(models.TransientModel):
                         provinces[reg.work_province.id]['re_registration_count'] += 1
                     if reg.is_extension_of_scope:
                         provinces[reg.work_province.id]['extension_of_scope_count'] += 1
-                    if not reg.is_extension_of_scope and reg.already_registered:
+                    if not reg.is_extension_of_scope and not reg.already_registered:
                         provinces[reg.work_province.id]['new_registration_count'] += 1
                     provinces[reg.work_province.id]['total'] += 1
         dbg(provinces)
