@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp.osv import osv, fields
-import mx.DateTime
-from mx.DateTime import RelativeDateTime
+#import mx.Datetime
+#from mx.Datetime import RelativeDateTime
 import time
 from openerp.report import report_sxw
 from datetime import datetime,date, timedelta
