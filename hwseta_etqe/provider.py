@@ -8991,7 +8991,17 @@ class provider_accreditation(models.Model):
 		#                                      'status': provider_campus_vals.status,
 											}
 						credit_provider_campus_lines.append((0, 0, provider_campus_data))
-			provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+                        provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+
+                        # if current uid is providers & return empty provider_obj list remove provider from res_user  
+                        if len(provider_obj) == 0 and self.env['res.users'].has_group('hwseta_etqe.group_providers'):
+                            provider_group = self.env.ref('hwseta_etqe.group_providers', False)
+                            provider_group.write({'users': [(3, self.env.uid)]})
+			    provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
+                            # undo the above change (add provider group)
+                            provider_group = self.env.ref('hwseta_etqe.group_providers', False)  
+                            provider_group.write({'users': [(4, self.env.uid)]})
+
 			pro_lst = []
 			for pro_obj in provider_obj:
 				pro_lst.append(pro_obj.id)
