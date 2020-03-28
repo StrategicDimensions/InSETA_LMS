@@ -8998,8 +8998,7 @@ class provider_accreditation(models.Model):
                             provider_group = self.env.ref('hwseta_etqe.group_providers', False)
                             provider_group.write({'users': [(3, self.env.uid)]})
 			    provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
-                            # undo the above change (add provider group)
-                            provider_group = self.env.ref('hwseta_etqe.group_providers', False)  
+                            # undo the above change (add provider group)  
                             provider_group.write({'users': [(4, self.env.uid)]})
 
 			pro_lst = []
