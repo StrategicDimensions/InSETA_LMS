@@ -8992,15 +8992,7 @@ class provider_accreditation(models.Model):
 											}
 						credit_provider_campus_lines.append((0, 0, provider_campus_data))
                         provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
-
-                        # if current uid is providers & return empty provider_obj list remove provider from res_user  
-                        if len(provider_obj) == 0 and self.env['res.users'].has_group('hwseta_etqe.group_providers'):
-                            provider_group = self.env.ref('hwseta_etqe.group_providers', False)
-                            provider_group.write({'users': [(3, self.env.uid)]})
-			    provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
-                            # undo the above change (add provider group)  
-                            provider_group.write({'users': [(4, self.env.uid)]})
-
+                        
 			pro_lst = []
 			for pro_obj in provider_obj:
 				pro_lst.append(pro_obj.id)
@@ -9126,7 +9118,7 @@ class provider_accreditation(models.Model):
 		mail_template_id = ir_model_data_obj.get_object_reference('hwseta_etqe', 'email_template_provider_extension_of_scope')
 		if mail_template_id:
 			self.pool['email.template'].send_mail(self.env.cr, self.env.uid, mail_template_id[1], self.id, force_send=True, context=self.env.context)
-		return True
+                return True
 
 	@api.multi
 	def write(self, vals):
