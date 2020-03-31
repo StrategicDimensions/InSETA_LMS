@@ -2814,7 +2814,7 @@ class assessors_moderators_register(models.Model):
 					''' As per new configuration '''
 					etqe_conf = self.env['etqe.config'].search([])
 					sdate = datetime.today().date()
-					new_date = "2020-03-31"
+					new_date = "2030-03-31"
 					if etqe_conf:
 						etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
 						if etqe_brw.etqa_end_date and etqe_brw.seta_license_end_date:
@@ -3054,7 +3054,7 @@ class assessors_moderators_register(models.Model):
 						''' As per new configuration '''
 						etqe_conf = self.env['etqe.config'].search([])
 						sdate = datetime.today().date()
-						new_date = "2020-03-31"
+						new_date = "2030-03-31"
 						if etqe_conf:
 							etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
 							if etqe_brw.etqa_end_date and etqe_brw.seta_license_end_date:
@@ -3257,7 +3257,7 @@ class assessors_moderators_register(models.Model):
 			''' As per new configuration '''
 			etqe_conf = self.env['etqe.config'].search([])
 			sdate = datetime.today().date()
-			new_date = "2020-03-31"
+			new_date = "2030-03-31"
 			if etqe_conf:
 				etqe_brw = self.env['etqe.config'].browse(etqe_conf[0].id)
 				if etqe_brw.etqa_end_date and etqe_brw.seta_license_end_date:
