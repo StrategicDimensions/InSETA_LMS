@@ -73,7 +73,6 @@ access_etqe_config_providers,etqe.config,model_etqe_config,hwseta_etqe.group_pro
 access_etqe_config_etqe_manager,etqe.config,model_etqe_config,hwseta_etqe.group_etqe_manager,1,1,1,1
 access_etqe_config_etqe_provincial_manager,etqe.config,model_etqe_config,hwseta_etqe.group_etqe_provincial_manager,1,1,1,1
 access_partner_etqe_provincial_officer,etqe.config,model_etqe_config,hwseta_etqe.group_etqe_provincial_officer,1,1,1,1
-access_etqe_config_etqe_executive_manager,res.partner,base.model_res_partner,hwseta_etqe.group_etqe_executive_manager,1,1,1,1
 access_etqe_config_etqe_officer,etqe.config,model_etqe_config,hwseta_etqe.group_etqe_officer,1,1,1,1
 access_etqe_config_etqe_administrator,etqe.config,model_etqe_config,hwseta_etqe.group_etqe_administrator,1,1,1,1
 access_etqe_config_etqe_provincial_administrator,etqe.config,model_etqe_config,hwseta_etqe.group_etqe_provincial_administrator,1,1,1,1
