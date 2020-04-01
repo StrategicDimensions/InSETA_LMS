@@ -115,7 +115,7 @@ class batch_master(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
 		user_groups = user_data.groups_id
@@ -670,7 +670,7 @@ class learner_registration_qualification(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=80, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
 		user_groups = user_data.groups_id
@@ -3493,7 +3493,7 @@ class assessors_moderators_register(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_data = self.env['res.users'].browse(user)
 		if user != 1 and user_data.assessor_moderator_id:
 			ass_mod_ids = []
@@ -4215,7 +4215,7 @@ class res_partner(models.Model):
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
 		# class = res.partner
-		user = self._uid
+                user = self._uid
 		user_data = self.env['res.users'].browse(user)
 		user_groups = user_data.groups_id
 		sdp_manager = False
@@ -4250,7 +4250,7 @@ class res_partner(models.Model):
 			if group.name == "Providers":
 				provider = True
 #                 return super(res_partner, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
-			if group.name in  ["ETQE Manager", "ETQE Administrator"]:
+			if group.name in  ["ETQE Manager", "ETQE Administrator", "ETQE Executive Manager"]:
 				if args:
 					if args[0][0] == 'provider':
 						self._cr.execute("select id from res_partner where is_visible = True and provider = True")
@@ -4668,7 +4668,7 @@ class provider_qualification(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=80, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
 		if self._context.get('model') == 'learner.registration.qualification':
@@ -6224,7 +6224,7 @@ class skills_programme_learner_rel(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=80, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
 		user_groups = user_data.groups_id
@@ -6314,7 +6314,7 @@ class provider_accreditation(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_obj = self.env['res.users']
 		user_groups = user_obj.browse(user).groups_id
 		for group in user_groups:
@@ -8992,10 +8992,11 @@ class provider_accreditation(models.Model):
 											}
 						credit_provider_campus_lines.append((0, 0, provider_campus_data))
                         provider_obj = self.env['res.partner'].search([('provider_accreditation_num', '=', self.accreditation_number)])
-                        
+
 			pro_lst = []
 			for pro_obj in provider_obj:
 				pro_lst.append(pro_obj.id)
+
 			provider_obj = self.env['res.partner'].search([('id', '=', max(pro_lst))])
 
 			'''Below code is written to delete provider master data before appending'''
@@ -9081,7 +9082,7 @@ class provider_accreditation(models.Model):
 							}
 			for line in self.assessors_ids:
 				assessors_obj = self.env['hr.employee'].browse([line.assessors_id.id])
-				assessors_obj.write({'as_provider_rel_id':[(0, 0, pro_ass_vals)]})
+                                assessors_obj.write({'as_provider_rel_id':[(0, 0, pro_ass_vals)]})
 
 			for line in self.moderators_ids:
 				moderators_obj = self.env['hr.employee'].browse([line.moderators_id.id])
@@ -9956,7 +9957,7 @@ class provider_assessment(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		if user != 1:
 			partner_data = self.env['res.users'].browse(user).partner_id
 			user_obj = self.env['res.users']
@@ -12269,7 +12270,7 @@ class learner_registration(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
 		user_groups = user_data.groups_id
@@ -13926,7 +13927,7 @@ class hr_employee(models.Model):
 
 	@api.model
 	def _search(self, args, offset=0, limit=80, order=None, count=False, access_rights_uid=None):
-		user = self._uid
+                user = self._uid
 		context = self._context
 		user_obj = self.env['res.users']
 		user_data = user_obj.browse(user)
