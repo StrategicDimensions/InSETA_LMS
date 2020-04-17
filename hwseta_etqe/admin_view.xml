@@ -988,6 +988,8 @@
 							<field name="is_active_provider"/>
 							<field name="is_existing_provider"/>
 							<field name="is_visible"/>
+							<field name="provider_status_Id"/>
+							<field name="user_id" string="user"/>
 							<field name="provider_start_date"/>
 							<field name="provider_end_date"/>
 							<field name="email"/>
