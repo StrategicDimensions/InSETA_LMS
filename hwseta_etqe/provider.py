@@ -10257,7 +10257,7 @@ class provider_assessment(models.Model):
 										# 	dbg(x.title)
 										# 	dbg(x.line_id)
 										pro_qual_object2 = self.env['provider.qualification.line'].search(
-											[('id_no', '=', unit_line.id_data),
+											['|',('id_no', '=', unit_line.id_data),('title', '=', unit_line.title),
 											 ('line_id', '=', learner_qual.learner_qualification_parent_id.id)])
 										dbg(pro_qual_object2)
 										for x in pro_qual_object2:
