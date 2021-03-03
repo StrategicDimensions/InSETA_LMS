@@ -105,7 +105,9 @@
             <field name="view_id" ref="skills_programme_tree"/>
         </record>
     
-        <menuitem id="menu_main_skills_programme" name="Skills Program" sequence="6" parent="etqe_main_menu" groups="hwseta_etqe.group_seta_administrator"/>
-        <menuitem action="action_skills_programme_form" id="menu_skills_programme" name="Skills Program" sequence="1" parent="menu_main_skills_programme"/>
+<!--        <menuitem id="menu_main_skills_programme" name="Skills Program" sequence="6" parent="etqe_main_menu" groups="hwseta_etqe.group_seta_administrator"/>-->
+<!--        <menuitem action="action_skills_programme_form" id="menu_skills_programme" name="Skills Program" sequence="1" parent="menu_main_skills_programme"/>-->
+        <menuitem action="action_skills_programme_form" id="menu_skills_programme" name="Skills Programs" sequence="3" parent="menu_main_asqa_librarie"
+        groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data"/>
     </data>
 </openerp>

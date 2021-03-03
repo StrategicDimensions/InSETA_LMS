@@ -4893,9 +4893,17 @@ $(document)
                                                 success: function(
                                                     result) {
 
+                                                    console.log('check min')
+                                                    console.log(result)
+                                                    console.log(result.length)
                                                     if (result.length == 24) {
                                                         check_limit_sum = false;
                                                         alert("Sum of checked unit standards credits point should be greater than or equal to Minimum credits point !!")
+                                                        return false;
+                                                    }
+                                                    if (result.length == 37) {
+                                                        check_limit_sum = false;
+                                                        alert("Please ensure all unit standards are selected when choosing an exit level outcome qualification!!")
                                                         return false;
                                                     }
                                                 },

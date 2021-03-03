@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="update_learner_info_form" model="ir.ui.view">
+            <field name="name">SETA update.learner Wizard</field>
+            <field name="model">update.learner</field>
+            <field name="arch" type="xml">
+                <form string="update">
+                    <header>
+                        <field name="page" widget="statusbar" clickable="True"/>
+                    </header>
+                    <group string="Terms and Conditions" attrs="{'invisible':[('page','!=','terms')]}">
+                        <field name='learner_id' string="Personal Profile" domain="[('is_learner','=',True),('provider_learner','=',True)]" options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'tree_view_ref': 'hwseta_etqe.view_provider_learner_tree','search_view_ref':'hwseta_etqe.view_etqe_learner_search'}"/>
+                        <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?</p>
+                        <field name='disclaimer' string="Terms &amp; conditions"/>
+					</group>
+                    <group attrs="{'invisible':[('disclaimer','=',False)]}">
+                        <group string="General Details" attrs="{'invisible':[('page','!=','contact')]}">
+                            <field name='person_title' string="Title"/>
+                            <field name='initials'/>
+                            <field name='person_name' string="First Name"/>
+                            <field name='person_last_name' string="Last Name"/>
+                            <field name='highest_education'/>
+                            <field name='job_title' string="Job Title"/>
+                            <field name='current_occupation'/>
+                            <field name='years_in_occupation'/>
+                            <field name='department'/>
+                            <field name='manager'/>
+                            <field name='cont_number_home' string="Home Number"/>
+                            <field name='person_cell_phone_number' placeholder="0824513619" string="Cell Phone Number"/>
+                            <field name='cont_number_office' string="Office Number"/>
+                            <field name='work_phone' string="Work Phone"/>
+                            <field name='person_fax_number' string="Fax Number"/>
+                        </group>
+                        <group string="Status" attrs="{'invisible':[('page','!=','status')]}">
+                            <field name='marital'/>
+                            <field name='dissability' string="Disability Status"/>
+                            <field name="disability_status" string="Disability"/>
+                            <field name='socio_economic_status'/>
+							<field name="equity"/>
+                            <field name='seeing_rating_id' string='Seeing Rating'/>
+                            <field name='hearing_rating_id' string='Hearing Rating'/>
+                            <field name='walking_rating_id' string='Walking Rating'/>
+                            <field name='remembering_rating_id' string='Remembering Rating'/>
+                            <field name='communicating_rating_id' string='Communicating Rating'/>
+                            <field name='self_care_rating_id' string='Self Care Rating'/>
+                        </group>
+                        <group string="Citizenship &amp; Other Info" attrs="{'invisible':[('page','!=','citizenship')]}">
+                            <field name="citizen_resident_status_code"/>
+<!--							<field name="citizen_status_saqa_code"/>-->
+							<field name="country_id" string="Country of Nationality"  options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+							<field name="unknown_type" string="Type of Identification" attrs="{'required':[('citizen_resident_status_code','not in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','in',('sa','dual','PR'))]}"/>
+							<field name="unknown_type_document" string="ID Document/Passport Upload" domain="[('id','=',None)]" attrs="{'required':[('citizen_resident_status_code','not in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','in',('sa','dual','PR'))]}"/>
+<!--							<field name="nationality_saqa_code"/>-->
+							<field name="learner_identification_id" attrs="{'required':[('citizen_resident_status_code','in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','not in',('sa','dual','PR'))]}"/>
+                            <field name="id_document" domain="[('id','=',None)]" attrs="{'required':[('citizen_resident_status_code','in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','not in',('sa','dual','PR'))]}"/>
+							<field name="alternate_id_type" attrs="{'required':[('citizen_resident_status_code','not in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','in',('sa','dual','PR'))]}"/>
+							<field name="person_birth_date"/>
+							<field name="gender"/>
+							<field name="passport_id" attrs="{'readonly':[('citizen_resident_status_code','=','sa')]}"/>
+							<field name="national_id" string="National ID" attrs="{'invisible':[('citizen_resident_status_code','in',('sa','dual','PR'))]}"/>
+							<field name="home_language_code" string="Language" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+<!--							<field name="home_lang_saqa_code"/>-->
+                        </group>
+                        <group string="Work Address" attrs="{'invisible':[('page','!=','address')]}">
+                            <field name='work_address' string="Address Line 1"/>
+                            <field name='work_address2' string="Address Line 2"/>
+                            <field name='work_address3' string="Address Line 3"/>
+                            <field name='person_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='work_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='work_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='work_province' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='work_zip' string="Postal Code"/>
+                            <field name='work_country' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                        <group string="Home Address" attrs="{'invisible':[('page','!=','personal_addr')]}">
+                            <field name='person_home_address_1' string="Address Line 1"/>
+                            <field name='person_home_address_2' string="Address Line 2"/>
+                            <field name='person_home_address_3' string="Address Line 3"/>
+                            <field name='person_home_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='person_home_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='physical_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='person_home_province_code' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='person_home_zip' string="Postal Code"/>
+                            <field name='country_home' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                        <group string="Postal Address" attrs="{'invisible':[('page','!=','postal_addr')]}">
+                            <field name="same_as_home"/>
+                            <field name='person_postal_address_1' string="Address Line 1"/>
+                            <field name='person_postal_address_2' string="Address Line 2"/>
+                            <field name='person_postal_address_3' string="Address Line 3"/>
+                            <field name='person_postal_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='person_postal_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='postal_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='person_postal_province_code' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='person_postal_zip' string="Postal Code"/>
+                            <field name='country_postal' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                        <group string="Documents" attrs="{'invisible':[('page','!=','business_docs')]}">
+                            <h2>Please note:</h2>
+                            <p>These fields do not populate for you, if you add a file here,<b> it will be replaced!</b></p>
+                            <field name='learner_master_other_docs_ids' domain="[('id','=',None)]"/>
+                        </group>
+                        <group string="Disclaimer" attrs="{'invisible':[('page','!=','disclaimer')]}">
+                            <p><b>Please note:</b>The details you are trying to change will reflect on your profile and will require another update and approval to reverse any mistakes.</p>
+                            <button name="update" string="Update" type="object" default_focus="1" class="btn-primary"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+		<record id="action_update_learner" model="ir.actions.act_window">
+            <field name="name">SETA update personal info</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">update.learner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="update_learner_info_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="menu_update_learner"
+				  name="Update Learner Data"
+				  action="action_update_learner"
+				  parent="transaction_menu"
+				  groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_update_learner_wiz"
+				  sequence="7"/>
+        <record id="view_updated_learner_tree" model="ir.ui.view">
+			<field name="name">Updated learner tree</field>
+			<field name="model">updated.learner</field>
+			<field name="arch" type="xml">
+				<tree string="Links" create="false">
+                    <field name="reference"/>
+                    <field name="learner_id"/>
+                    <field name="create_date"/>
+                    <field name="action_date"/>
+                    <field name="action_partner"/>
+                    <field name="status"/>
+				</tree>
+			</field>
+		</record>
+        <!--		status wizard stuff -->
+		<record id="view_updated_learner_reject_wiz_form" model="ir.ui.view">
+			<field name="name">Reject Wizard</field>
+			<field name="model">updated.learner.reject.wiz</field>
+			<field name="arch" type="xml">
+				<form string="Reject Wizard">
+					<group>
+						<field name="comment"/>
+					</group>
+					<footer>
+						<button name="reject_update" string="Reject Update" type="object" class="oe_highlight"/>
+						or
+						<button string="Cancel" special="cancel" class="oe_link"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+		<record id="action_view_updated_learner_reject_wiz_form" model="ir.actions.act_window">
+			<field name="name">updated.learner.reject.wiz</field>
+			<field name="res_model">updated.learner.reject.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_updated_learner_reject_wiz_form"/>
+			<field name="target">new</field>
+		</record>
+        <record id="view_updated_learner_form" model="ir.ui.view">
+            <field name="name">Updated learner</field>
+            <field name="model">updated.learner</field>
+            <field name="arch" type="xml">
+                <form string="Updated learners" create="false" edit="false">
+                    <header>
+                        <button name="approve_update" string="Approve"
+                                attrs="{'invisible':[('status','not in',['submitted'])]}"
+                                type="object" default_focus="1"
+                                class="btn-primary" groups="hwseta_etqe.group_updated_learner_wiz,hwseta_etqe.group_seta_administrator"/>
+                        <button name="%(action_view_updated_learner_reject_wiz_form)d"
+                                attrs="{'invisible':[('status','not in',['submitted'])]}"
+                                type="action" string="Reject" context="{'update_id': active_id}"
+                                class="oe_highlight"  groups="hwseta_etqe.group_updated_learner_wiz,hwseta_etqe.group_seta_administrator"/>
+                        <field name="status" widget="statusbar"/>
+                    </header>
+                    <group>
+                        <field name='learner_id' string="Personal Profile"/>
+                        <field name='disclaimer'/>
+                        <field name='reference'/>
+                    </group>
+                    <group>
+                        <group string="Previous Information"></group>
+                        <group string="Updated Information"></group>
+                    </group>
+                    <group>
+                        <group string="General Details">
+                            <field name='related_person_title' string="Title"/>
+                            <field name='related_initials'/>
+                            <field name='related_name'/>
+                            <field name='related_person_name' string="First Name"/>
+                            <field name='related_person_last_name' string="Last Name"/>
+                            <field name='related_highest_education' string="Highest Education"/>
+                            <field name='related_job_title'  string="Job Title"/>
+                            <field name='related_current_occupation' string="Current Occupation"/>
+                            <field name='related_years_in_occupation' string="Years In Occupation"/>
+                            <field name='related_department' string="Department"/>
+                            <field name='related_manager' string="Manager"/>
+                            <field name='related_cont_number_home' string="Home Number"/>
+                            <field name='related_person_cell_phone_number' placeholder="0824513619" string="Cell Phone Number"/>
+                            <field name='related_cont_number_office' string="Office Number"/>
+                            <field name='related_work_phone' string="Work Phone"/>
+                            <field name='related_person_fax_number' string="Fax Number"/>
+                        </group>
+                        <group string="General Details">
+                            <field name='person_title' string="Title"/>
+                            <field name='initials'/>
+                            <field name='name'/>
+                            <field name='person_name' string="First Name"/>
+                            <field name='person_last_name' string="Last Name"/>
+                            <field name='highest_education'/>
+                            <field name='job_title' string="Job Title"/>
+                            <field name='current_occupation'/>
+                            <field name='years_in_occupation'/>
+                            <field name='department'/>
+                            <field name='manager'/>
+                            <field name='cont_number_home' string="Home Number"/>
+                            <field name='person_cell_phone_number' placeholder="0824513619" string="Cell Phone Number"/>
+                            <field name='cont_number_office' string="Office Number"/>
+                            <field name='work_phone' string="Work Phone"/>
+                            <field name='person_fax_number' string="Fax Number"/>
+                        </group>
+
+                    </group>
+                    <group>
+                        <group string="Status Details">
+                            <field name='related_marital'/>
+                            <field name='related_dissability' string="Disability Status"/>
+                            <field name="related_disability_status" string="Disability"/>
+                            <field name='related_socio_economic_status'/>
+							<field name="related_equity"/>
+                            <field name='related_seeing_rating_id' string='Seeing Rating'/>
+                            <field name='related_hearing_rating_id' string='Hearing Rating'/>
+                            <field name='related_walking_rating_id' string='Walking Rating'/>
+                            <field name='related_remembering_rating_id' string='Remembering Rating'/>
+                            <field name='related_communicating_rating_id' string='Communicating Rating'/>
+                            <field name='related_self_care_rating_id' string='Self Care Rating'/>
+                        </group>
+                        <group string="Status Details">
+                            <field name='marital'/>
+                            <field name='dissability' string="Disability Status"/>
+                            <field name="disability_status" string="Disability"/>
+                            <field name='socio_economic_status'/>
+							<field name="equity"/>
+                            <field name='seeing_rating_id' string='Seeing Rating'/>
+                            <field name='hearing_rating_id' string='Hearing Rating'/>
+                            <field name='walking_rating_id' string='Walking Rating'/>
+                            <field name='remembering_rating_id' string='Remembering Rating'/>
+                            <field name='communicating_rating_id' string='Communicating Rating'/>
+                            <field name='self_care_rating_id' string='Self Care Rating'/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Citizenship Details">
+                            <field name="related_citizen_resident_status_code"/>
+<!--							<field name="related_citizen_status_saqa_code"/>-->
+							<field name="related_country_id" string="Country of Nationality"  options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+							<field name="related_unknown_type" string="Type of Identification"/>
+							<field name="related_unknown_type_document" string="ID Document/Passport Upload" domain="[('id','=',None)]"/>
+<!--							<field name="related_nationality_saqa_code"/>-->
+							<field name="related_learner_identification_id"/>
+                            <field name="related_id_document" domain="[('id','=',None)]"/>
+							<field name="related_alternate_id_type"/>
+							<field name="related_person_birth_date"/>
+							<field name="related_gender"/>
+							<field name="related_passport_id" attrs="{'readonly':[('citizen_resident_status_code','=','sa')]}"/>
+							<field name="related_national_id" string="National ID" attrs="{'readonly':[('citizen_resident_status_code','=','sa')]}"/>
+							<field name="related_home_language_code" string="Language" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+<!--							<field name="related_home_lang_saqa_code"/>-->
+                        </group>
+                        <group string="Citizenship Details">
+                            <field name="citizen_resident_status_code"/>
+<!--							<field name="citizen_status_saqa_code"/>-->
+							<field name="country_id" string="Country of Nationality"  options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+							<field name="unknown_type" string="Type of Identification"/>
+							<field name="unknown_type_document" string="ID Document/Passport Upload" domain="[('id','=',None)]"/>
+<!--							<field name="nationality_saqa_code"/>-->
+							<field name="learner_identification_id" attrs="{'required':[('citizen_resident_status_code','in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','not in',('sa','dual','PR'))]}"/>
+                            <field name="id_document" domain="[('id','=',None)]" attrs="{'required':[('citizen_resident_status_code','in',('sa','dual','PR'))],'invisible':[('citizen_resident_status_code','not in',('sa','dual','PR'))]}"/>
+							<field name="alternate_id_type"/>
+							<field name="person_birth_date"/>
+							<field name="gender"/>
+							<field name="passport_id" attrs="{'readonly':[('citizen_resident_status_code','=','sa')]}"/>
+							<field name="national_id" string="National ID" attrs="{'readonly':[('citizen_resident_status_code','=','sa')]}"/>
+							<field name="home_language_code" string="Language" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+<!--							<field name="home_lang_saqa_code"/>-->
+                        </group>
+
+                    </group>
+                    <group>
+                        <group string="Work Address">
+                            <field name='related_work_address' string="Address Line 1"/>
+                            <field name='related_work_address2' string="Address Line 2"/>
+                            <field name='related_work_address3' string="Address Line 3"/>
+                            <field name='related_person_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='related_work_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='related_work_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='related_work_province' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='related_work_zip' string="Postal Code"/>
+                            <field name='related_work_country' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                        <group string="Work Address">
+                            <field name='work_address' string="Address Line 1"/>
+                            <field name='work_address2' string="Address Line 2"/>
+                            <field name='work_address3' string="Address Line 3"/>
+                            <field name='person_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='work_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='work_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='work_province' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='work_zip' string="Postal Code"/>
+                            <field name='work_country' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Home/Physical Address">
+                            <field name='related_person_home_address_1' string="Address Line 1"/>
+                            <field name='related_person_home_address_2' string="Address Line 2"/>
+                            <field name='related_person_home_address_3' string="Address Line 3"/>
+                            <field name='related_person_home_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='related_person_home_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='related_physical_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='related_person_home_province_code' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='related_person_home_zip' string="Postal Code"/>
+                            <field name='related_country_home' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                        <group string="Home/Physical Address">
+                            <field name='person_home_address_1' string="Address Line 1"/>
+                            <field name='person_home_address_2' string="Address Line 2"/>
+                            <field name='person_home_address_3' string="Address Line 3"/>
+                            <field name='person_home_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='person_home_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='physical_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='person_home_province_code' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='person_home_zip' string="Postal Code"/>
+                            <field name='country_home' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Postal Address">
+                            <field name="related_same_as_home"/>
+                            <field name='related_person_postal_address_1' string="Address Line 1"/>
+                            <field name='related_person_postal_address_2' string="Address Line 2"/>
+                            <field name='related_person_postal_address_3' string="Address Line 3"/>
+                            <field name='related_person_postal_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='related_person_postal_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='related_postal_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='related_person_postal_province_code' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='related_person_postal_zip' string="Postal Code"/>
+                            <field name='related_country_postal' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                        <group string="Postal Address">
+                            <field name="same_as_home"/>
+                            <field name='person_postal_address_1' string="Address Line 1"/>
+                            <field name='person_postal_address_2' string="Address Line 2"/>
+                            <field name='person_postal_address_3' string="Address Line 3"/>
+                            <field name='person_postal_suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Suburb"/>
+                            <field name='person_postal_city' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="City"/>
+                            <field name='postal_municipality' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Municipality"/>
+                            <field name='person_postal_province_code' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Province"/>
+                            <field name='person_postal_zip' string="Postal Code"/>
+                            <field name='country_postal' options="{'no_create': True,'no_quick_create':True,'no_open':True}" string="Country"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Business Documents">
+<!--                            <field name='related_registrationdoc'/>-->
+                        </group>
+                        <group string="Business Documents">
+                            <field name='learner_master_other_docs_ids'/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_updated_learner_tree" model="ir.actions.act_window">
+            <field name="name">SETA updated.learner</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">updated.learner</field>
+            <field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_updated_learner_tree"/>
+        </record>
+        <menuitem id="menu_updated_learner"
+				  name="Updated Learner Data"
+				  action="action_updated_learner_tree"
+				  parent="transaction_menu"
+				  groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_updated_learner_wiz"
+				  sequence="7"/>
+        <record id="view_learner_updates_form_inherit" model="ir.ui.view">
+			<field name="name">view.learner.updates.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_etqe_learner_master_form"/>
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_updated_learner_wiz'),ref('hwseta_etqe.group_seta_administrator'),ref('hwseta_etqe.group_update_learner_wiz')])]" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/notebook/page[@string='Public Information']" position="after">
+                    <page string="Updates">
+                        <group>
+                            <field name="update_ids"/>
+                        </group>
+                    </page>
+                </xpath>
+			</field>
+		</record>
+    </data>
+</openerp>

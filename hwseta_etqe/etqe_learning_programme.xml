@@ -109,7 +109,14 @@
             <field name="view_id" ref="etqe_learning_programme_tree"/>
         </record>
     
-        <menuitem id="menu_main_etqe_learning_programme" name="Learning Program" sequence="7" parent="etqe_main_menu" groups="hwseta_etqe.group_seta_administrator"/>
-        <menuitem action="action_etqe_learning_programme_form" id="menu_etqe_learning_programme" name="Learning Program" sequence="1" parent="menu_main_etqe_learning_programme"/>
+<!--        <menuitem id="menu_main_etqe_learning_programme" name="Learning Program" sequence="7" parent="etqe_main_menu" groups="hwseta_etqe.group_seta_administrator"/>-->
+<!--        <menuitem action="action_etqe_learning_programme_form" id="menu_etqe_learning_programme" name="Learning Program" sequence="1" parent="menu_main_etqe_learning_programme"/>-->
+        <menuitem action="action_etqe_learning_programme_form"
+                  id="menu_etqe_learning_programme"
+                  name="Learning Programs"
+                  sequence="2"
+                  parent="menu_main_asqa_librarie"
+                  groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data"
+        />
     </data>
 </openerp>

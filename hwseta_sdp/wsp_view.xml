@@ -16,7 +16,12 @@
 							string="Submit"
 							attrs="{'invisible':['|','|',('request_extension','=',True),('allow_extension','=',True),('state','!=','draft')]}"
 							groups="base.group_user,hwseta_sdp.group_sdf_user,hwseta_etqe.group_seta_administrator" /> -->
-						<button class="oe_highlight" type="object" name="action_submit_wsp" string="Submit" attrs="{'invisible':['|',('extension_allowed','!=',True),('state','!=','draft')]}" groups="base.group_user,hwseta_sdp.group_sdf_user,hwseta_etqe.group_seta_administrator"/>
+						<button class="oe_highlight"
+								type="object"
+								name="action_submit_wsp"
+								string="Submit"
+								attrs="{'invisible':['|',('submittable','!=',True),('state','!=','draft')]}"
+								groups="base.group_user,hwseta_sdp.group_sdf_user,hwseta_etqe.group_seta_administrator"/>
 						<button name="send_query_email" states="submitted" string="Query"
 							type="object" class="oe_highlight" groups="hwseta_sdp.group_wsp_administrator" />
 						<button name="send_query_email" states="evaluated" string="Query"
@@ -72,6 +77,7 @@
 							attrs="{'invisible' : [('allow_extension','=',False)]}" groups="hwseta_sdp.group_sdp_manager,hwseta_etqe.group_seta_administrator" />
 						<!-- -->
 					</header>
+					<field name="submittable" invisible="1"/>
 					<field name="extension_allowed" invisible="1"/>
 					<field name="is_tep_loaded" invisible="1" />
 					<field name="is_tep_to_planned_loaded" invisible="1" />
@@ -92,8 +98,9 @@
 							<!-- <field name="employer_id" on_change="onchange_employer_id(employer_id)" 
 								attrs="{'readonly':[('state','=','evaluated')]}" required="1" options="{'no_create_edit':True}"/> -->
 							<field name="employer_id" on_change="onchange_employer_id(employer_id)"
-								attrs="{'readonly':[('state','in',['submitted','evaluated'])]}"
-								required="1" options="{'no_create_edit':True}" />
+								   attrs="{'readonly':[('state','in',['submitted','evaluated'])]}"
+								   context = "{'type' : 'employer'}"
+								   required="1" options="{'no_create_edit':True}" />
 							<field name="fiscal_year" readonly="1" />
 							<field name="wsp_start_period" readonly="1" />
 							<field name="start_period" readonly="1" />
@@ -177,7 +184,7 @@
 									<field name="code" on_change="onchange_code(code)"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}"
 										attrs="{'required':[('save_actual_planned_record','=',False)]}"
-										domain="[('name','ilike','2017')]"/>
+										domain="[('name','ilike','2019')]"/>
 									<field name="occupation"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}"
 										attrs="{'required':[('save_actual_planned_record','=',False)]}"
@@ -1613,8 +1620,8 @@
 		<menuitem id="menu_sdp_wsp_submenu" name="WSP" parent="menu_sdp_wsp"
 			action="action_wsp_submission" sequence="12" />
 		<!-- WSP Menu for Portal View -->
-		<menuitem id="menu_sdp_wsp_portal" name="WSP" parent="menu_sdf_portal"
-			action="action_wsp_submission" sequence="3" />
+		<menuitem id="menu_sdp_wsp_portal" name="WSP" parent="hwseta_etqe.portal_provider_transaction"
+			action="action_wsp_submission" sequence="2" />
 
 		<!-- WSP Menu for Employer Portal View -->
 		<menuitem id="menu_employer_user_wsp_portal" name="WSP"

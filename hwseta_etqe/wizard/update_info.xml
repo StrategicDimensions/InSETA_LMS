@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="update_provider_info_form" model="ir.ui.view">
+            <field name="name">SETA update.provider Wizard</field>
+            <field name="model">update.provider</field>
+            <field name="arch" type="xml">
+                <form string="update">
+                    <header>
+                        <field name="page" widget="statusbar" clickable="True"/>
+                    </header>
+
+                    <group string="Terms and Conditions" attrs="{'invisible':[('page','!=','terms')]}">
+                        <field name='provider_id' string="Provider" domain="[('user_id','=',uid)]" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+
+					</group>
+                    <p attrs="{'invisible':[('page','!=','terms')]}">I, as the representative of the Skills Development Provider, take full responsibility of the amendments to the data in the company profile, and will not hold the Health and Welfare Sector Education and Training Authority (HWSETA) liable for any damages that may arise from the information uploaded below</p>
+                    <group attrs="{'invisible':[('page','!=','terms')]}">
+                        <field name='disclaimer' string="Terms &amp; conditions"/>
+                    </group>
+                    <group attrs="{'invisible':[('disclaimer','=',False)]}">
+                        <group string="General Details" attrs="{'invisible':[('page','!=','contact')]}">
+                            <field name='phone' placeholder="0116076900"/>
+                            <field name='mobile' placeholder="0824513619"/>
+                            <field name='fax' placeholder="0116168939"/>
+                            <field name='website'/>
+                        </group>
+<!--                        <group string="Provider Details" attrs="{'invisible':[('page','!=','provider')]}">-->
+<!--                            <field name='provider_sic_code'/>-->
+<!--                            <field name='provider_sars_number'/>-->
+<!--                            <field name='provider_type_id'/>-->
+<!--                            <field name='provider_class_Id'/>-->
+<!--                            <field name='provider_status_Id'/>-->
+<!--                        </group>-->
+                        <group string="Work Address" attrs="{'invisible':[('page','!=','address')]}">
+                            <field name='street' string="Address Line 1"/>
+                            <field name='street2' string="Address Line 2"/>
+                            <field name='street3' string="Address Line 3"/>
+                            <field name='suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='city' options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='state_id' string="Province" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='zip' string="Postal Code"/>
+                            <field name='country_id' string="Country" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                        </group>
+                        <group string="Home/Physical Address" attrs="{'invisible':[('page','!=','personal_addr')]}">
+                            <field name='physical_address_1' string="Address Line 1"/>
+                            <field name='physical_address_2' string="Address Line 2"/>
+                            <field name='physical_address_3' string="Address Line 3"/>
+                            <field name='provider_physical_suburb' string="Suburb" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='city_physical' string="City" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='province_code_physical' string="Province" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='zip_physical' string="Postal Code"/>
+                            <field name='country_code_physical' string="Country" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                        </group>
+                        <group string="Postal Address" attrs="{'invisible':[('page','!=','postal_addr')]}">
+                            <field name='postal_address_1' string="Address Line 1"/>
+                            <field name='postal_address_2' string="Address Line 2"/>
+                            <field name='postal_address_3' string="Address Line 3"/>
+                            <field name='provider_postal_suburb' string="Suburb" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='city_postal' string="City" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='province_code_postal' string="Province" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='zip_postal' string="Postal Code"/>
+                            <field name='country_code_postal' string="Country" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                        </group>
+                        <group string="Business Info" attrs="{'invisible':[('page','!=','business_info')]}">
+                            <field name='txtCompanyRegNo'/>
+                            <field name='txtVATRegNo'/>
+                            <field name='cboProviderFocus' options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='txtNumYearsCurrentBusiness'/>
+                            <field name='txtNumStaffMembers'/>
+                        </group>
+                        <p attrs="{'invisible':[('page','!=','business_docs')]}"><b>Please note: </b>Historical documents do not load from your profile, if you add a file here,<b> it will replace the your historical document!</b></p>
+                        <group string="Business Documents" attrs="{'invisible':[('page','!=','business_docs')]}">
+
+
+                            <field name='cipro_documents' domain="[('id','=',None)]"/>
+                            <field name='tax_clearance' domain="[('id','=',None)]"/>
+                            <field name='director_cv' string="Director C.V." domain="[('id','=',None)]"/>
+                            <field name='certified_copies_of_qualifications' string="Certified Copies of Qualifications" domain="[('id','=',None)]"/>
+                            <field name='professional_body_registration' domain="[('id','=',None)]"/>
+                            <field name='workplace_agreement' domain="[('id','=',None)]"/>
+                            <field name='business_residence_proof' string="Permanent Residence / Passport / Business Visa" domain="[('id','=',None)]"/>
+                            <field name='provider_learning_material' domain="[('id','=',None)]"/>
+                            <field name='skills_programme_registration_letter' domain="[('id','=',None)]"/>
+                            <field name='company_profile_and_organogram' string="Company Profile and Organogram" domain="[('id','=',None)]"/>
+                            <field name='quality_management_system' domain="[('id','=',None)]"/>
+                            <field name='lease_agreement_document' domain="[('id','=',None)]"/>
+                        </group>
+                        <p attrs="{'invisible':[('page','!=','disclaimer')]}"><b>Please note: </b>By clicking update and submitting this transaction, you confirm that all information that has been entered, is valid and accurate. This transaction will be evaluated and rejected if found to be invalid. You will need to submit a new transaction.</p>
+                        <group string="Disclaimer" attrs="{'invisible':[('page','!=','disclaimer')]}">
+
+                            <button name="update" string="Update" type="object" default_focus="1" class="btn-primary"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="update_provider_info_admin_form" model="ir.ui.view">
+            <field name="name">SETA update.provider Wizard</field>
+            <field name="model">update.provider</field>
+            <field name="arch" type="xml">
+                <form string="update">
+                    <header>
+                        <field name="page" widget="statusbar" clickable="True"/>
+                    </header>
+
+                    <group string="Terms and Conditions" attrs="{'invisible':[('page','!=','terms')]}">
+                        <field name='provider_id' string="Provider" options="{'no_create': True,'no_quick_create':True}"/>
+					</group>
+                    <p attrs="{'invisible':[('page','!=','terms')]}">I, as the representative of the Skills Development Provider, take full responsibility of the amendments to the data in the company profile, and will not hold the Health and Welfare Sector Education and Training Authority (HWSETA) liable for any damages that may arise from the information uploaded below</p>
+                    <group attrs="{'invisible':[('page','!=','terms')]}">
+                        <field name='disclaimer' string="Terms &amp; conditions"/>
+                    </group>
+                    <group attrs="{'invisible':[('disclaimer','=',False)]}">
+                        <group string="General Details" attrs="{'invisible':[('page','!=','contact')]}">
+                            <field name='phone' placeholder="0116076900"/>
+                            <field name='mobile' placeholder="0824513619"/>
+                            <field name='fax' placeholder="0116168939"/>
+                            <field name='website'/>
+                        </group>
+<!--                        <group string="Provider Details" attrs="{'invisible':[('page','!=','provider')]}">-->
+<!--                            <field name='provider_sic_code'/>-->
+<!--                            <field name='provider_sars_number'/>-->
+<!--                            <field name='provider_type_id'/>-->
+<!--                            <field name='provider_class_Id'/>-->
+<!--                            <field name='provider_status_Id'/>-->
+<!--                        </group>-->
+                        <group string="Work Address" attrs="{'invisible':[('page','!=','address')]}">
+                            <field name='street' string="Address Line 1"/>
+                            <field name='street2' string="Address Line 2"/>
+                            <field name='street3' string="Address Line 3"/>
+                            <field name='suburb' options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='city' options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='state_id' string="Province" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='zip' string="Postal Code"/>
+                            <field name='country_id' string="Country" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                        </group>
+                        <group string="Home/Physical Address" attrs="{'invisible':[('page','!=','personal_addr')]}">
+                            <field name='physical_address_1' string="Address Line 1"/>
+                            <field name='physical_address_2' string="Address Line 2"/>
+                            <field name='physical_address_3' string="Address Line 3"/>
+                            <field name='provider_physical_suburb' string="Suburb" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='city_physical' string="City" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='province_code_physical' string="Province" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='zip_physical' string="Postal Code"/>
+                            <field name='country_code_physical' string="Country" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                        </group>
+                        <group string="Postal Address" attrs="{'invisible':[('page','!=','postal_addr')]}">
+                            <field name='postal_address_1' string="Address Line 1"/>
+                            <field name='postal_address_2' string="Address Line 2"/>
+                            <field name='postal_address_3' string="Address Line 3"/>
+                            <field name='provider_postal_suburb' string="Suburb" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='city_postal' string="City" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='province_code_postal' string="Province" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='zip_postal' string="Postal Code"/>
+                            <field name='country_code_postal' string="Country" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                        </group>
+                        <group string="Business Info" attrs="{'invisible':[('page','!=','business_info')]}">
+                            <field name='txtCompanyRegNo'/>
+                            <field name='txtVATRegNo'/>
+                            <field name='cboProviderFocus' options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+                            <field name='txtNumYearsCurrentBusiness'/>
+                            <field name='txtNumStaffMembers'/>
+                        </group>
+                        <p attrs="{'invisible':[('page','!=','business_docs')]}"><b>Please note: </b>Historical documents do not load from your profile, if you add a file here,<b> it will replace the your historical document!</b></p>
+                        <group string="Business Documents" attrs="{'invisible':[('page','!=','business_docs')]}">
+
+
+                            <field name='cipro_documents' domain="[('id','=',None)]"/>
+                            <field name='tax_clearance' domain="[('id','=',None)]"/>
+                            <field name='director_cv' string="Director C.V." domain="[('id','=',None)]"/>
+                            <field name='certified_copies_of_qualifications' string="Certified Copies of Qualifications" domain="[('id','=',None)]"/>
+                            <field name='professional_body_registration' domain="[('id','=',None)]"/>
+                            <field name='workplace_agreement' domain="[('id','=',None)]"/>
+                            <field name='business_residence_proof' string="Permanent Residence / Passport / Business Visa" domain="[('id','=',None)]"/>
+                            <field name='provider_learning_material' domain="[('id','=',None)]"/>
+                            <field name='skills_programme_registration_letter' domain="[('id','=',None)]"/>
+                            <field name='company_profile_and_organogram' string="Company Profile and Organogram" domain="[('id','=',None)]"/>
+                            <field name='quality_management_system' domain="[('id','=',None)]"/>
+                            <field name='lease_agreement_document' domain="[('id','=',None)]"/>
+                        </group>
+                        <p attrs="{'invisible':[('page','!=','admin')]}"><b>Please note: </b>this page is used by administrators and can be skipped </p>
+                        <group string="Disclaimer" attrs="{'invisible':[('page','!=','admin')]}">
+                            <field name='provider_type_id'/>
+                            <field name='provider_class_Id'/>
+                            <field name='provider_start_date'/>
+                            <field name='provider_end_date'/>
+                        </group>
+                        <p attrs="{'invisible':[('page','!=','disclaimer')]}"><b>Please note: </b>By clicking update and submitting this transaction, you confirm that all information that has been entered, is valid and accurate. This transaction will be evaluated and rejected if found to be invalid. You will need to submit a new transaction.</p>
+                        <group string="Disclaimer" attrs="{'invisible':[('page','!=','disclaimer')]}">
+
+                            <button name="update" string="Update" type="object" default_focus="1" class="btn-primary"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+		<record id="action_update_provider" model="ir.actions.act_window">
+            <field name="name">SETA update.provider</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">update.provider</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="update_provider_info_form"/>
+            <field name="target">new</field>
+        </record>
+        <record id="action_update_provider_admin" model="ir.actions.act_window">
+            <field name="name">SETA update.provider</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">update.provider</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="update_provider_info_admin_form"/>
+            <field name="target">new</field>
+        </record>
+        <record id="view_updates_form_inherit" model="ir.ui.view">
+         <field name="name">view.provider.updates.form.inherit</field>
+         <field name="model">res.partner</field>
+         <field name="inherit_id" ref="view_provider_form"/>
+<!--         <field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers')])]" />-->
+         <field name="arch" type="xml">
+            <xpath expr="/form/sheet/notebook/page[@string='Address']" position="after">
+                    <page string="Updates">
+                        <group>
+<!--                            <field name="update_ids"/>-->
+                        </group>
+                    </page>
+                </xpath>
+         </field>
+      </record>
+        <menuitem id="menu_update_provider"
+				  name="Update Provider Info"
+				  action="action_update_provider"
+				  parent="portal_provider_transaction"
+				  groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_providers"
+				  sequence="7"/>
+        <menuitem id="menu_update_provider_admin"
+				  name="Update Provider Info"
+				  action="action_update_provider_admin"
+				  parent="transaction_menu"
+				  groups="hwseta_etqe.group_seta_administrator"
+				  sequence="7"/>
+        <record id="view_updated_providers_tree" model="ir.ui.view">
+			<field name="name">Updated Providers tree</field>
+			<field name="model">updated.providers</field>
+			<field name="arch" type="xml">
+				<tree string="Links" create="false">
+                    <field name="reference"/>
+                    <field name="provider_id"/>
+                    <field name="create_date"/>
+                    <field name="action_date"/>
+                    <field name="action_partner"/>
+                    <field name="status"/>
+				</tree>
+			</field>
+		</record>
+        <record id="updated_provider_search" model="ir.ui.view">
+			<field name="name">updated.provider.search</field>
+			<field name="model">updated.providers</field>
+			<field name="arch" type="xml">
+				<search string="Update Search">
+					<field name="reference"/>
+					<field name="provider_id"/>
+<!--					<group string="Group By">-->
+<!--						<filter string="Status" icon="terp-personal" domain="[]"-->
+<!--						context="{'group_by':'is_active_provider'}"/>-->
+<!--					</group>-->
+				</search>
+			</field>
+		</record>
+        <!--		status wizard stuff -->
+		<record id="view_updated_provider_reject_wiz_form" model="ir.ui.view">
+			<field name="name">updated.providers.reject.wiz Form View</field>
+			<field name="model">updated.providers.reject.wiz</field>
+			<field name="arch" type="xml">
+				<form string="Reject Wizard">
+					<group>
+						<field name="comment"/>
+					</group>
+					<footer>
+						<button name="reject_update" string="Reject Update" type="object" class="oe_highlight"/>
+						or
+						<button string="Cancel" special="cancel" class="oe_link"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+		<record id="action_view_updated_provider_reject_wiz_form" model="ir.actions.act_window">
+			<field name="name">updated.providers.reject.wiz</field>
+			<field name="res_model">updated.providers.reject.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_updated_provider_reject_wiz_form"/>
+			<field name="target">new</field>
+		</record>
+        <record id="view_updated_providers_form" model="ir.ui.view">
+            <field name="name">Updated Providers</field>
+            <field name="model">updated.providers</field>
+            <field name="arch" type="xml">
+                <form string="Updated Providers" create="false" edit="false">
+                    <header>
+                        <button name="approve_update" string="Approve"
+                                attrs="{'invisible':[('status','not in',['submitted'])]}"
+                                type="object" default_focus="1"
+                                class="btn-primary" groups="hwseta_etqe.group_updated_provider_wiz,hwseta_etqe.group_seta_administrator"/>
+                        <button name="%(action_view_updated_provider_reject_wiz_form)d"
+                                attrs="{'invisible':[('status','not in',['submitted'])]}"
+                                type="action" string="Reject" context="{'update_id': active_id}"
+                                class="oe_highlight"  groups="hwseta_etqe.group_updated_provider_wiz,hwseta_etqe.group_seta_administrator"/>
+                        <field name="status" widget="statusbar"/>
+                    </header>
+                    <group>
+                        <field name='provider_id' string="Provider"/>
+                        <field name='disclaimer'/>
+                        <field name='reference'/>
+                    </group>
+                    <group>
+                        <group string="Previous Details"></group>
+                        <group string="Updated Details"></group>
+                    </group>
+                    <group>
+                        <group string="General Details">
+                            <field name='related_phone'/>
+                            <field name='related_mobile'/>
+                            <field name='related_fax'/>
+                            <field name='related_website'/>
+                        </group>
+                        <group string="General Details">
+                            <field name='phone'/>
+                            <field name='mobile'/>
+                            <field name='fax'/>
+                            <field name='website'/>
+                        </group>
+
+                    </group>
+                    <group>
+                        <group string="Work Address">
+                            <field name='related_street' string="Address Line 1"/>
+                            <field name='related_street2' string="Address Line 2"/>
+                            <field name='related_street3' string="Address Line 3"/>
+                            <field name='related_suburb' string="Suburb"/>
+                            <field name='related_city' string="City"/>
+                            <field name='related_state_id' string="Province"/>
+                            <field name='related_zip' string="Postal Code"/>
+                            <field name='related_country_id' string="Country"/>
+                        </group>
+                        <group string="Work Address">
+                            <field name='street' string="Address Line 1"/>
+                            <field name='street2' string="Address Line 2"/>
+                            <field name='street3' string="Address Line 3"/>
+                            <field name='suburb' string="Suburb"/>
+                            <field name='city'/>
+                            <field name='state_id' string="Province"/>
+                            <field name='zip' string="Postal Code"/>
+                            <field name='country_id' string="Country"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Home/Physical Address">
+                            <field name='related_physical_address_1'  string="Address Line 1"/>
+                            <field name='related_physical_address_2' string="Address Line 2"/>
+                            <field name='related_physical_address_3' string="Address Line 3"/>
+                            <field name='related_provider_physical_suburb' string="Suburb"/>
+                            <field name='related_city_physical' string="City"/>
+                            <field name='related_province_code_physical' string="Province"/>
+                            <field name='related_zip_physical' string="Postal Code"/>
+                            <field name='related_country_code_physical' string="Country"/>
+                        </group>
+                        <group string="Home/Physical Address">
+                            <field name='physical_address_1' string="Address Line 1"/>
+                            <field name='physical_address_2' string="Address Line 2"/>
+                            <field name='physical_address_3' string="Address Line 3"/>
+                            <field name='provider_physical_suburb' string="Suburb"/>
+                            <field name='city_physical' string="City"/>
+                            <field name='province_code_physical' string="Province"/>
+                            <field name='zip_physical' string="Postal Code"/>
+                            <field name='country_code_physical' string="Country"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Postal Address">
+                            <field name='related_postal_address_1' string="Address Line 1"/>
+                            <field name='related_postal_address_2' string="Address Line 2"/>
+                            <field name='related_postal_address_3' string="Address Line 3"/>
+                            <field name='related_provider_postal_suburb' string="Suburb"/>
+                            <field name='related_city_postal' string="City"/>
+                            <field name='related_province_code_postal' string="Province"/>
+                            <field name='related_zip_postal' string="Postal Code"/>
+                            <field name='related_country_code_postal' string="Country"/>
+                        </group>
+                        <group string="Postal Address">
+                            <field name='postal_address_1' string="Address Line 1"/>
+                            <field name='postal_address_2' string="Address Line 2"/>
+                            <field name='postal_address_3' string="Address Line 3"/>
+                            <field name='provider_postal_suburb' string="Suburb"/>
+                            <field name='city_postal' string="City"/>
+                            <field name='province_code_postal' string="Province"/>
+                            <field name='zip_postal' string="Postal Code"/>
+                            <field name='country_code_postal' string="Country"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Business Info">
+                            <field name='related_txtCompanyRegNo'/>
+                            <field name='related_txtVATRegNo'/>
+                            <field name='related_cboProviderFocus'/>
+                            <field name='related_txtNumYearsCurrentBusiness'/>
+                            <field name='related_txtNumStaffMembers'/>
+                        </group>
+                        <group string="Business Info">
+                            <field name='txtCompanyRegNo'/>
+                            <field name='txtVATRegNo'/>
+                            <field name='cboProviderFocus'/>
+                            <field name='txtNumYearsCurrentBusiness'/>
+                            <field name='txtNumStaffMembers'/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Business Documents">
+                            <field name='related_cipro_documents' />
+                            <field name='related_tax_clearance' />
+                            <field name='related_director_cv' string="Director C.V."/>
+                            <field name='related_certified_copies_of_qualifications' string="Certified Copies of Qualifications"/>
+                            <field name='related_professional_body_registration' />
+                            <field name='related_workplace_agreement' />
+                            <field name='related_business_residence_proof' string="Business Visa/Passport/Permanent Residence"/>
+                            <field name='related_provider_learning_material' />
+                            <field name='related_skills_programme_registration_letter' />
+                            <field name='related_company_profile_and_organogram'  string="Company Profile and Organogram"/>
+                            <field name='related_quality_management_system' />
+                            <field name='related_lease_agreement_document' />
+                        </group>
+                        <group string="Business Documents">
+                            <field name='cipro_documents' />
+                            <field name='tax_clearance' />
+                            <field name='director_cv' string="Director C.V."/>
+                            <field name='certified_copies_of_qualifications' string="Certified Copies of Qualifications"/>
+                            <field name='professional_body_registration' />
+                            <field name='workplace_agreement' />
+                            <field name='business_residence_proof' string="Business Visa/Passport/Permanent Residence"/>
+                            <field name='provider_learning_material' />
+                            <field name='skills_programme_registration_letter' />
+                            <field name='company_profile_and_organogram' string="Company Profile and Organogram"/>
+                            <field name='quality_management_system' />
+                            <field name='lease_agreement_document' />
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Business Documents">
+                            <field name='related_provider_type_id'/>
+                            <field name='related_provider_class_Id'/>
+                            <field name='related_provider_start_date'/>
+                            <field name='related_provider_end_date'/>
+                        </group>
+                        <group string="Business Documents">
+                            <field name='provider_type_id'/>
+                            <field name='provider_class_Id'/>
+                            <field name='provider_start_date'/>
+                            <field name='provider_end_date'/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_updated_providers_tree" model="ir.actions.act_window">
+            <field name="name">SETA updated.providers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">updated.providers</field>
+            <field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hwseta_etqe.updated_provider_search" />
+            <field name="view_id" ref="view_updated_providers_tree"/>
+        </record>
+        <menuitem id="menu_updated_providers"
+				  name="Updated Provider Info"
+				  action="action_updated_providers_tree"
+				  parent="transaction_menu"
+				  groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_updated_provider_wiz"
+				  sequence="7"/>
+        
+        <record id="view_updates_form_inherit" model="ir.ui.view">
+			<field name="name">view.provider.updates.form.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="view_provider_form"/>
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers'),ref('hwseta_etqe.group_seta_administrator'),ref('hwseta_etqe.group_updated_provider_wiz')])]" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/sheet/notebook/page[@string='Address']" position="after">
+                    <page string="Updates">
+                        <group>
+                            <field name="update_ids"/>
+                        </group>
+                    </page>
+                </xpath>
+			</field>
+		</record>
+    </data>
+</openerp>

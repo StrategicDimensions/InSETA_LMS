@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="seta_provider_wizard_view" model="ir.ui.view">
+            <field name="name">SETA provider.wizard Wizard</field>
+            <field name="model">provider.wizard</field>
+            <field name="arch" type="xml">
+                <form string="provider.wizard">
+                    <group>
+                        <group>
+                            <field name="ticket_num" required="1"/>
+                            <field name="search_by"/>
+                            <field name="identification"/>
+<!--    						<button name="get_am" string="Get Assessor or Moderator" type="object" default_focus="1" class="btn-primary"/>-->
+    <!--                        <field name="assessor_id" string="Assessor" context="{'model' : 'link.stakeholder','assessor_id':True}" attrs="{'invisible':[('assessor_or_moderator','not in',['','assessor','provider'])]}" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>-->
+                            <field name="provider_id" string="Provider" readonly="1"/>
+                            <field name="start_date" attrs="{'invisible':[('provider_id','=',False)]}"/>
+                            <field name="end_date" attrs="{'invisible':[('provider_id','=',False)]}"/>
+                            <field name="status_change" attrs="{'invisible':[('provider_id','=',False)]}"/>
+
+                        </group>
+
+                    </group>
+
+                    <footer>
+<!--                        <button name="fix_dates" string="Fix Assessor or Moderator dates" attrs="{'invisible':['|',('moderator_id','=',False),('assessor_id','=',False)]}" type="object" default_focus="1" class="btn-primary"/>-->
+                        <button name="fix_dates" string="Update Record" attrs="{'invisible':[('provider_id','=',False)]}" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+		<record id="action_prov_wiz" model="ir.actions.act_window">
+            <field name="name">SETA provider.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">provider.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_provider_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem id="menu_action_prov_wiz"
+				  name="Prov Wizard"
+				  action="action_prov_wiz"
+				  groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_provider_wiz"
+				  sequence="5"/>
+    </data>
+</openerp>

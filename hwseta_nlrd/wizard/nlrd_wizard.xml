@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="seta_nlrd_exporter_view" model="ir.ui.view">
+            <field name="name">SETA nlrd.exporter Wizard</field>
+            <field name="model">nlrd.exporter</field>
+            <field name="arch" type="xml">
+                <form string="nlrd.exporter">
+                    <group>
+<!--                        <field name="name"/>-->
+                    </group>
+                    <footer>
+                        <button name="do_all" string="do all" type="object" default_focus="1" class="btn-primary"/>
+						or
+                        <button name="fetch_nlrd_21" string="provider 21" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="fetch_nlrd_24" string="accreditation 24" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="fetch_nlrd_25" string="person 25" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="fetch_nlrd_26" string="assessor 26" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="fetch_nlrd_27" string="assessor reg 27" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="fetch_nlrd_29" string="lrq 29" type="object" default_focus="1" class="btn-primary"/>
+						or
+                        <button name="inverse_check" string="inverse cleanup" type="object" default_focus="1" class="btn-primary"/>
+						or
+                        <button name="gen_all_dats" string="generate all dats" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="gen_21" string="generate 21" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="gen_25" string="generate 25" type="object" default_focus="1" class="btn-primary"/>
+						or
+                        <button name="unlink_all" string="unlink all" type="object" default_focus="1" class="btn-primary"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_nlrd_exporter" model="ir.actions.act_window">
+            <field name="name">SETA nlrd.exporter</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nlrd.exporter</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_nlrd_exporter_view"/>
+            <field name="target">new</field>
+        </record>
+
+		<record id="seta_nlrd_exporterv2_view" model="ir.ui.view">
+            <field name="name">SETA nlrd.exporter2 Wizard</field>
+            <field name="model">nlrd.exporter2</field>
+            <field name="arch" type="xml">
+                <form string="nlrd.exporter2">
+                    <group>
+						<group>
+<!--                        <field name="name"/>-->
+							<p>the process is as follows:</p>
+							<br/>
+							<ol>
+								<li>click "process all" to generate submission data</li>
+								<li>Click "report_link_issues" to report broken links on the records</li>
+								<li>Start checking the lists for broken records</li>
+								<li>Correct broken records at a master data level</li>
+								<li>Click "Clear" to empty the database of newly created records</li>
+								<li>Click "process all" again to make the system generate the results again including fixes done on master data</li>
+								<li>Repeat these actions until you have a clean submission data set</li>
+								<li>When the data reports no more errors, click "generate all dats"</li>
+								<li>Use the generated dat files for importing into EduKtiv software</li>
+								<li>Check the error report produced by EduKtiv and correct those errors before trying to import again</li>
+							</ol>
+						</group>
+						<group>
+							<button name="do_all_v2" string="Process all" type="object" default_focus="1" class="btn-primary"/>
+							<button name="report_link_issues" string="report_link_issues" type="object" default_focus="1" class="btn-primary"/>
+							<button name="gen_all_dats" string="generate all dats" type="object" default_focus="1" class="btn-primary"/>
+							<button name="purge_dupe_lrq" string="purge_dupe_lrq" type="object" default_focus="1" class="btn-primary"/>
+                        	<button name="purge_dupe_lrq_foreign" string="purge_dupe_lrq_foreign" type="object" default_focus="1" class="btn-primary"/>
+                        	<button name="purge_dupe_lrq_no_cert" string="purge_dupe_lrq_no_cert" type="object" default_focus="1" class="btn-primary"/>
+							<button name="unlink_all" string="Clear" type="object" default_focus="1" class="btn-primary"/>
+						</group>
+                    </group>
+                    <footer>
+<!--                        <button name="find_missing_learners" string="find_missing_learners" type="object" default_focus="1" class="btn-primary"/>-->
+<!--						<button name="build_lrq_29" string="build_lrq_29" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="build_providers_21" string="build_providers_21" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="build_prov_acc_24" string="build_prov_acc_24" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="build_ass_26" string="build_ass_26" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="build_ass_reg_27" string="build_ass_reg_27" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="build_person_25" string="build_person_25" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="purge_dupe_lrq" string="purge_dupe_lrq" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="purge_dupe_lrq_foreign" string="purge_dupe_lrq_foreign" type="object" default_focus="1" class="btn-primary"/>-->
+<!--                        <button name="purge_dupe_lrq_no_cert" string="purge_dupe_lrq_no_cert" type="object" default_focus="1" class="btn-primary"/>-->
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_nlrd_exporter2" model="ir.actions.act_window">
+            <field name="name">SETA nlrd.exporter2</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nlrd.exporter2</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_nlrd_exporterv2_view"/>
+            <field name="target">new</field>
+        </record>
+
+<!--        21-->
+		<record id="view_nlrd_21_search" model="ir.ui.view">
+			<field name="name">nlrd.21.search</field>
+			<field name="model">nlrd.21</field>
+			<field name="arch" type="xml">
+				<search string="Provider Search">
+					<field name="provider_id"/>
+					<field name="Provider_Accreditation_Num"/>
+					<group string="Group By">
+						<filter string="Status" icon="terp-personal" domain="[]"
+							context="{'group_by':'broken'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+		<record id="action_update_provider_info_admin_form" model="ir.actions.act_window">
+			<field name="name">fix providers</field>
+			<field name="res_model">update.provider</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="hwseta_etqe.update_provider_info_admin_form"/>
+			<field name="target">new</field>
+		</record>
+		<record id="seta_nlrd_21_form_view" model="ir.ui.view">
+            <field name="name">SETA nlrd.exporter Wizard</field>
+            <field name="model">nlrd.21</field>
+            <field name="arch" type="xml">
+                <form string="nlrd.21">
+					<header>
+						<button name="%(action_update_provider_info_admin_form)d" type="action" string="fix this Provider" context="{'provider_id': provider_id}" class="oe_highlight" />
+					</header>
+					<group col="4">
+						<field name="Provider_Type_Id" modifiers="{}"/>
+						<field name="Provider_Class_Id" modifiers="{}"/>
+						<field name="Provider_Contact_Name" modifiers="{}"/>
+						<field name="Longitude_Minutes" modifiers="{}"/>
+						<field name="Std_Industry_Class_Code" modifiers="{}"/>
+						<field name="provider_id" modifiers="{}"/>
+						<field name="Provider_Accreditation_Num" modifiers="{}"/>
+						<field name="Etqa_Id" modifiers="{}"/>
+						<field name="Country_Code" modifiers="{}"/>
+						<field name="Longitude_Degree" modifiers="{}"/>
+						<field name="Provider_Accredit_Start_Date" modifiers="{}"/>
+						<field name="Provider_Fax_Number" modifiers="{}"/>
+						<field name="Province_Code" modifiers="{}"/>
+						<field name="Provider_Phone_Number" modifiers="{}"/>
+						<field name="Provider_Contact_Cell_Number" modifiers="{}"/>
+						<field name="Provider_Physical_Address_2" modifiers="{}"/>
+						<field name="Provider_Contact_Phone_Number" modifiers="{}"/>
+						<field name="Date_Stamp" modifiers="{}"/>
+						<field name="Provider_Physical_Address_1" modifiers="{}"/>
+						<field name="Provider_Postal_Code" modifiers="{}"/>
+						<field name="Provider_Name" modifiers="{}"/>
+						<field name="Provider_Physical_Address_Town" modifiers="{}"/>
+						<field name="Provider_Accredit_End_Date" modifiers="{}"/>
+						<field name="Latitude_Seconds" modifiers="{}"/>
+						<field name="Structure_Status_Id" modifiers="{}"/>
+						<field name="Etqa_Decision_Number" modifiers="{}"/>
+						<field name="broken" modifiers="{}"/>
+						<field name="Provider_Phys_Address_Postcode" modifiers="{}"/>
+						<field name="Provider_Address_1" modifiers="{}"/>
+						<field name="Provider_Address_3" modifiers="{}"/>
+						<field name="Provider_Address_2" modifiers="{}"/>
+						<field name="Provider_Code" modifiers="{}"/>
+						<field name="Longitude_Seconds" modifiers="{}"/>
+						<field name="Provider_Sars_Number" modifiers="{}"/>
+						<field name="Provider_Web_Address" modifiers="{}"/>
+						<field name="Provider_Contact_Email_Address" modifiers="{}"/>
+						<field name="stat_msg" modifiers="{}"/>
+						<newline/>
+						<field name="Latitude_Minutes" modifiers="{}"/>
+						<field name="link_broken" modifiers="{}"/>
+						<field name="Latitude_Degree" modifiers="{}"/>
+					</group>
+				</form>
+            </field>
+        </record>
+
+        <record id="view_nlrd_21_tree" model="ir.ui.view">
+			<field name="name">nlrd.21.tree</field>
+			<field name="model">nlrd.21</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.21" create="false" colors="red:broken==True">
+					<field name="provider_id"/>
+					<field name="Provider_Accreditation_Num"/>
+					<field name="Provider_Code"/>
+					<field name="broken"/>
+					<field name="stat_msg"/>
+
+				</tree>
+			</field>
+		</record>
+        <record id="action_nlrd_21_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.21</field>
+			<field name="res_model">nlrd.21</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+			<field name="search_view_id" ref="view_nlrd_21_search" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new provider Profile.
+				</p>
+			</field>
+		</record>
+
+<!--        24-->
+
+        <record id="view_nlrd_24_tree" model="ir.ui.view">
+			<field name="name">nlrd.24.tree</field>
+			<field name="model">nlrd.24</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.24" create="false" colors="red:broken==True">
+					<field name="Qualification_Id"/>
+					<field name="broken"/>
+					<field name="stat_msg"/>
+				</tree>
+			</field>
+		</record>
+
+
+        <record id="action_nlrd_24_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.24</field>
+			<field name="res_model">nlrd.24</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+<!--			<field name="search_view_id" ref="view_res_partner_search_admin" />-->
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new Learner Profile.
+				</p>
+			</field>
+		</record>
+
+<!--        25-->
+
+        <record id="view_nlrd_25_tree" model="ir.ui.view">
+			<field name="name">nlrd.25.tree</field>
+			<field name="model">nlrd.25</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.25" create="false" colors="red:broken==True">
+					<field name="National_Id"/>
+					<field name="broken"/>
+					<field name="stat_msg"/>
+				</tree>
+			</field>
+		</record>
+        <record id="action_nlrd_25_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.25</field>
+			<field name="res_model">nlrd.25</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+<!--			<field name="search_view_id" ref="view_res_partner_search_admin" />-->
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new Learner Profile.
+				</p>
+			</field>
+		</record>
+
+<!--        26-->
+
+		<record id="seta_nlrd_26_form_view" model="ir.ui.view">
+            <field name="name">SETA nlrd.exporter Wizard</field>
+            <field name="model">nlrd.26</field>
+            <field name="arch" type="xml">
+                <form string="nlrd.26">
+					<header>
+						<button name="%(hwseta_etqe.action_update_assessor_admin)d" type="action" string="fix this Assessor" context="{'assessor_id': assessor_id}" class="oe_highlight" />
+					</header>
+					<group col="4">
+						<field name="assessor_id" modifiers="{}"/>
+						<field name="Designation_Registration_Number" modifiers="{}"/>
+						<field name="Designation_Etqa_Id" modifiers="{}"/>
+						<field name="Designation_Start_Date" modifiers="{}"/>
+						<field name="Date_Stamp" modifiers="{}"/>
+						<field name="Alternate_Type_Id" modifiers="{}"/>
+						<field name="National_Id" modifiers="{}"/>
+						<field name="person_id" modifiers="{}"/>
+						<field name="Person_Alternate_Id" modifiers="{}"/>
+						<field name="Designation_Id" modifiers="{}"/>
+						<field name="Structure_Status_Id" modifiers="{}"/>
+						<field name="Etqa_Decision_Number" modifiers="{}"/>
+						<field name="broken" modifiers="{}"/>
+						<field name="Provider_Code" modifiers="{}"/>
+						<field name="Provider_Etqa_Id" modifiers="{}"/>
+						<field name="stat_msg" modifiers="{}"/>
+						<newline/>
+						<field name="Designation_End_Date" modifiers="{}"/>
+						<field name="link_broken" modifiers="{}"/>
+					</group>
+				</form>
+            </field>
+        </record>
+        <record id="view_nlrd_26_tree" model="ir.ui.view">
+			<field name="name">nlrd.26.tree</field>
+			<field name="model">nlrd.26</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.26" create="false" colors="red:broken==True">
+					<field name="National_Id"/>
+					<field name="broken"/>
+					<field name="stat_msg"/>
+				</tree>
+			</field>
+		</record>
+        <record id="action_nlrd_26_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.26</field>
+			<field name="res_model">nlrd.26</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+<!--			<field name="search_view_id" ref="view_res_partner_search_admin" />-->
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new Learner Profile.
+				</p>
+			</field>
+		</record>
+
+<!--        27-->
+
+        <record id="view_nlrd_27_tree" model="ir.ui.view">
+			<field name="name">nlrd.27.tree</field>
+			<field name="model">nlrd.27</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.27" create="false" colors="red:broken==True">
+					<field name="Qualification_Id"/>
+					<field name="broken"/>
+					<field name="stat_msg"/>
+				</tree>
+			</field>
+		</record>
+        <record id="action_nlrd_27_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.27</field>
+			<field name="res_model">nlrd.27</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+<!--			<field name="search_view_id" ref="view_res_partner_search_admin" />-->
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new Learner Profile.
+				</p>
+			</field>
+		</record>
+
+<!--        29-->
+
+        <record id="view_nlrd_29_tree" model="ir.ui.view">
+			<field name="name">nlrd.29.tree</field>
+			<field name="model">nlrd.29</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.29" create="false" colors="red:broken==True">
+					<field name="national_id"/>
+					<field name="broken"/>
+					<field name="stat_msg"/>
+				</tree>
+			</field>
+		</record>
+		<record id="nlrd_29_search_admin" model="ir.ui.view">
+			<field name="name">nlrd.29search.admin</field>
+			<field name="model">nlrd.29</field>
+			<field name="arch" type="xml">
+				<search string="29">
+					<field name="learner_id" />
+
+					<group string="Group By">
+						<filter string="Learner" icon="terp-personal" domain="[]" context="{'group_by':'learner_id'}" />
+						<filter string="status" icon="terp-personal" domain="[]" context="{'group_by':'link_broken'}" />
+						<filter string="broken" icon="terp-personal" domain="[]" context="{'group_by':'broken'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+        <record id="action_nlrd_29_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.29</field>
+			<field name="res_model">nlrd.29</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+			<field name="search_view_id" ref="nlrd_29_search_admin" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a new Learner Profile.
+				</p>
+			</field>
+		</record>
+
+		<!--        report-->
+
+        <record id="view_nlrd_report_tree" model="ir.ui.view">
+			<field name="name">nlrd.report.tree</field>
+			<field name="model">nlrd.report</field>
+			<field name="arch" type="xml">
+				<tree string="nlrd.report" create="false">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+		<record id="nlrd_report_search_admin" model="ir.ui.view">
+			<field name="name">nlrd.report.search.admin</field>
+			<field name="model">nlrd.report</field>
+			<field name="arch" type="xml">
+				<search string="report">
+					<field name="name" />
+
+					<group string="Group By">
+						<filter string="error type" icon="terp-personal" domain="[]" context="{'group_by':'name'}" />
+						<filter string="doc" icon="terp-personal" domain="[]" context="{'group_by':'doc_model'}" />
+						<filter string="id" icon="terp-personal" domain="[]" context="{'group_by':'doc_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+        <record id="action_nlrd_report_tree" model="ir.actions.act_window">
+			<field name="name">action.nlrd.report</field>
+			<field name="res_model">nlrd.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False" />
+			<field name="search_view_id" ref="nlrd_report_search_admin" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					nlrd fix report
+				</p>
+			</field>
+		</record>
+
+        <menuitem id="menu_nlrd_root" name="NLRD" groups="hwseta_nlrd.group_nlrd_admin"/>
+        <menuitem id="menu_nlrd_sub" name="NLRD" parent="menu_nlrd_root"/>
+        <menuitem id="menu_nlrd_21" name="NLRD 21 provider" action="action_nlrd_21_tree" parent="menu_nlrd_sub"/>
+        <menuitem id="menu_nlrd_24" name="NLRD 24 accred quals" action="action_nlrd_24_tree" parent="menu_nlrd_sub"/>
+        <menuitem id="menu_nlrd_25" name="NLRD 25 person" action="action_nlrd_25_tree" parent="menu_nlrd_sub"/>
+        <menuitem id="menu_nlrd_26" name="NLRD 26 assessor" action="action_nlrd_26_tree" parent="menu_nlrd_sub"/>
+        <menuitem id="menu_nlrd_27" name="NLRD 27 assessor quals" action="action_nlrd_27_tree" parent="menu_nlrd_sub"/>
+        <menuitem id="menu_nlrd_29" name="NLRD 29 lrq" action="action_nlrd_29_tree" parent="menu_nlrd_sub"/>
+        <menuitem id="menu_nlrd_report" name="NLRD report" action="action_nlrd_report_tree" parent="menu_nlrd_sub"/>
+		<menuitem id="menu_nlrd_exporter" name="NLRD exporter" action="action_nlrd_exporter" parent="menu_nlrd_sub"/>
+		<menuitem id="menu_nlrd_exporter2" name="NLRD exporter v2" action="action_nlrd_exporter2" parent="menu_nlrd_sub"/>
+
+<!--		fixer wizard stuff -->
+		<record id="view_lrq_fix_wiz_form" model="ir.ui.view">
+			<field name="name">learner.reg.qual.fix.wiz Form View</field>
+			<field name="model">learner.reg.qual.fix.wiz</field>
+			<field name="arch" type="xml">
+				<form string="LRQ Wizard" version="7.0">
+					<group>
+						<field name="lrq_id" style="width:300px;"/>
+						<field name="missing_learner" style="width:300px;"/>
+					</group>
+					<group attrs="{'invisible': [('missing_learner','=', False)]}">
+						<field name="learner_id" style="width:300px;"/>
+					</group>
+
+					<footer>
+						<button name="fix_lrq" string="fix_lrq" type="object" class="oe_highlight"/>
+						or
+						<button string="Cancel" special="cancel" class="oe_link"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+		<record id="action_view_wiz_fix_lrq" model="ir.actions.act_window">
+			<field name="name">Credit Card Info</field>
+			<field name="res_model">learner.reg.qual.fix.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_lrq_fix_wiz_form"/>
+			<field name="target">new</field>
+		</record>
+
+<!--		<record id="learner_registration_qualification_form_admin_inherit" model="ir.ui.view">-->
+<!--			<field name="name">learner.registration.qualification.form.admin.inherit</field>-->
+<!--			<field name="model">learner.registration.qualification</field>-->
+<!--			<field name="inherit_id" ref="hwseta_etqe.learner_registration_qualification_form_admin" />-->
+<!--&lt;!&ndash;			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers'),ref('hwseta_etqe.group_dc_stakeholder_data')])]" />&ndash;&gt;-->
+<!--			<field name="arch" type="xml">-->
+<!--				<xpath expr='//header' position='inside'>-->
+<!--                	<button name="%(action_view_wiz_fix_lrq)d" type="action" string="fix this lrq" context="{'lrq_id': active_id}" class="oe_highlight" />-->
+<!--            	</xpath>-->
+<!--			</field>-->
+<!--		</record>-->
+    </data>
+</openerp>

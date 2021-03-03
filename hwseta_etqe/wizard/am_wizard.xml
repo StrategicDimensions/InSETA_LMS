@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="seta_assessor_moderator_wizard_view" model="ir.ui.view">
+            <field name="name">SETA assessor.moderator.wizard Wizard</field>
+            <field name="model">assessor.moderator.wizard</field>
+            <field name="arch" type="xml">
+                <form string="assessor.moderator.wizard">
+                    <group>
+                        <group>
+                            <field name="ticket_num" required="1"/>
+                            <field name="assessor_or_moderator" string="Stakeholder Type"/>
+                            <field name="search_by"/>
+                            <field name="identification"/>
+<!--    						<button name="get_am" string="Get Assessor or Moderator" type="object" default_focus="1" class="btn-primary"/>-->
+    <!--                        <field name="assessor_id" string="Assessor" context="{'model' : 'link.stakeholder','assessor_id':True}" attrs="{'invisible':[('assessor_or_moderator','not in',['','assessor','provider'])]}" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>-->
+                            <field name="assessor_id" string="Assessor" readonly="1"/>
+                            <field name="moderator_id" string="Moderator" readonly="1"/>
+                            <field name="start_date" attrs="{'invisible':[('assessor_id','=',False)]}"/>
+                            <field name="end_date" attrs="{'invisible':[('assessor_id','=',False)]}"/>
+                            <field name="moderator_start_date" attrs="{'invisible':[('moderator_id','=',False)]}"/>
+                            <field name="moderator_end_date" attrs="{'invisible':[('moderator_id','=',False)]}"/>
+                        </group>
+
+                    </group>
+
+                    <footer>
+<!--                        <button name="fix_dates" string="Fix Assessor or Moderator dates" attrs="{'invisible':['|',('moderator_id','=',False),('assessor_id','=',False)]}" type="object" default_focus="1" class="btn-primary"/>-->
+                        <button name="fix_dates" string="Update Record" attrs="{'invisible':[('moderator_id','=',False),('assessor_id','=',False)]}" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+		<record id="action_am_wiz" model="ir.actions.act_window">
+            <field name="name">SETA link.stakeholder</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">assessor.moderator.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_assessor_moderator_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem id="menu_action_am_wiz"
+				  name="AMD"
+				  action="action_am_wiz"
+				  groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_ass_mod_wiz"
+				  sequence="5"/>
+    </data>
+</openerp>

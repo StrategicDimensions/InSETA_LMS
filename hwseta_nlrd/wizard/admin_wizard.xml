@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="seta_admin_wiz" model="ir.ui.view">
+            <field name="name">SETA nlrd.exporter2 Wizard</field>
+            <field name="model">nlrd.exporter2</field>
+            <field name="arch" type="xml">
+                <form string="nlrd.exporter2">
+
+<!--                <field name="name"/>-->
+					<p>the process is as follows:</p>
+					<br/>
+					<ol>
+                        <li>fix 29-this step consists of:
+                            <ol>
+                                <li>checks for "no assessor number" message and deletes orphan lrq if a healthy replacement is found</li>
+                                <li>checks for "no id or alt id" message and tries to find a matching assessment based on the batch number</li>
+                                <li>we need to consider a data integrity issue where a learner reg is a draft but they have an achieved lrq,<br></br>
+                                    this causes the nlrd generator to not find a learner till the reg is updated to master</li>
+                                <li>eg /web?debug=#id=58779&amp;view_type=form&amp;model=learner.registration</li>
+                            </ol>
+                        </li>
+						<li>
+                            
+                        </li>
+					</ol>
+					<group>
+                        <button name="fix_assessor" string="correct 26 assessor" type="object"/>
+                        <button name="fix_lrq" string="correct 29 lrq" type="object"/>
+                        <button name="fix_person" string="correct 25 person" type="object"/>
+                        <button name="fix_provider" string="correct 21 provider" type="object"/>
+                        <button name="fix_assessor_qual" string="correct 27 assessor qual" type="object"/>
+                        <button name="purge_dupe_amr" string="purge_dupe_amr" type="object"/>
+					</group>
+                    <group>
+                        <button name="do_all_admin" string="do_all_admin" type="object"/>
+                        <button name="unlink_all" string="clear reports" type="object"/>
+                    </group>
+                    <footer>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_admin_wiz" model="ir.actions.act_window">
+            <field name="name">SETA NLRD admin wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nlrd.admin.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_admin_wiz"/>
+            <field name="target">new</field>
+        </record>
+		<menuitem id="admin_wiz_menu" name="admin_wiz" action="action_admin_wiz" parent="menu_nlrd_sub"/>
+    </data>
+</openerp>

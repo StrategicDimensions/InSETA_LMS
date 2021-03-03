@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+<!--		stakeholders-->
+
+		<record id="view_provider_portal_provider_form_inherit" model="ir.ui.view">
+			<field name="name">view.provider.provider.form.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="view_provider_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+                	<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_provider_portal_provider_tree_inherit" model="ir.ui.view">
+			<field name="name">view.provider.provider.tree.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="provider_tree_view" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers'),ref('hwseta_etqe.group_dc_stakeholder_data')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_provider_portal_batch_form_inherit" model="ir.ui.view">
+			<field name="name">view.provider.batch.form.inherit</field>
+			<field name="model">batch.master</field>
+			<field name="inherit_id" ref="batch_master_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_provider_portal_learner_tree_inherit" model="ir.ui.view">
+			<field name="name">view.provider.learner.tree.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_provider_learner_tree" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_provider_portal_learner_form_inherit" model="ir.ui.view">
+			<field name="name">view.provider.learner.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_etqe_learner_master_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_providers')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+					<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+<!--		internal-->
+		<record model="ir.ui.menu" id="portal.portal_messages">
+			<field name="groups_id" eval="[(6,0,[ref('hwseta_etqe.group_seta_administrator')])]"/>
+		</record>
+<!--		<record id="view_provider_accred_form_inherit" model="ir.ui.view">-->
+<!--			<field name="name">view.provider.accred.form.inherit</field>-->
+<!--			<field name="model">provider.accreditation</field>-->
+<!--			<field name="inherit_id" ref="provider_accreditation_form" />-->
+<!--			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_etqe_provincial_administrator')])]" />-->
+<!--			<field name="arch" type="xml">-->
+<!--				<xpath expr='//form' position='attributes'>-->
+<!--                	<attribute name="create">false</attribute>-->
+<!--                	<attribute name="edit">false</attribute>-->
+<!--            	</xpath>-->
+<!--			</field>-->
+<!--		</record>-->
+		<record id="view_portal_lr_form_inherit" model="ir.ui.view">
+			<field name="name">view.learner.registration.form.inherit</field>
+			<field name="model">learner.registration</field>
+			<field name="inherit_id" ref="view_learner_registration" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+                	<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_dc_lr_form_inherit" model="ir.ui.view">
+			<field name="name">view.learner.registration.form.inherit</field>
+			<field name="model">learner.registration</field>
+			<field name="inherit_id" ref="view_learner_registration" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_dc_stakeholder_data'),ref('hwseta_etqe.group_seta_administrator')])]" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='learner_qualification_ids']//form//field[@name='provider_id']" position="replace">
+					<field name="provider_id" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+				</xpath>
+				<xpath expr="//field[@name='skills_programme_ids']//form//field[@name='provider_id']" position="replace">
+					<field name="provider_id" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+				</xpath>
+				<xpath expr="//field[@name='learning_programme_ids']//form//field[@name='provider_id']" position="replace">
+					<field name="provider_id" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+				</xpath>
+			</field>
+		</record>
+		<record id="view_dc_batch_master_form_inherit" model="ir.ui.view">
+			<field name="name">view.batch.master.form.inherit</field>
+			<field name="model">batch.master</field>
+			<field name="inherit_id" ref="batch_master_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_dc_stakeholder_data'),ref('hwseta_etqe.group_seta_administrator')])]" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='provider_id']" position="replace">
+					<field name="provider_id"/>
+				</xpath>
+			</field>
+		</record>
+		<record id="view_portal_lr_tree_inherit" model="ir.ui.view">
+			<field name="name">view.learner.registration.tree.inherit</field>
+			<field name="model">learner.registration</field>
+			<field name="inherit_id" ref="view_learner_registration_tree" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+
+		<record id="view_portal_provider_form_inherit" model="ir.ui.view">
+			<field name="name">view.provider.form.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="view_provider_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+                	<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_dc_provider_form_inherit" model="ir.ui.view">
+			<field name="name">view.provider.form.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="view_provider_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_dc_stakeholder_data')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_portal_provider_tree_inherit" model="ir.ui.view">
+			<field name="name">view.provider.tree.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="provider_tree_view" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_portal_assessor_tree_inherit" model="ir.ui.view">
+			<field name="name">view.assessor.tree.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_assessors_tree" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_dc_stakeholder_data')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_portal_assessor_form_inherit" model="ir.ui.view">
+			<field name="name">view.assessor.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_assessors_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_assessors')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+					<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_portal_moderator_tree_inherit" model="ir.ui.view">
+			<field name="name">view.moderator.tree.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_moderators_tree" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_dc_stakeholder_data')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_portal_moderator_form_inherit" model="ir.ui.view">
+			<field name="name">view.moderator.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_moderators_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_moderators')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+					<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+<!--		learner views-->
+		<record id="view_portal_learner_tree_inherit" model="ir.ui.view">
+			<field name="name">view.learner.tree.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_provider_learner_tree" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_dc_stakeholder_data')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//tree' position='attributes'>
+                	<attribute name="create">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+		<record id="view_portal_learner_form_inherit" model="ir.ui.view">
+			<field name="name">view.learner.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_etqe_learner_master_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_dc_stakeholder_data')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+					<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+<!--		ass mod reg views todo: probably have to comment below as its a transaction hwich exect mgr and prov mgr have inputs on -->
+<!--		<record id="view_portal_am_reg_tree_inherit" model="ir.ui.view">-->
+<!--			<field name="name">view.assessors.moderators.register.tree.inherit</field>-->
+<!--			<field name="model">assessors.moderators.register</field>-->
+<!--			<field name="inherit_id" ref="view_assessors_moderators_register_tree" />-->
+<!--&lt;!&ndash;			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_etqe_manager')])]" />&ndash;&gt;-->
+<!--			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_etqe_manager')])]" />-->
+<!--			<field name="arch" type="xml">-->
+<!--				<xpath expr='//tree' position='attributes'>-->
+<!--                	<attribute name="create">false</attribute>-->
+<!--            	</xpath>-->
+<!--			</field>-->
+<!--		</record>-->
+		<record id="view_portal_am_reg_form_inherit" model="ir.ui.view">
+			<field name="name">view.assessors.moderators.register.form.inherit</field>
+			<field name="model">assessors.moderators.register</field>
+			<field name="inherit_id" ref="view_assessors_moderators_registration_form" />
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_etqe_manager'),ref('hwseta_etqe.group_etqe_officer'),ref('hwseta_etqe.group_etqe_administrator'),ref('hwseta_etqe.group_etqe_executive_manager')])]" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position='attributes'>
+                	<attribute name="create">false</attribute>
+					<attribute name="edit">false</attribute>
+            	</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

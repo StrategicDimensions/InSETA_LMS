@@ -26,7 +26,8 @@
 				</form>
 			</field>
 		</record>
-		<menuitem name="Import Learners" id="provider_portal_learner_import_menu"
-			action="action_import_learners_in_system" sequence="11" parent="portal_provider_transaction" groups="hwseta_etqe.group_providers"/>
+<!--		removed as redundant-->
+<!--		<menuitem name="Import Learners" id="provider_portal_learner_import_menu"-->
+<!--			action="action_import_learners_in_system" sequence="11" parent="portal_provider_transaction" groups="hwseta_etqe.group_seta_administrator"/>-->
 	</data>
 </openerp>

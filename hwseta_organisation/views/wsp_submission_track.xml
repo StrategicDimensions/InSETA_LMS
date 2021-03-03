@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record id="wsp_submission_track_admin" model="ir.ui.view">
+			<field name="name">wsp.submission.track.form.admin</field>
+			<field name="model">wsp.submission.track</field>
+			<field name="arch" type="xml">
+				<form create="false">
+					<header>
+                        <button name="set_syncable_scheme_year" string="link" type="object" groups="hwseta_etqe.group_seta_administrator"/>
+					</header>
+					<group col="4">
+                        <field name="status" modifiers="{}"/>
+                        <field name="name" modifiers="{}"/>
+                        <field name="last_user_evaluated_updated" modifiers="{}"/>
+                        <field name="employer_id" modifiers="{}"/>
+                        <field name="rejected_date" modifiers="{}"/>
+                        <field name="fiscal_year" modifiers="{}"/>
+                        <field name="rejected_by" modifiers="{}"/>
+                        <field name="approved_date" modifiers="{}"/>
+                        <field name="scheme_year_id" modifiers="{}"/>
+                        <field name="approved_by" modifiers="{}"/>
+                        <field name="date_created" modifiers="{}"/>
+                        <field name="org_year" modifiers="{}"/>
+                        <field name="wsp_date_submitted" modifiers="{}"/>
+                    </group>
+				</form>
+			</field>
+		</record>
+
+	</data>
+
+</openerp>

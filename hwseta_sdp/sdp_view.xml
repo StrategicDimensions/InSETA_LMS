@@ -1858,7 +1858,9 @@ e', 'image_medium', record.id.value)"
 		</record>
 		
 		<menuitem id="menu_sdp_master" name="SDP"
-			groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_wsp_administrator,hwseta_sdp.group_general_access,hwseta_sdp.group_auditor_access,hwseta_sdp.group_wsp_manager,project.group_project_manager,account.group_account_manager,hwseta_projects.group_learning_programme_manager,hwseta_projects.group_project_officer,hwseta_projects.group_learning_programmes_officer,hwseta_projects.group_learning_programmes_administrator,hwseta_projects.group_projects_administrators,hwseta_finance.group_cfo,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_sdf_user,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_wsp_administrator" />
+			groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_wsp_administrator,hwseta_sdp.group_general_access,hwseta_sdp.group_auditor_access,hwseta_sdp.group_wsp_manager,project.group_project_manager,account.group_account_manager,hwseta_projects.group_learning_programme_manager,hwseta_projects.group_project_officer,hwseta_projects.group_learning_programmes_officer,hwseta_projects.group_learning_programmes_administrator,hwseta_projects.group_projects_administrators,hwseta_finance.group_cfo,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_wsp_administrator" />
+
+
 		<!-- Indent/Requisiton Menus -->
 		<menuitem name="Requisition" parent="menu_sdp_master" id="menu_sdp_requisition"
 			sequence="1" groups="hwseta_sdp.group_sdp_manager" />
@@ -1872,9 +1874,9 @@ e', 'image_medium', record.id.value)"
 		<!-- -->
 		<menuitem id="menu_sdp_transactions" name="Transactions"
 			parent="menu_sdp_master" sequence="6"
-			groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_wsp_administrator,hwseta_sdp.group_general_access,hwseta_sdp.group_wsp_manager,project.group_project_manager,account.group_account_manager,hwseta_projects.group_learning_programme_manager,hwseta_sdp.group_sdf_user" />
+			groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_wsp_administrator,hwseta_sdp.group_general_access,hwseta_sdp.group_wsp_manager,project.group_project_manager,account.group_account_manager,hwseta_projects.group_learning_programme_manager" />
 		<menuitem id="menu_learning_programme" name="Learners"
-			parent="menu_sdp_master" sequence="3" groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager,hwseta_projects.group_project_officer,hwseta_projects.group_learning_programmes_officer,hwseta_projects.group_learning_programmes_administrator,hwseta_projects.group_projects_administrators,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_sdf_user,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_wsp_administrator" />
+			parent="menu_sdp_master" sequence="3" groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager,hwseta_projects.group_project_officer,hwseta_projects.group_learning_programmes_officer,hwseta_projects.group_learning_programmes_administrator,hwseta_projects.group_projects_administrators,hwseta_sdp.group_provincial_manager,hwseta_sdp.group_provincial_officer,hwseta_sdp.group_wsp_officer,hwseta_sdp.group_wsp_administrator" />
 		<menuitem id="menu_learning_programme_submenu" name="Learners"
 			parent="menu_learning_programme" action="action_learner_view" />
 		<!-- SDF Menus -->
@@ -1920,9 +1922,7 @@ e', 'image_medium', record.id.value)"
 		<!-- Portal Menus regarding SDF and WSP -->
 		<menuitem name="SDF" id="menu_sdf_portal" parent="portal.portal_menu"
 			groups="hwseta_sdp.group_sdf_user" sequence="2" />
-		<menuitem action="open_view_sdf_list_my" id="menu_sdf_submenu_portal"
-			name="SDF" parent="menu_sdf_portal" sequence="1"
-			groups="hwseta_sdp.group_sdf_user" />
+
 		<!-- <menuitem action="action_sdf_register" id="menu_sdf_register_portal" 
 			name="SDF Registration" parent="menu_sdf_portal" sequence="2" groups="hwseta_sdp.group_sdf_user"/> -->
 		<menuitem name="Document Library" id="menu_doc_library"
@@ -1943,8 +1943,11 @@ e', 'image_medium', record.id.value)"
 		<!-- Merging SDF and Employer Portal -->
 		<menuitem name="Employer" id="menu_sdf_employer" parent="portal.portal_menu"
 			sequence="3" />
+				<menuitem action="open_view_sdf_list_my" id="menu_sdf_submenu_portal"
+			name="SDF" parent="hwseta_etqe.portal_stakeholders_menu" sequence="2"
+			groups="hwseta_sdp.group_sdf_user" />
 		<menuitem name="Employer" id="menu_sdf_employer_form_portal"
-			parent="menu_sdf_employer" action="hwseta_finance.action_employer_form"
+			parent="hwseta_etqe.portal_stakeholders_menu" action="hwseta_finance.action_employer_form"
 			groups="hwseta_sdp.group_sdf_user" sequence="1" />
 
 		<!-- <menuitem name="EOI" id="menu_sdf_eoi_portal" parent="portal.portal_menu" 
@@ -1981,7 +1984,7 @@ e', 'image_medium', record.id.value)"
 
 		<menuitem action="hwseta_person.action_partner_project_rel"
 			id="menu_request_for_eoi_submit" name="Apply For EOI" parent="menu_sdp_transactions"
-			sequence="2"  groups="hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager,hwseta_sdp.group_sdf_user"/>
+			sequence="2"  groups="hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager"/>
 		<!-- Project Indicator Menu -->
 		<menuitem action="action_project_indicator" id="menu_project_indicator"
 			name="Project Indicator" parent="menu_sdp_project" sequence="7"
@@ -1998,5 +2001,11 @@ e', 'image_medium', record.id.value)"
 		<menuitem action="hwseta_sdp.action_EOI_ID_configuration"
 			id="menu_request_for_eoi_id_configuration" name="EOI-ID Library" parent="menu_sdp_transactions"
 			sequence="2" />
+
+		<menuitem id="menu_fin_sdp_org" name="Organisation" parent="menu_sdp_master"
+                       sequence="6" />
+               <menuitem id="menu_fin_sdp_employer_form" parent="menu_fin_sdp_org"  action="hwseta_finance.action_employer_form" sequence="1" />
+
+
 	</data>
 </openerp>

@@ -2,19 +2,27 @@
 <openerp>
 	<data>
 		<menuitem id="etqe_main_menu" name="ETQE"
-			groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_officer" />
+				  groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_assess_rollback" />
 		<!-- <menuitem name="Purchase Requisition" parent="etqe_main_menu" id="stock_indent.menu_indent_indent_main" 
 			sequence="1" /> -->
-		<menuitem name="Providers" id="portal_providers_menu" parent="portal.portal_menu"
-			sequence="2" groups="hwseta_etqe.group_providers" />
-		<menuitem name="Assessors" id="portal_assessors_menu" parent="portal.portal_menu"
-			sequence="2" groups="hwseta_etqe.group_assessors" />
-		<menuitem name="Moderators" id="portal_moderators_menu"
-			parent="portal.portal_menu" sequence="2"
-			groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators" />
+		<menuitem name="Stakeholders" id="stakeholders_menu" parent="etqe_main_menu"
+				  groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"
+			sequence="2"/>
+		<menuitem name="Stakeholders" id="portal_stakeholders_menu" parent="portal.portal_menu"
+			sequence="2" groups="hwseta_etqe.group_providers,hwseta_etqe.group_assessors,hwseta_etqe.group_moderators" />
+<!--		todo:remove orphaned menu items below which are replaced by stakeholders submenu-->
+<!--		removed: orphaned by stakeholders portal menu -->
+<!--		<menuitem name="Providers" id="portal_providers_menu" parent="portal.portal_menu"-->
+<!--			sequence="2" groups="hwseta_etqe.group_providers" />-->
+<!--		<menuitem name="Assessors" id="portal_assessors_menu" parent="portal.portal_menu"-->
+<!--			sequence="2" groups="hwseta_etqe.group_assessors" />-->
+<!--		<menuitem name="Moderators" id="portal_moderators_menu"-->
+<!--			parent="portal.portal_menu" sequence="2"-->
+<!--			groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators,hwseta_etqe.group_etqe_executive_manager" />-->
 		<!-- Provider Code -->
 		<menuitem name="Providers" id="providers_menu" parent="etqe_main_menu"
-			sequence="2" groups="hwseta_etqe.group_providers,hwseta_etqe.group_etqe_manager" />
+				  sequence="1"
+				  groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator" />
 
 		<!-- scheduler for provider to send re-registration alert 42 days before 
 			expire date -->
@@ -59,10 +67,14 @@
 			<field name="inherit_id" ref="base.view_partner_form" />
 			<field name="arch" type="xml">
 				<xpath expr='//form[@string="Partners"]' position='attributes'>
-                	<attribute name="create">false</attribute>
+                	<!--<attribute name="create">false</attribute>-->
             	</xpath>
+				<xpath expr="//field[@name='user_id']" position="replace">
+
+				</xpath>
 				<xpath expr="//field[@name='website']" position="replace">
 					<field name="website" widget="url" placeholder="e.g. www.hwseta.org.za" />
+					<field name="user_id" readonly="1" string="User"/>
 				</xpath>
 				<xpath expr="//field[@name='active']" position="replace">
 				</xpath>
@@ -101,17 +113,17 @@
 						</group>
 						<group>
 							<!-- <field name="provider_contact_name" attrs="{'invisible':['|',('provider','=',False)]}"/> -->
-							<field name="provider_accreditation_num" attrs="{'invisible':[('provider','=',False)]}" />
+							<field name="provider_accreditation_num" attrs="{'invisible':[('provider','=',False)]}" readonly="1"/>
 							<field name="provider_etqa_decision_number" attrs="{'invisible':[('provider','=',False)]}" />
 							<!-- <field name="provider_sdl_no" attrs="{'invisible':[('provider','=',False)], 
 								'required':[('provider','=',True)]}"/> -->
 							<!-- <field name="provider_website_address" attrs="{'invisible':[('provider','=',False)]}"/> -->
 							<field name="provider_date_stamp" attrs="{'invisible':[('provider','=',False)]}" />
-							<field name="provider_start_date"
-								attrs="{'invisible':[('provider','=',False)],'readonly':[('provider','=',True)]}" />
-							<field name="provider_end_date"
-								attrs="{'invisible':[('provider','=',False)],'readonly':[('provider','=',True)]}" />
-							<field name="is_active_provider" attrs="{'invisible':[('provider','=',False)],'readonly':[('provider','=',True)]}" />
+							<field name="provider_start_date"/>
+<!--								attrs="{'invisible':[('provider','=',False)],'readonly':[('provider','=',True)]}" />-->
+							<field name="provider_end_date"/>
+<!--								attrs="{'invisible':[('provider','=',False)],'readonly':[('provider','=',True)]}" />-->
+							<field name="is_active_provider" attrs="{'invisible':[('provider','=',False)]}" />
 							<field name="is_visible" invisible="1"/>
 						</group>
 					</group>
@@ -305,15 +317,15 @@
 									<field name="reject_request" invisible="1" />
 									<button name="action_send_request" string="Send request"
 										type="object" icon="gtk-go-forward" attrs="{'invisible':[('request_send','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer,hwseta_etqe.group_providers" />
+										groups="hwseta_etqe.group_seta_administrator" />
 									<button name="action_approved_request" string="Approve"
 										type="object" icon="gtk-go-forward"
 										attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator" />
 									<button name="action_rejected_request" string="Reject"
 										type="object" icon="gtk-close"
 										attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator" />
 								</tree>
 							</field>
 						</group>
@@ -353,15 +365,15 @@
 									<field name="reject_request" invisible="1" />
 									<button name="action_send_request" string="Send request"
 										type="object" icon="gtk-go-forward" attrs="{'invisible':[('request_send','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer,hwseta_etqe.group_providers" />
+										groups="hwseta_etqe.group_seta_administrator" />
 									<button name="action_approved_request" string="Approve"
 										type="object" icon="gtk-go-forward"
 										attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator" />
 									<button name="action_rejected_request" string="Reject"
 										type="object" icon="gtk-close"
 										attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator" />
 								</tree>
 							</field>
 						</group>
@@ -372,8 +384,8 @@
 					position="after">
 					<page string="Learning Programme" attrs="{'invisible':[('provider','=',False)]}">
 						<group colspan="2" col="8">
-							<field name="learning_programme_ids" nolabel="1" readonly="0">
-								<tree delete="false">
+							<field name="learning_programme_ids" nolabel="1">
+								<tree>
 									<field name="request_send" invisible="1" />
 									<field name="approval_request" invisible="1" />
 									<field name="reject_request" invisible="1" />
@@ -384,23 +396,23 @@
 									<field name="assessors_id"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 									<field name="assessor_sla_document" domain="[('id','=',None)]"
-										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+										options="{'no_quick_create':True,'no_open':True}" />
 									<field name="moderators_id"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 									<field name="moderator_sla_document" domain="[('id','=',None)]"
-										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+										options="{'no_quick_create':True,'no_open':True}" />
 									<field name="status"></field>
 									<button name="action_send_request" string="Send request"
 										type="object" icon="gtk-go-forward" attrs="{'invisible':[('request_send','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer,hwseta_etqe.group_providers" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data" />
 									<button name="action_approved_request" string="Approve"
 										type="object" icon="gtk-go-forward"
 										attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data" />
 									<button name="action_rejected_request" string="Reject"
 										type="object" icon="gtk-close"
 										attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator" />
 								</tree>
 								<form string="Learning Programme">
 									<sheet>
@@ -414,7 +426,7 @@
 												<field name="assessors_id"
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 												<field name="assessor_sla_document" domain="[('id','=',None)]"
-													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+													options="{'no_quick_create':True,'no_open':True}" />
 
 											</group>
 											<group>
@@ -423,7 +435,7 @@
 												<field name="moderators_id"
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 												<field name="moderator_sla_document" domain="[('id','=',None)]"
-													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+													options="{'no_quick_create':True,'no_open':True}" />
 											</group>
 										</group>
 										<group>
@@ -454,7 +466,7 @@
 					<page string="Skills Programme" attrs="{'invisible':[('provider','=',False)]}">
 						<group colspan="2" col="8">
 							<field name="skills_programme_ids" nolabel="1">
-								<tree delete="false">
+								<tree>
 									<field name="request_send" invisible="1" />
 									<field name="approval_request" invisible="1" />
 									<field name="reject_request" invisible="1" />
@@ -465,23 +477,23 @@
 									<field name="assessors_id"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 									<field name="assessor_sla_document" domain="[('id','=',None)]"
-										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+										options="{'no_quick_create':True,'no_open':True}" />
 									<field name="moderators_id"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 									<field name="moderator_sla_document" domain="[('id','=',None)]"
-										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+										options="{'no_quick_create':True,'no_open':True}" />
 									<field name="status"></field>
 									<button name="action_send_request" string="Send request"
 										type="object" icon="gtk-go-forward" attrs="{'invisible':[('request_send','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer,hwseta_etqe.group_providers" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data" />
 									<button name="action_approved_request" string="Approve"
 										type="object" icon="gtk-go-forward"
 										attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data" />
 									<button name="action_rejected_request" string="Reject"
 										type="object" icon="gtk-close"
 										attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator" />
 								</tree>
 								<form string="Skills Programme">
 									<sheet>
@@ -495,7 +507,7 @@
 												<field name="assessors_id"
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 												<field name="assessor_sla_document" domain="[('id','=',None)]"
-													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+													options="{'no_quick_create':True,'no_open':True}" />
 
 											</group>
 											<group>
@@ -504,7 +516,7 @@
 												<field name="moderators_id"
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 												<field name="moderator_sla_document" domain="[('id','=',None)]"
-													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
+													options="{'no_quick_create':True,'no_open':True}" />
 											</group>
 										</group>
 										<group>
@@ -532,13 +544,14 @@
 					<page string="Qualification" attrs="{'invisible':[('provider','=',False)]}">
 						<group colspan="2" col="8">
 							<field name="qualification_ids" nolabel="1">
-								<tree delete="false">
+								<tree>
 									<field name="saqa_qual_id" readonly="1" />
 									<field name="request_send" invisible="1" />
 									<field name="approval_request" invisible="1" />
 									<field name="reject_request" invisible="1" />
 									<field name="qualification_id" widget="selection"
 										placeholder="Qualification" class="oe_no_button" />
+									<field name="is_exit_level_outcomes" readonly="1"/>
 									<field name="assessors_id"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 									<field name="assessor_sla_document" domain="[('id','=',None)]"
@@ -550,15 +563,15 @@
 									<field name="status"></field>
 									<button name="action_send_request" string="Send request"
 										type="object" icon="gtk-go-forward" attrs="{'invisible':[('request_send','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer,hwseta_etqe.group_providers" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_prov_quals" />
 									<button name="action_approved_request" string="Approve"
 										type="object" icon="gtk-go-forward"
 										attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_prov_quals" />
 									<button name="action_rejected_request" string="Reject"
 										type="object" icon="gtk-close"
 										attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-										groups="hwseta_sdp.group_sdp_manager,hwseta_sdp.group_wsp_officer" />
+										groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_prov_quals" />
 								</tree>
 								<form string="Qualifications">
 									<sheet>
@@ -567,6 +580,7 @@
 												<field name="qualification_id" on_change="onchange_qualification(qualification_id)"
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}"
 													domain="[('seta_branch_id','=','11')]" />
+												<field name="is_exit_level_outcomes" readonly="1"/>
 												<field name="assessor_no" placeholder="Enter Assessor ID"/>
 												<field name="assessors_id"
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
@@ -1313,27 +1327,31 @@
 			<field name="model">res.partner</field>
 			<field eval="8" name="priority" />
 			<field name="arch" type="xml">
-				<tree string="Contacts" create="false">
+				<tree string="Contacts" create="false" edit="false">
 					<field name='provider_accreditation_num' />
 					<field name="display_name" />
 					<field name="phone" placeholder="0116076900" />
 					<field name="email" />
+					<field name="is_active_provider" />
+					<field name="provider_status_Id" />
 				</tree>
 			</field>
 		</record>
 		<record id="view_res_partner_filter_inherit_provider" model="ir.ui.view">
 			<field name="name">res.partner.filter.provider</field>
 			<field name="model">res.partner</field>
+			<field name="groups_id" eval="[(6, 0, [ref('hwseta_etqe.group_seta_employee'),ref('hwseta_etqe.group_seta_administrator') ])]" />
 			<field name="inherit_id" ref="base.view_res_partner_filter" />
 			<field name="arch" type="xml">
 				<xpath
 					expr="//search[@string='Search Partner']/group[@string='Group By']"
 					position="inside">
-					<field name="provider_accreditation_num" />
+					<field name="provider_accreditation_num"/>
+					<filter name="active" string="Active" domain="[('is_active_provider','=',True)]" help="find only active providers"/>
 					<filter string="Province" icon="terp-personal" domain="[]"
-						context="{'group_by':'state_id'}" />
+						context="{'group_by':'state_id'}"/>
 					<filter string="Status" icon="terp-personal" domain="[]"
-						context="{'group_by':'is_active_provider'}" />
+						context="{'group_by':'is_active_provider'}"/>
 						
 				</xpath>
 			</field>
@@ -1347,7 +1365,7 @@
 			<field name="view_mode">kanban,tree,form,gantt</field>
 			<field name="domain">[('provider','=',True),('parent_id','=',None),('active','=',True)]
 			</field>
-			<field name="context">{'search_default_provider':1,'default_customer':0,'default_supplier':0,'default_provider':1,'default_is_company':1}
+			<field name="context">{'search_default_active':1,'search_default_provider':1,'default_customer':0,'default_supplier':0,'default_provider':1,'default_is_company':1}
 			</field>
 			<field name="search_view_id" ref="base.view_res_partner_filter" />
 			<field name="help" type="html">
@@ -1372,12 +1390,66 @@
 		</record>
 
 		<menuitem name="Providers" id="providers" action="action_providers_form"
-			sequence="1" parent="providers_menu" />
+			sequence="1" parent="stakeholders_menu" />
 		<!-- Providers Menu for Portal -->
-		<menuitem name="Providers" id="portal_providers" action="action_providers_form"
-			sequence="1" parent="portal_providers_menu" />
+		<record id="provider_portal_tree_view" model="ir.ui.view">
+			<field name="name">provider.tree.view</field>
+			<field name="model">res.partner</field>
+			<field eval="8" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Contacts" create="false" edit="false">
+					<field name='provider_accreditation_num' />
+					<field name="display_name" />
+					<field name="phone" placeholder="0116076900" />
+					<field name="email" />
+					<field name="is_active_provider" />
+					<field name="provider_status_Id" />
+				</tree>
+			</field>
+		</record>
+		<record id="portal_provider_search" model="ir.ui.view">
+			<field name="name">portal.provider.search</field>
+			<field name="model">res.partner</field>
+			<field name="arch" type="xml">
+				<search string="Learner Search">
+					<field name="employer_sdl_no"/>
+					<field name="name"/>
+					<group string="Group By">
+						<filter string="Status" icon="terp-personal" domain="[]"
+						context="{'group_by':'is_active_provider'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+		<record id="action_portal_providers_form" model="ir.actions.act_window">
+			<field name="name">Providers</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">res.partner</field>
+			<field name="domain">[]</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('provider','=',True),('parent_id','=',None),('active','=',True)]
+			</field>
+			<field name="context">{'search_default_provider':1,'default_customer':0,'default_supplier':0,'default_provider':1,'default_is_company':1}
+			</field>
+			<field name="search_view_id" ref="hwseta_etqe.portal_provider_search" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to add a Providers in your address book.
+				</p>
+			</field>
+		</record>
+		<record id="action_providers_portal_tree_view" model="ir.actions.act_window.view">
+			<field eval="1" name="sequence" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="provider_portal_tree_view" />
+			<field name="act_window_id" ref="action_portal_providers_form" />
+		</record>
+		<menuitem name="Providers" id="portal_providers" action="action_portal_providers_form"
+			sequence="3" parent="portal_stakeholders_menu" groups="hwseta_etqe.group_providers"/>
 		<!-- Transaction Menu -->
 		<menuitem name="Transactions" id="transaction_menu" sequence="9"
+				  groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_assess_rollback"
 			parent="etqe_main_menu" />
 		<!-- <menuitem name="Monitoring and Evaluation" id="monitoring_and_evaluation" 
 			action="hwseta_sdp.action_monitor_and_evaluate" sequence="3" parent="transaction_menu" 
@@ -1387,13 +1459,14 @@
 		<!-- <menuitem name="Site Validation" id="site_validation" action="action_providers_form" 
 			sequence="5" parent="transaction_menu" /> -->
 		<!-- Indent/Requisiton Menus -->
+		<!-- TODO : will potentially add this when we start using the object -->
 		<menuitem name="Requisition" parent="etqe_main_menu" id="menu_requisition"
 			sequence="1" />
 		<menuitem action="stock_indent.action_indent_indent" name="Purchase Requisition"
-			parent="menu_requisition" id="menu_purchase_requisition_etqe"
+			parent="menu_requisition" id="menu_purchase_requisition_etqe" groups="hwseta_etqe.group_seta_administrator"
 			sequence="1" />
 		<menuitem action="hwseta_finance.action_petty_cash_request"
-			name="Petty Cash Requisition" parent="menu_requisition" id="menu_petty_cash_requisition"
+			name="Petty Cash Requisition" parent="menu_requisition" id="menu_petty_cash_requisition" groups="hwseta_etqe.group_seta_administrator"
 			sequence="2" />
 		<!-- <menuitem action="stock_indent.action_indent_indent" name="Travel 
 			Requisition" parent="menu_requisition" id="menu_travel_requisition" sequence="3" 
@@ -1410,10 +1483,8 @@
 					<field name="email" widget="email" />
 					<field name="provider_register_date" />
 					<field name="provider_approval_date" />
-					<field name="is_extension_of_scope" invisible="1"/>
-					<field name="is_existing_provider" invisible="1"/>
-					<field name="reapproval" invisible="1"/>
-					<field name="optYesNo" invisible="1"/>
+					<field name="is_extension_of_scope"/>
+					<field name="is_existing_provider"/>
 					<field name="final_state" />
 					<field name="transaction_type" />
 					<!-- <field name="approved"/> -->
@@ -1427,6 +1498,8 @@
 			<field name="arch" type="xml">
 				<form string="Accreditation">
 					<header>
+						<field name="id" invisible="1" />
+						<field name="reject_button_is_visible" invisible="1" />
 						<field name="submitted" invisible="1" />
 						<field name="verify" invisible="1" />
 						<field name="evaluate" invisible="1" />
@@ -1435,7 +1508,6 @@
 						<field name="recommended1" invisible="1" />
 						<field name="validate" invisible="1" />
 						<field name="recommended2" invisible="1" />
-						<field name="type_visibility" invisible="1" />
 						<field name="related_provider" invisible="1" />
 						<field name="optYesNo" invisible="1" />
 						<!-- <button name="action_submit_button" string="Submit" type="object"
@@ -1443,76 +1515,83 @@
 							<button name="action_approve_button" states="pending" string="Approve" type="object" 
 							class="oe_highlight" attrs="{'invisible':['|',('approved','=',True),('submitted','=',False)]}"/> -->
 						<button name="action_submit_button" string="Submit" type="object"
-							class="oe_highlight"
-						    groups="hwseta_etqe.group_providers,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':['|',('state','in',['general_details','general_business_information','address_info','qualification','approved','verification','evaluation','denied']),('submitted','=',True)]}" />
+							class="oe_highlight oe_read_only"
+						    groups="hwseta_etqe.group_providers,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_dc_stakeholder_data"
+							attrs="{'invisible':['|','|',('state','in',['general_business_information','address_info','qualification','approved','verification','evaluation','denied']),('submitted','=',True)]}" />
 						<button name="action_verify_button" string="Evaluate" type="object"
 							class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':['|','|',('state','not in',['verification']),('verify','=',True),('approved','=',True)]}" /><!-- 
+						    groups="hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.seta_administrator"
+							attrs="{'invisible':['|','|','|',('state','not in',['verification']),('verify','=',True),('approved','=',True),('denied','=',True)]}" /><!--
 							,('verify','=',True) -->
 						<button name="action_evaluate_button" string="Recommended"
 							type="object" class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':['|',('state','in',['general_details','general_business_information','address_info','campus','qualification','verification','approved','denied']),('evaluate','=',True)]}" />
+						    groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"
+							attrs="{'invisible':['|','|',('state','in',['general_details','general_business_information','address_info','campus','qualification','verification','approved','denied']),('evaluate','=',True),('denied','=',True)]}" />
 						<button name="action_recommended1_button" string="Validate"
 							type="object" class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':['|',('state','not in',['recommended1']),('recommended1','=',True)]}" />
+						    groups="hwseta_etqe.group_etqe_officer, hwseta_etqe.seta_administrator"
+							attrs="{'invisible':['|','|',('state','not in',['recommended1']),('recommended1','=',True),('denied','=',True)]}" />
 						<button name="action_validate_button" string="Recommended"
 							type="object" class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':['|',('state','not in',['validated']),('validate','=',True)]}" />
+						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_seta_administrator"
+							attrs="{'invisible':['|','|',('state','not in',['validated']),('validate','=',True),('denied','=',True)]}" />
 						<button name="action_approve_button" string="Approve" type="object"
 							class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
+						    groups="hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_seta_administrator"
 							attrs="{'invisible':['|','|',('state','not in',['recommended2']),('approved','=',True),('denied','=',True)]}" />
+<!--						not sure if i should merge forward or back here? @viwe, please deal with this line-->
 						<button name="action_denied_button" string="Reject" type="object"
 							class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':['|',('state','in',['general_details','general_business_information','address_info','campus','qualification','approved','denied']),('approved','=',True)]}" />
+						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator"
+							attrs="{'invisible':['|',('reject_button_is_visible','=',False),('denied','=',True)]}" />
 						<!-- <button name="action_denied_button" string="Reject" type="object" 
 							class="oe_highlight" attrs="{'invisible':['|','|','|',('state','in',['general_details','general_business_information','address_info','campus','qualification','verification','denied']),('denied','=',True),('evaluate','=',False),('approved','=',True)]}"/> -->
 
-						<button name="action_reevaluate_button" string="Re-Evaluate"
-							type="object" class="oe_highlight"
-						    groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
-							attrs="{'invisible':[('state','not in',['denied'])]}" />
+						<button name="action_reevaluate_button"
+								string="Re-Evaluate"
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"
+								attrs="{'invisible':['|',('state','not in',['denied']),('denied','!=',True)]}" />
 
 						<field name="state" widget="statusbar" clickable="True"
 							statusbar_visible="general_details,general_business_information,address_info,qualification, campus,verification,evaluation,recommended1,validated,recommended2,approved,denied"
-							statusbar_colors='{"campus":"blue"}'/>
+							statusbar_colors='{"campus":"blue"}' />
 					</header>
+					<div attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('state','not in',['general_details'])]}">
+						<group>
+							<group>
+								<field name="type_visibility" readonly="1"
+									   on_change="onchange_type_visibility(type_visibility,related_provider,reapproval,is_existing_provider,is_extension_of_scope)"/>
+								<field name="is_existing_provider"
+									on_change="onchange_is_existing_provider(is_existing_provider)"
+									   attrs="{'invisible':[('type_visibility','not in',['existing','ext_and_exist'])]}"
+									/>
+								<field name="is_extension_of_scope"
+									on_change="onchange_is_extension_of_scope(is_extension_of_scope)"
+									attrs="{'invisible':[('type_visibility','not in',['extension','ext_and_exist','ext_and_reapp'])]}"
+								/>
+
+								<field name="reapproval" on_change="onchange_reapproval(reapproval)"
+									   attrs="{'invisible':[('type_visibility','not in',['reapproval','ext_and_reapp'])]}"
+									/>
+
+							</group>
+						</group>
+
+					</div>
 						<field name="image" widget='image'
 							attrs="{'invisible':[('state','in',['general_business_information','address_info','campus','qualification','verification','evaluation','recommended1','validated','recommended2'])]}"
 							class="oe_left oe_avatar" options='{"preview_image": "image_medium", "size": [90, 90]}' />
 						<div class="oe_title oe_left"
 							attrs="{'invisible':[('state','in',['general_business_information','address_info','campus','qualification','verification','evaluation','recommended1','validated','recommended2'])]}">
-							<div class="oe_edit_only">
-								<field name="type_visibility"/>
-								<field name="is_existing_provider" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['existing','ext_and_exist'])]}"
-									on_change="onchange_is_existing_provider(is_existing_provider)"
-									/>
-								<label for="is_existing_provider" attrs="{'invisible':[('type_visibility','not in',['existing','ext_and_exist'])]}" />
-							</div>
-							<div class="oe_edit_only">
-								<field name="is_extension_of_scope" attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['extension','ext_and_exist','ext_and_reapp'])]}"
-									on_change="onchange_is_extension_of_scope(is_extension_of_scope)" />
-								<label for="is_extension_of_scope" attrs="{'invisible':[('type_visibility','not in',['extension','ext_and_exist','ext_and_reapp'])]}" />
-							</div>
-							<div class="oe_edit_only">
-								<field name="reapproval" on_change="onchange_reapproval(reapproval)"
-                                       attrs="{'readonly':[('state','not in',['general_details'])],'invisible':[('type_visibility','not in',['reapproval','ext_and_reapp'])]}"
-									/>
-								<label for="reapproval" attrs="{'invisible':[('type_visibility','not in',['reapproval','ext_and_reapp'])]}" string="Programme Re-Approval"/>
-							</div>
 
 							<div class="oe_edit_only"
 								attrs="{'invisible':[('is_existing_provider','=',False),('is_extension_of_scope','=',False),('reapproval','=',False)]}">
 								<label for="accreditation_number" />
 								<field name="accreditation_number"
 									attrs="{'required':['|',('is_existing_provider','=',True),('is_extension_of_scope','=',True)],'readonly':[('approved','=',True)]}"
-									on_change="onchange_accreditation_number(accreditation_number,is_existing_provider,is_extension_of_scope,reapproval)"
+									on_change="onchange_accreditation_number(type_visibility,accreditation_number,is_existing_provider,is_extension_of_scope,reapproval)"
 									placeholder="Accreditation Number" />
 							</div>
 							<div class="oe_edit_only">
@@ -1775,6 +1854,7 @@
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 
 									<field name="select" editable="bottom" />
+									<field name="is_exit_level_outcomes" readonly="1"/>
 									<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer"/>
 									<!-- <field name="originator" readonly="1"/> -->
 								</tree>
@@ -1792,6 +1872,7 @@
 													options="{'no_open':True}" required = '1'/>
 												<field name="minimum_credits" />
 												<field name="select" />
+												<field name="is_exit_level_outcomes" readonly="1"/>
 											</group>
 											<group>
 												<field name="saqa_qual_id" />
@@ -2647,8 +2728,9 @@
 		</record>
 
 		<menuitem name="Accreditation" id="accreditation_etqe"
-			action="action_provider_accreditation_form" sequence="1"
-			parent="transaction_menu" />
+				  action="action_provider_accreditation_form" sequence="1"
+				  groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"
+			parent="transaction_menu"  />
 
 
 
@@ -2659,6 +2741,7 @@
 			<field name="arch" type="xml">
 				<form string="Assessors Moderators">
 					<header>
+						<field name="reject_button_is_visible" invisible="1" />
 						<field name="submitted" invisible="1" />
 						<field name="verify" invisible="1" />
 						<field name="evaluate" invisible="1" />
@@ -2671,26 +2754,28 @@
 						<button name="action_submit_button" string="Submit" type="object"
 							class="oe_highlight"
 							attrs="{'invisible':['|',('state','in',['general_info','public_info','personal_info','address_info','approved','verification','evaluation','denied']),('submitted','=',True)]}"
-							groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators,hwseta_etqe.seta_administrator,hwseta_etqe.group_dc_stakeholder_data"/>
 						<button name="action_verify_button" string="Evaluate" type="object"
 							class="oe_highlight"
 							attrs="{'invisible':['|','|','|',('state','in',['general_info','public_info','personal_info','address_info','qualification_info','evaluation','approved','denied']),('approved','=',True),('verify','=',True),('denied','=',True)]}"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.hwseta_seta_administrator"/>
 						<button name="action_evaluate_button" string="Recommended"
 							type="object" class="oe_highlight"
-							attrs="{'invisible':['|',('state','in',['general_info','public_info','personal_info','address_info','qualification_info','verification','approved','denied']),('evaluate','=',True)]}"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							attrs="{'invisible':['|','|',('state','in',['general_info','public_info','personal_info','address_info','qualification_info','verification','approved','denied']),('evaluate','=',True),('denied','=',True)]}"
+							groups="hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_seta_administrator"/>
 						<button name="action_approve_button" string="Approve" type="object"
 							class="oe_highlight"
 							attrs="{'invisible':['|','|','|',('state','in',['general_info','public_info','personal_info','address_info','qualification_info','verification','denied']),('approved','=',True),('denied','=',True),('evaluate','=',False)]}"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"/>
 						<button name="action_denied_button" string="Reject" type="object"
 							class="oe_highlight"
-							attrs="{'invisible':['|','|',('state','in',['general_info','public_info','personal_info','address_info','qualification_info','approved','denied']),('approved','=',True),('denied','=',True)]}"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							attrs="{'invisible':[('reject_button_is_visible','=',False)]}"
+
+							groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.hwseta_seta_administrator"/>
 						<button name="action_reevaluate_button" string="Re-Evaluate"
-							type="object" class="oe_highlight"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
+							      type="object" class="oe_highlight"
+
+							groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"
 							attrs="{'invisible':[('state','in',['general_info','public_info','personal_info','address_info','qualification_info','verification','approved','evaluation'])]}" />
 						<!-- <button name="action_denied_button" string="Reject" type="object" 
 							class="oe_highlight" attrs="{'invisible':['|','|','|',('state','in',['general_info','public_info','personal_info','address_info','qualification_info','verification','denied']),('denied','=',True),('evaluate','=',False),('approved','=',True)]}"/> -->
@@ -2881,7 +2966,7 @@
 									context="{'model' : 'assessors.moderators.register', 'field_name' : 'ID Document'}"/> -->
 								<field name="id_document" string="ID Document/Passport Upload"
 									domain="[('id','=',None)]"
-									attrs="{'required':[('citizen_resident_status_code','in',['sa','PR']),('state','=','personal_info')],'readonly':['|',('citizen_resident_status_code','=','other'),('submitted','=',True)]}"
+									attrs="{'required':[('citizen_resident_status_code','in',['sa','PR']),('state','=','personal_info')],'readonly':[('submitted','=',True)]}"
 									context="{'model' : 'assessors.moderators.register'}" />
 								<field name="home_language_code" attrs="{'readonly':[('approved','=',True)]}" />
 
@@ -3018,6 +3103,7 @@
 										placeholder="Qualification" class="oe_no_button"
 										options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 									<field name="select" />
+									<field name="is_exit_level_outcomes" readonly="1"/>
 								</tree>
 								<form string="Qualifications">
 									<sheet>
@@ -3029,6 +3115,7 @@
 													 required = '1'/>
 												<field name="minimum_credits"/>
 												<field name="select"/>
+												<field name="is_exit_level_outcomes" readonly="1"/>
 											</group>
 											<group>
 												<field name="saqa_qual_id" required = '1'/>
@@ -3074,6 +3161,7 @@
 									<field name="qualification_evaluation_id" widget="selection"
 										placeholder="Qualification" class="oe_no_button" />
 									<field name="select" />
+									<field name="is_exit_level_outcomes" readonly="1"/>
 									<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer"/>
 								</tree>
 								<form string="Qualifications">
@@ -3085,6 +3173,7 @@
 													on_change="onchange_qualification(qualification_evaluation_id)" 
 													options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 												<field name="select" />
+												<field name="is_exit_level_outcomes" readonly="1"/>
 												<field name="minimum_credits" readonly="1"/>
 											</group>
 											<group>
@@ -3224,7 +3313,9 @@
 		<!-- -->
 
 		<menuitem name="Assessors and Moderators" id="assessor_moderator"
-			action="action_assessor_moderator_register" sequence="2"
+				  action="action_assessor_moderator_register"
+				  sequence="2"
+				  groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"
 			parent="transaction_menu" />
 
 		<!--Assessors tree view -->
@@ -3232,7 +3323,7 @@
 			<field name="name">hr.assessors.tree</field>
 			<field name="model">hr.employee</field>
 			<field name="arch" type="xml">
-				<tree string="Assessors" create="false">
+				<tree string="Assessors">
 					<field name="assessor_seq_no" />
 					<field name="name" />
 					<field name="work_phone" placeholder="0116076900" />
@@ -3383,13 +3474,13 @@
 								<field name="work_email" widget="email" required="1" readonly="1"/>
 								<field name="person_cell_phone_number" placeholder="0824513619"
 									string="Mobile Number" />
-								<field name="start_date" readonly="1" />
+								<field name="start_date"/>
 								<field name="is_active_assessor" />
 							</group>
 							<group>
 								<field name="type" attrs="{'invisible':[('is_assessors','=',False)]}" />
-								<field name="assessor_seq_no" attrs="{'invisible':[('is_assessors','=',False)]}" />
-								<field name="end_date" readonly="1" />
+								<field name="assessor_seq_no" attrs="{'invisible':[('is_assessors','=',False)]}" readonly="1"/>
+								<field name="end_date" />
 							</group>
 						</group>
 						<div class="oe_right oe_button_box" name="button_box">
@@ -3606,12 +3697,13 @@
 								<group>
 									<field name="id" invisible="1" />
 									<field name="qualification_ids" context="{'hr_id': id}"
-										nolabel="1" readonly="1">
-										<tree string="Qualifications" delete="false"  colors="green:qual_unit_type == 'qual';orange:qual_unit_type == 'unit'">
+										nolabel="1">
+										<tree string="Qualifications" colors="green:qual_unit_type == 'qual';orange:qual_unit_type == 'unit'">
 											<field name="qual_unit_type" widget="radio" nolabel="1" invisible="1"/>
 											<field name="saqa_qual_id" />
 											<field name="qualification_hr_id" widget="selection"
 												placeholder="Qualification" class="oe_no_button" />
+											<field name="is_exit_level_outcomes"/>
 											<field name="current_hr_id" invisible="1" />
 											<field name="request_send" invisible="1" />
 											<field name="approval_request" invisible="1" />
@@ -3620,15 +3712,15 @@
 											<button name="action_send_request" string="Send request"
 												type="object" icon="gtk-go-forward"
 												attrs="{'invisible':[('request_send','=',True)]}"
-												groups="hwseta_etqe.group_moderators,hwseta_etqe.group_assessors" />
+												groups="hwseta_etqe.group_moderators,hwseta_etqe.group_assessors,hwseta_etqe.group_dc_stakeholder_data" />
 											<button name="action_approved_request" string="Approve"
 												type="object" icon="gtk-go-forward"
 												attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-												groups="hwseta_etqe.group_etqe_manager" />
+												groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_dc_stakeholder_data" />
 											<button name="action_rejected_request" string="Reject"
 												type="object" icon="gtk-close"
 												attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-												groups="hwseta_etqe.group_etqe_manager" />
+												groups="hwseta_etqe.group_etqe_provincial_manager" />
 										</tree>
 										<form string="Qualifications">
 											<sheet>
@@ -3638,11 +3730,12 @@
 														on_change="onchange_qualification(qualification_hr_id)"
 														options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 													<field name="saqa_qual_id" />
+													<field name="is_exit_level_outcomes"/>
 												</group>
 												<group>
 													<field name="qualification_line_hr" nolabel="1">
 														<tree string="Qualifications Line" editable="bottom"
-															delete="false" create="false">
+															delete="false">
 															<field name="type" readonly="1" />
 															<field name="id_no" readonly="1" />
 															<field name="title" readonly="1" />
@@ -3975,14 +4068,14 @@
 							<group>
 								<field name="work_email" widget="email" required="1" readonly="1"/>
 								<field name="work_phone" placeholder="0116076900" string="Mobile Number" />
-								<field name="moderator_start_date" readonly="1" />
+								<field name="moderator_start_date" />
 								<field name="is_active_moderator" />
 							</group>
 							<group>
 								<field name="type" attrs="{'invisible':[('is_moderators','=',False)]}" />
 
-								<field name="moderator_seq_no" attrs="{'invisible':[('is_moderators','=',False)]}" />
-								<field name="moderator_end_date" readonly="1" />
+								<field name="moderator_seq_no" attrs="{'invisible':[('is_moderators','=',False)]}" readonly="1" />
+								<field name="moderator_end_date" />
 							</group>
 						</group>
 
@@ -4252,13 +4345,13 @@
 			                        </ul>
 								</div>
 								<group>
-									<field name="moderator_qualification_ids" nolabel="1"
-										readonly="1">
-										<tree string="Qualifications" delete="false" colors="green:qual_unit_type == 'qual';orange:qual_unit_type == 'unit'">
+									<field name="moderator_qualification_ids" nolabel="1">
+										<tree string="Qualifications" colors="green:qual_unit_type == 'qual';orange:qual_unit_type == 'unit'">
 											<field name="qual_unit_type" widget="radio" nolabel="1" invisible="1"/>
 											<field name="saqa_qual_id" />
 											<field name="qualification_hr_id" widget="selection"
 												placeholder="Qualification" class="oe_no_button" />
+											<field name="is_exit_level_outcomes"/>
 											<field name="request_send" invisible="1" />
 											<field name="approval_request" invisible="1" />
 											<field name="reject_request" invisible="1" />
@@ -4266,15 +4359,15 @@
 											<button name="action_send_request" string="Send request"
 												type="object" icon="gtk-go-forward"
 												attrs="{'invisible':[('request_send','=',True)]}"
-												groups="hwseta_etqe.group_moderators,hwseta_etqe.group_assessors" />
+												groups="hwseta_etqe.group_moderators,hwseta_etqe.group_assessors,hwseta_etqe.group_dc_stakeholder_data" />
 											<button name="action_approved_request" string="Approve"
 												type="object" icon="gtk-go-forward"
 												attrs="{'invisible':['|','|',('approval_request','=',True),('request_send','=',False),('reject_request','=',True)]}"
-												groups="hwseta_etqe.group_etqe_manager" />
+												groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_dc_stakeholder_data" />
 											<button name="action_rejected_request" string="Reject"
 												type="object" icon="gtk-close"
 												attrs="{'invisible':['|','|',('reject_request','=',True),('request_send','=',False),('approval_request','=',True)]}"
-												groups="hwseta_etqe.group_etqe_manager" />
+												groups="hwseta_etqe.group_etqe_provincial_manager" />
 										</tree>
 										<form string="Qualifications">
 											<sheet>
@@ -4284,11 +4377,11 @@
 														on_change="onchange_qualification(qualification_hr_id)"
 														options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
 													<field name="saqa_qual_id" readonly="1" />
+													<field name="is_exit_level_outcomes"/>
 												</group>
 												<group>
 													<field name="qualification_line_hr" nolabel="1">
-														<tree string="Qualifications Line" editable="bottom"
-															delete="false" create="false">
+														<tree string="Qualifications Line" editable="bottom" delete="false">
 															<field name="type" readonly="1" />
 															<field name="id_no" readonly="1" />
 															<field name="title" readonly="1" />
@@ -4451,23 +4544,23 @@
 		</record>
 
 		<!-- Assessors And Moderators Menus -->
-		<menuitem id="menu_main_assessors_moderators" name="Assessors"
-			sequence="3" parent="etqe_main_menu"
-			groups="hwseta_etqe.group_assessors,hwseta_etqe.group_etqe_manager" />
+<!--		<menuitem id="menu_main_assessors_moderators" name="Assessors"-->
+<!--			sequence="3" parent="etqe_main_menu"-->
+<!--			groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator" />-->
 		<menuitem action="open_view_assessors_list_my" id="menu_assessors_submenu"
-			name="Assessors" sequence="1" parent="menu_main_assessors_moderators" />
+			name="Assessors" sequence="4" parent="stakeholders_menu" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator" />
 		<menuitem name="Assessors" id="portal_assessors" action="open_view_assessors_list_my"
-			sequence="1" parent="portal_assessors_menu" groups="hwseta_etqe.group_assessors" />
-		<menuitem id="menu_main_moderators" name="Moderators"
-			sequence="4" parent="etqe_main_menu"
-			groups="hwseta_etqe.group_moderators,hwseta_etqe.group_etqe_manager" />
+			sequence="4" parent="portal_stakeholders_menu" groups="hwseta_etqe.group_assessors" />
+<!--		<menuitem id="menu_main_moderators" name="Moderators"-->
+<!--			sequence="4" parent="etqe_main_menu"-->
+<!--			groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator" />-->
 		<menuitem action="open_view_moderators_list_my" id="menu_moderators_submenu"
-			name="Moderators" sequence="2" parent="menu_main_moderators" />
+			name="Moderators" sequence="3" parent="stakeholders_menu" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"/>
 		<menuitem name="Moderators" id="portal_moderators" action="open_view_moderators_list_my"
-			sequence="1" parent="portal_moderators_menu"
-			groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators" />
+			sequence="5" parent="portal_stakeholders_menu"
+			groups="hwseta_etqe.group_moderators" />
 		<menuitem name="Assessors and Moderators" id="assessor_moderator_portal"
-			action="action_assessor_moderator_register" sequence="3"
+			action="action_assessor_moderator_register" sequence="4"
 			parent="portal_provider_transaction" groups="hwseta_etqe.group_moderators,hwseta_etqe.group_assessors" />
 
 		<record id="provider_qualification_line_form" model="ir.ui.view">
@@ -4606,9 +4699,9 @@
 		</record>
 
 		<menuitem id="menu_main_asqa_librarie" name="SAQA Library"
-			sequence="5" parent="etqe_main_menu" groups="hwseta_etqe.group_seta_administrator"/>
+			sequence="5" parent="etqe_main_menu" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data" />
 		<menuitem action="action_provider_qualification_form" id="menu_librarie"
-			name="Library" sequence="1" parent="menu_main_asqa_librarie" />
+			name="Qualifications" sequence="1" parent="menu_main_asqa_librarie" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data" />
 
 		<record id="batch_master_form" model="ir.ui.view">
 			<field name="name">batch.master.form</field>
@@ -4684,10 +4777,13 @@
 			<field name="view_id" eval="batch_master_privider_filter" />
 		</record>
 
-		<menuitem id="menu_main_batch_master" name="Batch Master"
-			sequence="8" parent="etqe_main_menu" />
+
+<!--		commented as redundant, moved batches to transactions secondary menu-->
+<!--		<menuitem id="menu_main_batch_master" name="Batch Master"-->
+<!--			sequence="8" parent="etqe_main_menu" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data" />-->
 		<menuitem action="action_batch_master_form" id="menu_batch"
-			name="Batch Master" sequence="1" parent="menu_main_batch_master" />
+			name="Batch Master" sequence="5" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"
+				  parent="transaction_menu"/>
 
 		<record id="view_assessment_form" model="ir.ui.view">
 			<field name="name">provider.assessment.form</field>
@@ -4714,60 +4810,79 @@
 
 						<button name="action_submit_button" string="Submit" type="object"
 							class="oe_highlight" attrs="{'invisible':[('submited','=',True)]}"
-							groups="hwseta_etqe.group_providers,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"/>
+							groups="hwseta_etqe.group_providers,hwseta_etqe.group_seta_adminstrator"/>
 						<button name="action_verify_button" string="Recommended"
 							type="object" class="oe_highlight"
-							attrs="{'invisible':[('state','not in',['submitted'])]}"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							attrs="{'invisible':[('state','!=','submitted')]}"
+							groups="hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_seta_administrator"/>
 						<button name="action_set_to_draft" string="Not Recommended"
 							type="object" class="oe_highlight"
 							attrs="{'invisible':[('state','not in',['submitted'])]}"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"/>
+							groups="hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_seta_administrator"/>
 						<button name="action_evaluate_button" string="Recommended"
 							type="object" class="oe_highlight"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
+							groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"
 							attrs="{'invisible':[('state','not in',['verify'])]}" />
 						<button name="action_set_to_submit" string="Not Recommended"
+								type="object" class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"
+								attrs="{'invisible':[('state','not in',['verify'])]}" />
+						<button name="action_achieved_button" string="Achieve"
+							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_administrator,hwseta_etqe.seta_administrator"
+							attrs="{'invisible':[('state','!=','evaluate')]}" />
+						<button name="action_set_to_verified" string="Not Recommended"
 							type="object" class="oe_highlight"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':[('state','not in',['verify'])]}" />
-						<button name="action_achieved_button" string="Achieve / New"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':[('state','not in',['evaluate'])]}" />
+							attrs="{'invisible':[('state','not in',['evaluate'])]}"
+							groups="hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_seta_administrator"/>
                         <button name="action_achieved_button_keep" string="Achieve / Keep"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
+							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_administrator,hwseta_etqe.seta_administrator"
 							attrs="{'invisible':['|',('state','not in',['evaluate']),('ammended','!=',True)]}" />
 						
+
 						<!-- Qualification Buttons -->
 						<button name="action_print_certificate_button" string="Certificate of Achievements"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['skill','lp']),('is_qdm_provider','=',True)]}" />
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
+								attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['skill','lp']),('is_qdm_provider','=',True)]}" />
 						<button name="action_print_qualification_sor_button" string="Statement of Results"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['skill','lp']),('is_qdm_provider','=',True)]}" />
-						
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
+								attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['skill','lp']),('is_qdm_provider','=',True)]}" />
+
 						<!-- QDM Qualification Button -->
 						<button name="action_print_statement_of_achievement" string="Statement of Achievements"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['skill','lp']),('is_qdm_provider','=',False)]}" />
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
+								attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['skill','lp']),('is_qdm_provider','=',False)]}" />
 						
 						<!-- Skills Programme Button -->
 						<button name="action_print_skills_statement_of_results_button" string="Statement of Results"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['qual','lp']),('is_qdm_provider','=',True)]}" />
+							    type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
+								attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['qual','lp']),('is_qdm_provider','=',True)]}" />
 						
 						<!-- Learning Programme Buttons -->
 						<button name="action_print_lp_certificate_button" string="Certificate of Achievements"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['qual','skill']),('is_qdm_provider','=',True)]}" />
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
+								attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['qual','skill']),('is_qdm_provider','=',True)]}" />
 						<button name="action_print_lp_statement_of_result_button" string="Statement of Results"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_finance.group_ceo"
-							attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['qual','skill']),('is_qdm_provider','=',True)]}" />
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
+								attrs="{'invisible':['|','|',('state','not in',['achieved']),('qual_skill_assessment','in',['qual','skill']),('is_qdm_provider','=',True)]}" />
 						
 						<button name="action_learner_status_button" string="Assessment Status Report"
-							type="object" class="oe_highlight" groups="hwseta_etqe.group_providers,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator, hwseta_etqe.group_etqe_administrator"
+								type="object"
+								class="oe_highlight"
+								groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_dc_library_data,hwseta_finance.group_ceo"
 							invisible="1" />
-						<field name="state" widget="statusbar" clickable="True"
+						<field name="state" widget="statusbar"
 							statusbar_visible="draft,submitted,verify,evaluate,achieved"
 							statusbar_colors='{"learners":"blue","assessor":"blue"}'
 							readonly="1" />
@@ -4795,7 +4910,7 @@
 								<field name="comment" attrs="{'readonly':[('submited','=',True)]}"></field>
 								<!-- <field name="employer_id" on_change="onchange_provider(provider_id,employer_id)" 
 									domain="[('employer','=',True)]" required="1" attrs="{'readonly':['|',('verified','=',True),('state','in',['active','re-enrolled','dropout','replacement','suspended','inactive','achieved'])]}"/> -->
-								<field name="select_all" attrs="{'readonly':[('state','in',['draft','achieved'])]}" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+								<field name="select_all" attrs="{'readonly':[('state','in',['draft','achieved'])]}" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 							</group>
 						</group>
 						<!-- <group col="4" attrs="{'invisible':[('state','in',['assessor','moderator','verify'])]}"> 
@@ -4860,7 +4975,7 @@
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<!-- <field name="timetable_id" readonly="1" /> -->
-											<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 											<field name="comment" attrs="{'required':[('verify','=',False)]}" />
 										</tree>
 									</field>
@@ -4881,7 +4996,7 @@
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<!-- <field name="timetable_id" readonly="1" /> -->
-											<field name="evaluate" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="evaluate" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 											<field name="comment" attrs="{'required':[('evaluate','=',False)]}" />
 										</tree>
 									</field>
@@ -4902,7 +5017,7 @@
  -->											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id"  options="{'no_create_edit':True,'no_open':True}" readonly="1" />
 											<!-- <field name="timetable_id" readonly="1" /> -->
-											<field name="achieve" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="achieve" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 										</tree>
 									</field>
 								</group>
@@ -5001,7 +5116,7 @@
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<!-- <field name="timetable_id" readonly="1" /> -->
-											<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 											<field name="comment" attrs="{'required':[('verify','=',False)]}" />
 										</tree>
 									</field>
@@ -5024,7 +5139,7 @@
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<!-- <field name="timetable_id" readonly="1" /> -->
-											<field name="evaluate" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="evaluate" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 											<field name="comment" attrs="{'required':[('evaluate','=',False)]}" />
 										</tree>
 									</field>
@@ -5047,7 +5162,7 @@
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<!-- <field name="timetable_id" readonly="1" /> -->
-											<field name="achieve" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo" />
+											<field name="achieve" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback" />
 										</tree>
 									</field>
 								</group>
@@ -5110,7 +5225,7 @@
 												widget="many2many_tags" options="{'no_create_edit':True,'no_open':True}" />
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
-											<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="verify" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 											<field name="comment" attrs="{'required':[('verify','=',False)]}" />
 										</tree>
 									</field>
@@ -5127,7 +5242,7 @@
 												widget="many2many_tags" options="{'no_create_edit':True,'no_open':True}" />
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
-											<field name="evaluate" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo"/>
+											<field name="evaluate" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback"/>
 											<field name="comment" attrs="{'required':[('evaluate','=',False)]}" />
 										</tree>
 									</field>
@@ -5144,7 +5259,7 @@
 												widget="many2many_tags" options="{'no_create_edit':True,'no_open':True}" />
 											<field name="assessors_id" options="{'no_create_edit':True,'no_open':True}" readonly="1"/>
 											<field name="moderators_id" options="{'no_create_edit':True,'no_open':True}" readonly="1" />
-											<field name="achieve" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo" />
+											<field name="achieve" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo,hwseta_etqe.group_assess_rollback" />
 										</tree>
 									</field>
 								</group>
@@ -5257,6 +5372,7 @@
 				<!--  add provider Assessment search -->
 				<field name="name" />
 				<field name="provider_id" />
+				<field name="batch_id" />
 				 <field name="qual_skill_assessment" />
 					
 					<group expand="0" string="Group By">
@@ -5319,27 +5435,28 @@
 			<field name="view_id" ref="view_assessment_form" />
 			<field name="act_window_id" ref="open_view_assessment_list_my" />
 		</record>
-
-		<menuitem name="Batch Master" id="portal_provider_batch"
-			parent="portal.portal_menu" sequence="3"
-			groups="hwseta_etqe.group_providers,hwseta_etqe.group_etqe_manager" />
+<!--		removed: orphaned by portal_provider_transaction usage on batches-->
+<!--		<menuitem name="Batch Master" id="portal_provider_batch"-->
+<!--			parent="portal.portal_menu" sequence="3"-->
+<!--			groups="hwseta_etqe.group_providers" />-->
 		<menuitem action="action_batch_master_form" id="portal_menu_batch"
-			name="Batch Master" sequence="1" parent="portal_provider_batch" />
+			name="Batch Master" sequence="8" parent="portal_provider_transaction" groups="hwseta_etqe.group_providers"/>
 
 		<menuitem name="Transactions" id="portal_provider_transaction"
 			parent="portal.portal_menu" sequence="4"
-			groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators,hwseta_etqe.group_providers,hwseta_etqe.group_etqe_manager,hwseta_finance.group_ceo" />
+			groups="hwseta_etqe.group_assessors,hwseta_etqe.group_moderators,hwseta_etqe.group_providers,hwseta_etqe.group_etqe_manager,hwseta_finance.group_ceo,hwseta_etqe.group_seta_administrator" />
 		<menuitem name="Accreditation" id="accreditation_portal"
-			action="action_provider_accreditation_form" sequence="1"
+			action="action_provider_accreditation_form" sequence="3"
 			parent="portal_provider_transaction" groups="hwseta_etqe.group_providers" />
 		<menuitem action="open_view_assessment_list_my" id="assessment_menu"
-			name="Assessment" sequence="2" parent="portal_provider_transaction"
+			name="Assessment" sequence="10" parent="portal_provider_transaction"
 			groups="hwseta_etqe.group_providers" />
 		<!-- <menuitem name="Monitoring and Evaluation" id="monitoring_and_evaluation_portal" 
 			action="hwseta_sdp.action_monitor_and_evaluate" sequence="3" parent="portal_provider_transaction" 
 			groups="hwseta_etqe.group_providers"/> -->
 		<menuitem action="open_view_assessment_list_my" id="assessment_menu_etqe"
-			name="Assessment" sequence="2" parent="transaction_menu"  />
+			name="Assessment" sequence="7" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_assess_rollback"
+				  parent="transaction_menu" />
 
 
 
@@ -5431,25 +5548,30 @@
 						<field name="is_moderators" invisible="1" />
 						<field name="is_assessors" invisible="1" />
 						<field name="provider_learner" invisible="1" />
-						<button name="action_active_button" string="Enrolled" type="object"
-							class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['active']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+<!--						hidden due to this being master records-->
+<!--						<button name="action_active_button" string="Enrolled" type="object"-->
+<!--							class="oe_highlight"-->
+<!--							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['active']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />-->
 
 						<button name="%(hwseta_etqe.action_dropout_status_wiz)d"
 							string="Drop Out" type="action" class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['dropout','inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['dropout','inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 
 						<button name="action_replacement_button" string="Replacement"
 							type="object" class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['replacement','inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['replacement','inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 
 						<button name="action_suspend_button" string="Suspend" type="object"
 							class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['suspended','inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['suspended','inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 						<!-- name="action_inactive_button" -->
 						<button string="In Active" type="action" class="oe_highlight"
 							name="%(hwseta_etqe.action_inactive_status_wiz)d"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['inactive']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 
 						<button name="action_achieved_button" string="Achieve"
 							type="object" class="oe_highlight"
@@ -5742,25 +5864,29 @@
 						<field name="is_moderators" invisible="1" />
 						<field name="is_assessors" invisible="1" />
 						<field name="provider_learner" invisible="1" />
-						<button name="action_active_button" string="Enrolled" type="object"
-							class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['active','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+<!--						<button name="action_active_button" string="Enrolled" type="object"-->
+<!--							class="oe_highlight"-->
+<!--							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['active','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />-->
 
 						<button name="%(hwseta_etqe.action_dropout_status_wiz)d"
 							string="Drop Out" type="action" class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['dropout','inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['dropout','inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 
 						<button name="action_replacement_button" string="Replacement"
 							type="object" class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['replacement','inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['replacement','inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 
 						<button name="action_suspend_button" string="Suspend" type="object"
 							class="oe_highlight"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['suspended','inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['suspended','inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 						<!-- name="action_inactive_button" -->
 						<button string="In Active" type="action" class="oe_highlight"
 							name="%(hwseta_etqe.action_inactive_status_wiz)d"
-							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}" />
+							attrs="{'invisible':['|','|','|','|',('provider_learner','=',False),('state','in',['inactive','achieved']),('is_sdf','=',True),('is_assessors','=',True),('is_moderators','=',True)]}"
+              groups="hwseta_etqe.group_seta_administrator"/>
 
 <!-- 						<button name="action_achieved_button" string="Achieve"
 							type="object" class="oe_highlight"
@@ -6147,6 +6273,7 @@
 										<field name="certificate_date" />
 										<field name="is_complete" readonly="1" />
 										<field name="is_learner_achieved" readonly="1" />
+										<field name="is_exit_level_outcomes" readonly="1" />
 										<field name="assessors_id" />
 										<field name="assessor_date" />
 										<field name="moderators_id" />
@@ -6165,6 +6292,7 @@
 													<field name="assessors_id" />
 													<field name="moderators_id" />
 													<field name="batch_id" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>
+													<field name="is_exit_level_outcomes"/>
 												</group>
 												<group>
 													<field name="provider_id" />
@@ -6383,6 +6511,8 @@
 				<tree string="Provider Learner" create="false">
 					<field name="learner_identification_id" />
 					<field name="name" />
+					<field name="person_middle_name" />
+					<field name="job_title" />
 					<field name="work_phone" placeholder="0116076900" />
 					<field name="work_email" />
 					<field name="learners_status" />
@@ -6467,6 +6597,7 @@
 					<group expand="0" string="Group By">
 						<!-- group by feauture -->
 						<filter string="Status" icon="terp-personal" domain="[]" context="{'group_by':'state'}"/>
+						<filter string="Provider Province" icon="terp-personal" domain="[]" context="{'group_by':'provider_province'}"/>
 						<filter string="Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
 						<filter string="Work Province" icon="terp-personal" domain="[]" context="{'group_by':'work_province'}"/>
 						<filter string="Home Province" icon="terp-personal" domain="[]" context="{'group_by':'person_home_province_code'}"/>
@@ -6488,35 +6619,35 @@
 							invisible="1" /> <field name="evaluated" invisible="1" /> -->
 						<field name="approved" invisible="1" />
 						<field name="rejected" invisible="1" />
-						<!-- <button name="action_submit_button" string="Submit" type="object" 
-							class="oe_highlight" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_applicant_skill_developer,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_providers" 
-							attrs="{'invisible':['|',('state','in',['submitted','approved','verify','evaluate','rejected']),('submited','=',True)]}" 
-							/> <button name="action_verify_button" string="Verify" type="object" class="oe_highlight" 
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_executive_manager,hwseta_finance.group_ceo" 
-							attrs="{'invisible':['|',('state','in',['draft','approved','verify','learners','evaluate','rejected']),('verified','=',True)]}" 
-							/> <button name="action_evaluate_button" string="Evalute" type="object" class="oe_highlight" 
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_officer" 
-							attrs="{'invisible':['|',('state','in',['draft','approved','learners','submitted','evaluate','rejected']),('evaluated','=',True)]}" 
-							/> -->
+						 <button name="action_submit_button" string="Submit" type="object"
+							class="oe_highlight" groups="hwseta_etqe.group_providers,group_dc_stakeholder_data"
+							attrs="{'invisible':[('state','not in',['draft'])]}"
+							/>
 						<button name="action_approved_button" string="Approve"
 							type="object" class="oe_highlight"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_providers"
-							attrs="{'invisible':['|',('state','in',['approved','rejected']),('approved','=',True)]}" />
+							groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_seta_administrator"
+							attrs="{'invisible':['|',('state','not in',['submitted']),('approved','=',True)]}" />
 							
 						<button name="action_update_button" string="Update to Learner Master"
 							type="object" class="oe_highlight"
-							groups="hwseta_etqe.group_seta_administrator" confirm="Are you sure you want to update record?"
-							attrs="{'invisible':[('state','in',['draft','rejected']),('compute_field','=',False)]}" />
+
+							groups="hwseta_etqe.group_seta_administrator"
+
+              confirm="Are you sure you want to update record?"
+							attrs="{'invisible':[('state','not in',['draft','rejected','approved']),('compute_field','=',False)]}" />
+<!--						groups="hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_seta_administrator"-->
+						<!--
 						<button name="action_rejected_button" string="Reject" type="object"
 							class="oe_highlight"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_administrator"
-							attrs="{'invisible':['|','|',('state','in',['approved','rejected']),('approved','=',True),('rejected','=',True)]}" />
+							groups=""
+							attrs="{'invisible':['|','|',('state','not in',['approved','rejected']),('approved','=',True),('rejected','=',True)]}" />
+						-->
 						<button name="action_set_to_draft_button" string="Set To Draft"
 							type="object" class="oe_highlight"
-							groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager"
-							attrs="{'invisible':[('state','in',['draft','approved'])]}" />
-						<field name="state" widget="statusbar" clickable="True"
-							statusbar_visible="draft,approved,rejected" statusbar_colors='{"learners":"blue","assessor":"blue"}' />
+							groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_seta_employee,hwseta_etqe.group_seta_administrator"
+							attrs="{'invisible':[('state','in',['draft'])]}" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,submitted,approved,rejected" statusbar_colors='{"learners":"blue","assessor":"blue"}' />
 							
 							
 					</header>
@@ -6526,12 +6657,13 @@
 							<group>
 								<field name="is_existing_learner" class="oe_edit_only"
 									attrs="{'readonly':[('state','=','approved'),('compute_field', '=', False)]}" />
-								<field name="citizen_status" class="oe_edit_only" attrs="{'invisible':[('is_existing_learner','=',False)],'required':[('is_existing_learner','=',True)],'readonly':[('state','=','approved'),('compute_field', '=', False)]}"/>
+								<field name="citizen_status" class="oe_edit_only" attrs="{'invisible':[('is_existing_learner','=',False)],'readonly':[('state','=','approved'),('compute_field', '=', False)]}"/>
 								<field name="onchange_identification_number" class="oe_edit_only"
 									attrs="{'invisible':[('citizen_status','not in',['dual','PR','sa'])],'required':[('citizen_status','in',['dual','PR','sa']),('is_existing_learner','=',True)],'readonly':[('state','=','approved'),('compute_field', '=', False)]}"
 									on_change="onchange_details(onchange_identification_number)" />
 								<field name="existing_national_id" class="oe_edit_only" on_change="onchange_existing_national_id(existing_national_id)"
 								attrs="{'invisible':[('citizen_status','not in',['other','unknown'])],'required':[('citizen_status','in',['other','unknown']),('is_existing_learner','=',True)],'readonly':[('state','=','approved'),('compute_field', '=', False)]}"/>
+								<field name="provider_id" required="1" groups="hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"/>
 								<field name="person_title" attrs="{'readonly':[('state','=','approved'),('compute_field', '=', False)]}"
 									required="1" />
 								<field name="compute_field" invisible="True"/>
@@ -6610,8 +6742,7 @@
 							<page string="Personal Information">
 								<group>
 									<group string="Status">
-										<field name="gender" on_change="onchange_gender(gender)"
-											attrs="{'readonly':[('state','=','approved'),('compute_field', '=', False)]}" required="1" />
+										<field name="gender" on_change="onchange_gender(gender)" required="1" />
 										<field name="gender_saqa_code" invisible="1"
 											on_change="onchange_gender_saqa_code(gender_saqa_code)" />
 										<field name="marital" attrs="{'readonly':[('state','=','approved'),('compute_field', '=', False)]}"
@@ -6648,7 +6779,7 @@
 										<field name="alternate_id_type" attrs="{'readonly':[('state','=','approved')]}" />
 										<field name="national_id"
 											attrs="{'invisible':[('citizen_resident_status_code','=','sa')],'readonly':[('state','=','approved')],'required':[('citizen_resident_status_code','in',['other','unknown'])]}" />
-										<field name="person_birth_date" attrs="{'readonly':[('state','=','approved')]}" />
+										<field name="person_birth_date"/>
 										<field name="passport_id" groups="base.group_hr_user,hwseta_etqe.group_providers"
 											attrs="{'invisible':[('citizen_resident_status_code','=','sa')],'readonly':[('state','=','approved'),('compute_field', '=', False)],'required':[('citizen_resident_status_code','=','other')]}" />
 										<field name="id_document" string="ID Document/Passport Upload"
@@ -6833,6 +6964,7 @@
 										<tree>
 											<field name="learner_qualification_parent_id"  required="1"
 												nolabel="1" options="{'no_create': True,'no_quick_create':True}" />
+											<field name="is_exit_level_outcomes" readonly="1"/>
 											<field name="start_date" required="1" />
 											<field name="end_date" required="1" />
 											<field name="provider_id" invisible="1" />
@@ -6848,13 +6980,13 @@
 													<group>
 														<field name="learner_qualification_parent_id" on_change="onchange_qualification(learner_qualification_parent_id)"
 															options="{'no_create': True,'no_quick_create':True,'no_open': True}"
-															required="1" context="{'model' : 'learner.registration.qualification'}"
+															required="1" context="{'model' : 'learner.registration.qualification','provider_id':provider_id}"
 															/>
 														<field name="start_date" required="1" />
 														<field name="assessors_id" on_change="onchange_assessors_id(assessors_id)"
-															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'learner.registration.qualification'}" required="1"/>
+															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'learner.registration.qualification','provider_id':provider_id,'ass_mod':'ass'}" required="1"/>
 														<field name="moderators_id" on_change="onchange_moderators_id(moderators_id)"
-															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'learner.registration.qualification'}" required="1"/>
+															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'learner.registration.qualification','provider_id':provider_id,'ass_mod':'mod'}" required="1"/>
 														<field name="minimum_credits" />
 														<field name="batch_id" required="1"
 															options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
@@ -6866,6 +6998,7 @@
 														<field name="assessor_date" />
 														<field name="moderator_date" />
 														<field name="total_credits" />
+														<field name="is_exit_level_outcomes" readonly="1"/>
 													</group>
 												</group>
 												<div>
@@ -6927,12 +7060,12 @@
 														<field name="skills_programme_id"
 															on_change="onchange_skills_programme(skills_programme_id)"
 															options="{'no_create': True,'no_quick_create':True,'no_open':True}" 
-															context="{'model' : 'skills.programme.learner.rel'}"/>
+															context="{'model' : 'skills.programme.learner.rel','provider_id':provider_id}"/>
 														<field name="start_date" />
 														<field name="assessors_id" on_change="onchange_assessors_id(assessors_id)"
-															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'skills.programme.learner.rel'}" required="1"/>
+															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'skills.programme.learner.rel','provider_id':provider_id}" required="1"/>
 														<field name="moderators_id" on_change="onchange_moderators_id(moderators_id)"
-															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'skills.programme.learner.rel'}" required="1"/>
+															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model' : 'skills.programme.learner.rel','provider_id':provider_id}" required="1"/>
 														<field name="minimum_credits" />
 														<field name="batch_id" required="1"
 															options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
@@ -7001,12 +7134,12 @@
 														<field name="learning_programme_id"
 															on_change="onchange_learning_programme(learning_programme_id)"
 															options="{'no_create': True,'no_quick_create':True,'no_open':True}" 
-															context="{'model':'learning.programme.learner.rel'}"/>
+															context="{'model':'learning.programme.learner.rel','provider_id':provider_id}"/>
 														<field name="start_date" />
 														<field name="assessors_id" on_change="onchange_assessors_id(assessors_id)"
-															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model':'learning.programme.learner.rel'}" required="1"/>
+															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model':'learning.programme.learner.rel','provider_id':provider_id}" required="1"/>
 														<field name="moderators_id" on_change="onchange_moderators_id(moderators_id)"
-															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model':'learning.programme.learner.rel'}" required="1"/>
+															options="{'no_create': True,'no_quick_create':True,'no_open':True}" context="{'model':'learning.programme.learner.rel','provider_id':provider_id}" required="1"/>
 														<field name="minimum_credits" />
 														<field name="batch_id" required="1"
 															options="{'no_create': True,'no_quick_create':True,'no_open':True}" />
@@ -7088,17 +7221,22 @@
 
 		<!-- portal learner registration menu -->
 		<menuitem name="Learner Registration" id="learner_registration_portal"
-			action="learner_registration_action" sequence="10"
+			action="learner_registration_action" sequence="9"
 			parent="portal_provider_transaction" groups="hwseta_etqe.group_providers" />
 
 		<menuitem name="Learner Registration" id="learner_registraion_etqe1"
-			action="learner_registration_action" sequence="4" parent="transaction_menu" />
+			action="learner_registration_action" sequence="6" groups="hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_stakeholder_data,hwseta_etqe.group_seta_administrator"
+				  parent="transaction_menu" />
 
-		<menuitem id="etqe_learner_main_menu" name="Learners" parent="etqe_main_menu"
-			sequence="2" />
+<!--		<menuitem id="etqe_learner_main_menu" name="Learners" groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data" parent="etqe_main_menu"-->
+<!--			sequence="2" />-->
 
-		<menuitem name="Learners" id="learner_master_entry" action="action_provider_learner_view"
-			sequence="1" parent="etqe_learner_main_menu" />
+		<menuitem name="Learners"
+				  id="learner_master_entry"
+				  action="action_provider_learner_view"
+				  sequence="4"
+				  groups="hwseta_etqe.group_etqe_provincial_administrator,hwseta_etqe.group_etqe_manager,hwseta_etqe.group_etqe_provincial_manager,hwseta_etqe.group_etqe_administrator,hwseta_etqe.group_etqe_provincial_officer,hwseta_etqe.group_etqe_executive_manager,hwseta_etqe.group_seta_administrator,hwseta_etqe.group_etqe_officer,hwseta_etqe.group_dc_library_data,hwseta_etqe.group_dc_stakeholder_data"
+				  parent="stakeholders_menu" />
 
 		<record id="view_learner_timetable_form" model="ir.ui.view">
 			<field name="name">learner.timetable.form</field>
@@ -7446,11 +7584,12 @@
 			</field>
 		</record>
 		<!-- Portal Menus for Provider -->
-		<menuitem name="Learners" id="menu_provider_learners" parent="portal.portal_menu"
-			sequence="2" groups="hwseta_etqe.group_providers" />
+<!--		removed:orphaned by stakeholders portal menu-->
+<!--		<menuitem name="Learners" id="menu_provider_learners" parent="portal.portal_menu"-->
+<!--			sequence="2" groups="hwseta_etqe.group_providers" />-->
 		<menuitem name="Learners" id="menu_provider_learners_submenu"
-			action="action_provider_learner_view" sequence="1"
-			parent="menu_provider_learners" />
+			action="action_provider_learner_view" sequence="6"
+			parent="portal_stakeholders_menu" groups="hwseta_etqe.group_providers"/>
 
 		<!-- <menuitem id="etqe_Learners_menu" name="Learners" sequence="4" parent="etqe_main_menu" 
 			groups="hwseta_etqe.group_providers" /> <menuitem action="hwseta_sdp.action_learner_view" 
@@ -7508,7 +7647,7 @@
 
 		<!-- EQTE config menu -->
 		<menuitem name="ETQE Configuration" id="etqe_config_menu"
-			sequence="9" parent="etqe_main_menu" />
+			sequence="9" groups="hwseta_etqe.group_seta_administrator" parent="etqe_main_menu" />
 		<menuitem name="ETQE Configuration" id="menu_etqe_configuration"
 			action="action_etqe_config_form" sequence="1" parent="etqe_config_menu" />
 

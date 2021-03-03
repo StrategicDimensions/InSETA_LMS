@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_group_group_nlrd_admin_21,nlrd.21,hwseta_nlrd.model_nlrd_21,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_24,nlrd.24,hwseta_nlrd.model_nlrd_24,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_25,nlrd.25,hwseta_nlrd.model_nlrd_25,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_26,nlrd.26,hwseta_nlrd.model_nlrd_26,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_27,nlrd.27,hwseta_nlrd.model_nlrd_27,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_29,nlrd.29,hwseta_nlrd.model_nlrd_29,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_report,nlrd.report,hwseta_nlrd.model_nlrd_report,hwseta_nlrd.group_nlrd_admin,1,1,1,1
+access_group_group_nlrd_admin_exporter2,nlrd.exporter2,hwseta_nlrd.model_nlrd_exporter2,hwseta_nlrd.group_nlrd_admin,1,1,1,1

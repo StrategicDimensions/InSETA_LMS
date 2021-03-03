@@ -205,5 +205,7 @@ class skills_programme(models.Model):
                 self.name = ''
                 print "222222"
                 return {'warning':{'title':'Duplicate Record','message':'Please enter unique  Skills Programme Name'}}
-        return {}    
+        return {}
+
+
 skills_programme()

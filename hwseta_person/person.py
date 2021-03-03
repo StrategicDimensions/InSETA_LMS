@@ -4,6 +4,20 @@ from datetime import datetime,date
 import calendar
 from openerp import tools
 
+DEBUG = True
+
+if DEBUG:
+	import logging
+
+	logger = logging.getLogger(__name__)
+
+
+	def dbg(msg):
+		logger.info(msg)
+else:
+	def dbg(msg):
+		pass
+
 class seta_branches(models.Model):
     _name = 'seta.branches'
     
@@ -267,9 +281,43 @@ class res_users(models.Model):
         :return: True if the current user is a member of the group with the
            given external ID (XML ID), else False.
         """
+        # grp_list = ['group_dc_stakeholder_data',
+        #             'group_seta_employee',
+        #             'group_dc_library_data',
+        #             'group_assess_rollback',
+        #             'group_providers',
+        #             'group_assessors',
+        #             'group_moderators',
+        #             'group_etqe_applicant_skill_developer',
+        #             'group_etqe_manager',
+        #             'group_etqe_executive_manager',
+        #             'group_etqe_provincial_manager',
+        #             'group_etqe_officer',
+        #             'group_etqe_administrator',
+        #             'group_etqe_provincial_administrator',
+        #             'group_seta_administrator',
+        #             'group_ass_mod_wiz',
+        #             'group_ass_mod_wiz',
+        #             'group_provider_wiz',
+        #             'group_updated_provider_wiz',
+        #             'group_prov_quals',
+        #             'group_qual_approvals',
+        #             'group_sdf_emails_approvals',
+        #             'group_update_learner_wiz',
+        #             'group_updated_learner_wiz',
+        #             'group_updated_assessor_wiz',
+        #             'group_ampqw_quals',
+        #             'group_ampqw_qual_approvals',
+        #             'group_lqw_administrator',
+        #             'group_lqw_approver',
+        #             ]
         if group_ext_id:
+            if group_ext_id == 'group_dc_stakeholder_data':
+                group_ext_id = 'hwseta_etqe.group_dc_stakeholder_data'
             assert group_ext_id and '.' in group_ext_id, "External ID must be fully qualified"
             module, ext_id = group_ext_id.split('.')
+            # dbg(module)
+            # dbg(ext_id)
             cr.execute("""SELECT 1 FROM res_groups_users_rel WHERE uid=%s AND gid IN
                             (SELECT res_id FROM ir_model_data WHERE module=%s AND name=%s)""",
                        (uid, module, ext_id))

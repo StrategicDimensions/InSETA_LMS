@@ -1,0 +1,5 @@
+* Ticket 10863 - Create Dev and Main branches
+
+Create main and dev branches for more structured workflow
+
+`https://helpdesk.hwseta.org.za/tickets/v2#my_tickets/10863?eyJ0aWNrZXRQYWdpbmciOnsiZmlyc3RQYWdlIjoxLCJjdXJyZW50UGFnZSI6MSwicGVyUGFnZSI6MjUsInRvdGFsUGFnZXMiOjEsInNvcnRBdHRyIjoiaWQiLCJzb3J0RGlyIjpmYWxzZSwidXNlRGVmYXVsdFNvcnQiOmZhbHNlLCJzaXRlX2lkIjoiYWxsX3NpdGVzIiwic2l0ZV9uYW1lIjoiQWxsIFNpdGVzIiwidmlld05hbWUiOiJteV90aWNrZXRzIn19`

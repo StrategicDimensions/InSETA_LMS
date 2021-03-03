@@ -15,6 +15,8 @@ import ast
 from openerp.addons.web.controllers.main import ensure_db
 from openerp.addons.web.controllers.main import Home
 from operator import itemgetter
+from .. import checkers
+import calendar
 DEBUG = True
 
 if DEBUG:
@@ -945,9 +947,15 @@ class Website(openerp.addons.website.controllers.main.Website):
                                                                           'provider_accreditation_ref':post.get('provider_accreditation_ref',''),
                                                                           'acc_multi_doc_upload_ids':doc_vals,
                                                                           'submitted': True,
-                                                                          'final_state': 'Submitted'
+                                                                          'final_state': 'Submitted',
+                                                                          'provider_accreditation_status_ids':
+                                                                              [(0, 0,
+                                                                                {'pa_name': post.get('txtRegName',''),
+                                                                                    'pa_date': datetime.datetime.now(),
+                                                                                    'pa_status': 'Submitted',
+                                                                                    'pa_updation_date': datetime.datetime.now(),
+                                                                                    'pa_comment': 'Submitted on the website.'})]
                                                                           })
-        
             dict.update({'provider_accreditation_ref':post.get('provider_accreditation_ref','NA')})
         return request.website.render("website.RegistrationConfirmationMessage",dict)
         #return request.redirect("/")    
@@ -1137,7 +1145,10 @@ class Website(openerp.addons.website.controllers.main.Website):
             values ['gender'] = post.get('gender','')
             values ['marital'] = post.get('marital','')
             if post.get('birth_date','') != '':
-                values ['birthday'] = post.get('birth_date','')
+                bd = datetime.datetime.strptime(post.get('birth_date',''),'%m/%d/%Y')
+                bd_text = bd.strftime('%d/%m/%Y')
+                # values ['birthday'] = post.get('birth_date','')
+                values ['birthday'] = bd_text
             values ['person_home_address_1'] = post.get('home_line1','')
             values ['person_home_address_2'] = post.get('home_line2','')
             values ['person_home_address_3'] = post.get('home_line3','')
@@ -1284,10 +1295,14 @@ class Website(openerp.addons.website.controllers.main.Website):
                 for q_line_obj in qual_line_data:
                     checked_credit_sum += int(q_line_obj.level3)
                     
-            if checked_credit_sum < qual_data.m_credits:
+            if checked_credit_sum < qual_data.m_credits and not qual_data.is_exit_level_outcomes:
                 result.append({'check_limit':False})
-            elif not checked_credit_sum < qual_data.m_credits:
+            elif not checked_credit_sum < qual_data.m_credits and not qual_data.is_exit_level_outcomes:
                 result.append({'check_limit': True})
+            elif qual_data.is_exit_level_outcomes:
+                # checks if selected lines match all lines in library master for elo's'
+                if len(qual_line_ids) != len(qual_data.qualification_line):
+                    result.append({'check_limit': False,'elo':True})
             return json.dumps(result)
         return False
     
@@ -2067,6 +2082,118 @@ class Website(openerp.addons.website.controllers.main.Website):
                 value.update({'result':1,'state':sdf[0][1],'ref':sdf[0][2]})
             result.append(value)
         return json.dumps(result)
+
+    @http.route(['/page/validate_identification_no_assessor'], type='http', auth="public", website=True)
+    def validate_identification_no_assessor(self, **post):
+        dbg("got here")
+        dbg(post)
+        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
+        value = {}
+        result = []
+        if post.get('identification_no'):
+            dbg(checkers.said_check(post.get('identification_no')))
+            identification_id = post.get('identification_no')
+            check = checkers.said_check(identification_id)
+            year = check['year']
+            month = check['month']
+            day = check['day']
+            dbg(check)
+            dbg(checkers.old_said_check(identification_id))
+            if not check['valid']:
+                # raise Warning('not valid' + str(check))
+                if "Invalid gender" in checkers.old_said_check(identification_id):
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                    'message': 'Invalid Gender!'}})
+                if "Invalid citizenship status" in checkers.old_said_check(identification_id):
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                    'message': 'Invalid citizenship status!'}})
+                # if "Invalid birth date" in checkers.old_said_check(identification_id):
+                if int(day) > 31 or int(day) < 1:
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                    'message': 'Incorrect Day In Identification Number!'}})
+                if int(month) > 12 or int(month) < 1:
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                    'message': 'Incorrect Month In Identification Number!'}})
+                else:
+                    # # Calculating last day of month.
+                    x_year = int(year)
+                    if x_year == 00:
+                        x_year = 2000
+                    last_day = calendar.monthrange(int(x_year), int(month))[1]
+                    if int(day) > last_day:
+                        return json.dumps({
+                            # 'value': {'existing_assessor_id': ''},
+                            'result': {'title': 'Invalid',
+                                        'message': 'Incorrect last day of month in identification number!'}})
+                # if you get here and nothin has been returned yet, it means the checksum must be the issue so raise it
+                return json.dumps({
+                    # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                    'message': 'Incorrect checksum!'}})
+
+    @http.route(['/page/validate_identification_no_sdf'], type='http', auth="public", website=True)
+    def validate_identification_no_sdf(self, **post):
+        dbg("got here")
+        dbg(post)
+        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
+        value = {}
+        result = []
+        if post.get('identification_no'):
+            dbg(checkers.said_check(post.get('identification_no')))
+            identification_id = post.get('identification_no')
+            check = checkers.said_check(identification_id)
+            year = check['year']
+            month = check['month']
+            day = check['day']
+            dbg(check)
+            dbg(checkers.old_said_check(identification_id))
+            if not check['valid']:
+                # raise Warning('not valid' + str(check))
+                if "Invalid gender" in checkers.old_said_check(identification_id):
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                   'message': 'Invalid Gender!'}})
+                if "Invalid citizenship status" in checkers.old_said_check(identification_id):
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                   'message': 'Invalid citizenship status!'}})
+                # if "Invalid birth date" in checkers.old_said_check(identification_id):
+                if int(day) > 31 or int(day) < 1:
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                   'message': 'Incorrect Day In Identification Number!'}})
+                if int(month) > 12 or int(month) < 1:
+                    return json.dumps({
+                        # 'value': {'existing_assessor_id': ''},
+                        'result': {'title': 'Invalid',
+                                   'message': 'Incorrect Month In Identification Number!'}})
+                else:
+                    # # Calculating last day of month.
+                    x_year = int(year)
+                    if x_year == 00:
+                        x_year = 2000
+                    last_day = calendar.monthrange(int(x_year), int(month))[1]
+                    if int(day) > last_day:
+                        return json.dumps({
+                            # 'value': {'existing_assessor_id': ''},
+                            'result': {'title': 'Invalid',
+                                       'message': 'Incorrect last day of month in identification number!'}})
+                # if you get here and nothin has been returned yet, it means the checksum must be the issue so raise it
+                return json.dumps({
+                    # 'value': {'existing_assessor_id': ''},
+                    'result': {'title': 'Invalid',
+                               'message': 'Incorrect checksum!'}})
     
     @http.route(['/page/check_identification_no_assessor'], type='http', auth="public", website=True)
     def check_identification_no_assessor(self, **post): 
@@ -2086,7 +2213,7 @@ class Website(openerp.addons.website.controllers.main.Website):
             elif len(assessor)>0:
                 value.update({'result':1})
             result.append(value)
-        return json.dumps(result)    
+        return json.dumps(result)
     
     @http.route(['/page/check_email_id'], type='http', auth="public", website=True)
     def check_email_id(self, **post): 
@@ -2309,6 +2436,7 @@ class Website(openerp.addons.website.controllers.main.Website):
         cr.execute("select id,assessor_seq_no,person_name from hr_employee where is_assessors=True  and assessor_seq_no='%s'"%(str(post.get('assessor_no'))))
         assessor = cr.fetchall()
         if len(assessor) == 0:
+            dbg(result)
             return json.dumps(result)
         else:
             flag = False
@@ -2328,6 +2456,7 @@ class Website(openerp.addons.website.controllers.main.Website):
                         } 
                 result.append(value)
                 cr.commit()
+            dbg(result)
             return json.dumps(result)
 
     @http.route(['/page/check_moderator_number'], type='http', auth="public", website=True)
@@ -2373,6 +2502,8 @@ class Website(openerp.addons.website.controllers.main.Website):
         cr.execute("select id,moderator_seq_no,person_name from hr_employee where is_moderators=True and moderator_seq_no='%s'"%(str(post.get('moderator_no'))))
         moderator = cr.fetchall()
         if len(moderator) == 0:
+            dbg('no assessor')
+            dbg(result)
             return json.dumps(result)
         else:
             flag = False
@@ -2391,7 +2522,9 @@ class Website(openerp.addons.website.controllers.main.Website):
                            'display_name':moderator[0][2],
                         } 
                 result.append(value)
-                cr.commit()            
+                cr.commit()
+            dbg(result)
+            dbg('found stuff')
             return json.dumps(result)                 
 
     #For Assessor Re - registration 

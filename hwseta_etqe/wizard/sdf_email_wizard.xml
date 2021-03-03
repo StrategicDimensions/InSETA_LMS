@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="seta_sdf_email_wizard_view" model="ir.ui.view">
+            <field name="name">SETA sdf.email.wizard Wizard</field>
+            <field name="model">sdf.email.wizard</field>
+            <field name="arch" type="xml">
+                <form string="sdf.email.wizard">
+                    <group>
+                        <group>
+                            <field name="ticket_num" required="1"/>
+                            <field name="search_by"/>
+                            <field name="identification"/>
+<!--    						<button name="get_am" string="Get Assessor or Moderator" type="object" default_focus="1" class="btn-primary"/>-->
+    <!--                        <field name="assessor_id" string="Assessor" context="{'model' : 'link.stakeholder','assessor_id':True}" attrs="{'invisible':[('assessor_or_moderator','not in',['','assessor','provider'])]}" options="{'no_create': True,'no_quick_create':True,'no_open':True}"/>-->
+                            <field name="sdf_id" string="SDF" readonly="1"/>
+                            <field name="work_email" string="SDF Email" />
+                        </group>
+                    </group>
+
+                    <footer>
+<!--                        <button name="fix_dates" string="Fix Assessor or Moderator dates" attrs="{'invisible':['|',('moderator_id','=',False),('assessor_id','=',False)]}" type="object" default_focus="1" class="btn-primary"/>-->
+                        <button name="fix_email" string="Update Record" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+		<record id="action_sdf_email_wiz" model="ir.actions.act_window">
+            <field name="name">SETA link.stakeholder</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sdf.email.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_sdf_email_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem id="menu_action_sdf_email_wiz"
+				  name="SDF Email"
+				  action="action_sdf_email_wiz"
+				          groups="hwseta_etqe.group_seta_administrator,hwseta_etqe.group_sdf_emails_approvals"
+				  sequence="60"/>
+    </data>
+</openerp>

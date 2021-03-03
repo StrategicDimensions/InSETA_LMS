@@ -551,28 +551,29 @@
 		<record id="view_res_partner_filter_inherit_employer" model="ir.ui.view">
 			<field name="name">res.partner.filter.inherit.employer</field>
 			<field name="model">res.partner</field>
+<!--			<field name="groups_id" eval="[(6, 0, [ref('hwseta_sdp.group_general_access'),ref('hwseta_sdp.group_provincial_manager'),ref('hwseta_sdp.group_provincial_officer'),ref('hwseta_sdp.group_sdp_manager'),ref('hwseta_sdp.group_wsp_administrator'),ref('hwseta_sdp.group_wsp_manager'),ref('hwseta_sdp.group_wsp_officer')])]" />-->
 			<field name="inherit_id" ref="base.view_res_partner_filter" />
 			<field name="arch" type="xml">
 				<xpath
 					expr="/search[@string='Search Partner']"
 					position="inside">
 					<filter string="Employers" name="employer" domain="[('employer','=',1)]"
-						help="Employers" />
+						help="Employers"/>
 					<filter string="Dormant Employers" name="dormant_employer"
-						domain="[('dormant','=',1)]" help="Employers" />
+						domain="[('dormant','=',1)]" help="Employers"/>
 					<filter string="Inactive Employers" name="inactive_employer"
-						domain="[('active','=',0)]" help="Employers" />
+						domain="[('active','=',0)]" help="Employers"/>
 				</xpath>
 				<xpath expr="///search[@string='Search Partner']"
 					position="inside">
-					<field name="employer_sdl_no" />
+					<field name="employer_sdl_no"/>
 					<field name="employer_trading_name" />
 				</xpath>
 				<xpath
 					expr="//search[@string='Search Partner']/group[@string='Group By']"
 					position="inside">
 					<filter string="Trading Name" icon="terp-personal" domain="[]"
-						context="{'group_by':'employer_trading_name'}" />
+						context="{'group_by':'employer_trading_name'}"/>
 				</xpath>
 			</field>
 		</record>
@@ -1923,9 +1924,10 @@
 		<menuitem name="Organisation Payments" id="menu_action_employer_payments_tree1_portal"
 			parent="menu_finance_employer" action="action_employer_payments"
 			groups="hwseta_finance.group_employer_user" sequence="5" />
-		<menuitem name="Transactions" id="portal_employer_transaction"
-			parent="portal.portal_menu" sequence="4"
-			groups="hwseta_finance.group_employer_user" />
+<!--		removed:orphaned by adding transactions menu in etqe module-->
+<!--		<menuitem name="Transactions" id="portal_employer_transaction"-->
+<!--			parent="portal.portal_menu" sequence="4"-->
+<!--			groups="hwseta_finance.group_employer_user" />-->
 
 		<!-- Avoiding Employer Invoices visibility under Customer Invoices -->
 		<!-- <record id="account.action_invoice_tree1" model="ir.actions.act_window"> 

@@ -30,13 +30,17 @@
 											<tr>
 												<td class="button" colspan="4">Please ensure that you are
 													familiar with the
-													Terms &amp; Conditions before continuing
+													Terms &amp; Conditions as well as the Criteria For Registration before continuing
 												</td>
 											</tr>
 											<tr>
-												<td colspan="4">
+												<td>
 													<a target="_blank"
 														href="/hwseta_website/static/src/ProviderAccreditation/Templates/Code_of_Conduct_for_Registered_Assessors_and_Moderators.docx">Code Of Conduct</a>
+												</td>
+												<td colspan="4">
+													<a target="_blank"
+														href="/hwseta_website/static/src/ProviderAccreditation/Templates/Criteria_for_Registration_as_Asessor_Moderator.docx">Criteria For Registration</a>
 												</td>
 											</tr>
 											<tr>

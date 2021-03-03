@@ -771,8 +771,9 @@
 			</field>
 		</record>
         
-        <menuitem id="menu_learnership" name="EOI" parent="menu_sdp_transactions" action="action_learning_programme" sequence="3" groups="hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager"/>
-        <menuitem id="menu_eoi_approval_criteria" name="EOI Approval Criteria" parent="menu_sdp_project" action="action_eoi_approval_criteria" sequence="4" groups="hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager"/>
+
+<menuitem id="menu_learnership" name="EOI" parent="menu_sdp_transactions" action="action_learning_programme" sequence="3" groups="hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager"/>
+ <menuitem id="menu_eoi_approval_criteria" name="EOI Approval Criteria" parent="menu_sdp_project" action="action_eoi_approval_criteria" sequence="4" groups="hwseta_sdp.group_wsp_manager,project.group_project_manager,hwseta_projects.group_learning_programme_manager"/>
         <!-- Portal Access for Employer User -->
         <menuitem id="menu_learner_programme_portal" name="EOI" parent="portal.portal_projects" action="action_learning_programme" groups="hwseta_finance.group_enable_enrollment" sequence="2"/>
         <menuitem action="hwseta_person.action_partner_project_rel" id="menu_request_for_eoi_submit_employer"

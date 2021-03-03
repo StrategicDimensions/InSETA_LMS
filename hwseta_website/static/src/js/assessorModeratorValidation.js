@@ -502,27 +502,49 @@ $(function() {
                 dt = dateOfBirth
                 $(document).ready(
                     function() {
-                        var arr = dt.split("/");
-                        var i = 0;
-                        if (arr[0] > 12) {
-                            sbm = 1;
-                            document.frmAssessorModerator.id_no.value = '';
-                            alert("Enter Valid S.A Identification Number!!");
-                            document.frmAssessorModerator.id_no.focus();
-                        }
-                        if (arr[2] % 4 == 0) {
-                            days[1] = 29;
-                        }
-                        for (i = 0; i < 12; i++) {
-                            if (arr[0] == months[i]) {
-                                if (arr[1] > days[i]) {
-                                    sbm = 1;
-                                    document.frmAssessorModerator.id_no.value = '';
-                                    alert("Enter Valid S.A Identification Number!!");
-                                    document.frmAssessorModerator.id_no.focus();
-                                }
+                        var identification_no = $("#id_no").val()
+                        $.ajax({
+                            url: "/page/validate_identification_no_assessor",
+                            type: "post",
+                            dataType: "json",
+                            async: true,
+                            data: {
+                                'identification_no': identification_no
+                            },
+                            success: function(result) {
+                                console.log(result);
+                                console.log(result['result']['message']);
+                                console.log(typeof result['result']['message']);
+                                if (result['result']['title'].includes("Invalid")) {
+                                    console.log("found invalid title")
+                                    sbm=1;
+                                    $('#id_no').val('');
+                                    alert(result['result']['message']);
+                                    $('#id_no').focus();
+                                    };
                             }
-                        }
+                            });
+//                        var arr = dt.split("/");
+//                        var i = 0;
+//                        if (arr[0] > 12) {
+//                            sbm = 1;
+//                            document.frmAssessorModerator.id_no.value = '';
+//                            alert("Enter Valid S.A Identification Number!!");
+//                            document.frmAssessorModerator.id_no.focus();
+//                        }
+//                        if (arr[2] % 4 == 0) {
+//                            days[1] = 29;
+//                        }
+//                        for (i = 0; i < 12; i++) {
+//                            if (arr[0] == months[i]) {
+//                                if (arr[1] > days[i]) {
+//                                    sbm = 1;
+//                                    document.frmAssessorModerator.id_no.value = '';
+//                                    alert("Enter Valid S.A Identification Number!!");
+//                                    document.frmAssessorModerator.id_no.focus();
+//                                }
+//                            }
+//                        }
                     });
                 if (sbm == 0) {
                     var identification_no = $("#id_no").val()
@@ -667,7 +689,7 @@ $(document).ready(function() {
                             // $("#txtIdDocument").val(result[0].);
                             $("#home_lang").val(result[0].home_language);
 
-                            $("#cit_res").prop("disabled", true);
+//                            $("#cit_res").prop("disabled", true);
                             $("#nat").attr("disabled", true);
                             $("#nat_id").prop('readonly', true);
                             $("#pass_no").prop('readonly', true);
@@ -921,7 +943,7 @@ $(document).ready(function() {
                             // $("#txtIdDocument").val(result[0].);
                             $("#home_lang").val(result[0].home_language);
 
-                            $("#cit_res").prop("disabled", true);
+//                            $("#cit_res").prop("disabled", true);
                             $("#nat").attr("disabled", true);
                             $("#nat_id").prop('readonly', true);
                             $("#pass_no").prop('readonly', true);
@@ -1177,7 +1199,7 @@ $(document).ready(function() {
                         // $("#txtIdDocument").val(result[0].);
                         $("#home_lang").val(result[0].home_language);
 
-                        $("#cit_res").prop("disabled", true);
+//                        $("#cit_res").prop("disabled", true);
                         $("#nat").attr("disabled", true);
                         $("#id_no").prop('readonly', true);
                         $("#nat_id").prop('readonly', true);
@@ -2080,7 +2102,7 @@ $(function() {
                                 $(".heading").parent("tbody").append("<tr id='lines' class='lines'><td>" + result[index]['type'] + "</td><td>" + result[index]['id_no'] + "</td><td>" + result[index]['title'] + "</td><td>" + result[index]['level1'] + "</td><td>" + result[index]['level2'] + "</td><td>" + result[index]['level3'] + "</td><td><input style='height: 15px;width: 15px;' id='check_qualification_line' type='checkbox' name='quali' value='" + result[index]['line_id'] + "' data-value='" + result[index]['id'] + "' checked/><input id='check_qualification_id' type='hidden' name='quali' value='" + result[index]['id'] + "'/></td></tr>")
                             }
                         } else {
-                            if ((result[index]['type'] == 'Core') || (result[index]['type'] == 'Fundamental') || (result[index]['type'] == 'Elective') || (result[index]['type'] == 'Core ') || (result[index]['type'] == 'Fundamental ') || (result[index]['type'] == 'Elective ')) {
+                            if ((result[index]['type'] == 'Exit Level Outcomes') ||(result[index]['type'] == 'Core') || (result[index]['type'] == 'Fundamental') || (result[index]['type'] == 'Elective') || (result[index]['type'] == 'Core ') || (result[index]['type'] == 'Fundamental ') || (result[index]['type'] == 'Elective ')) {
                                 unit_standard_line = true;
                                 $(".heading").parent("tbody").append("<tr id='lines' class='lines'><td>" + result[index]['type'] + "</td><td>" + result[index]['id_no'] + "</td><td>" + result[index]['title'] + "</td><td>" + result[index]['level1'] + "</td><td>" + result[index]['level2'] + "</td><td>" + result[index]['level3'] + "</td><td><input style='height: 15px;width: 15px;' id='check_qualification_line' disabled='disabled' type='checkbox' name='quali' value='" + result[index]['line_id'] + "' data-value='" + result[index]['id'] + "' checked/><input id='check_qualification_id' type='hidden' name='quali' value='" + result[index]['id'] + "'/></td></tr>")
                             } else {
@@ -2192,6 +2214,11 @@ $(function() {
                 },
                 success: function(result) {
                     // $("#qualification_idss").val(result.toString());
+                    if (result.length == 37) {
+                        check_limit_sum = false;
+                        alert("Please ensure all unit standards are selected when choosing an exit level outcome qualification!!")
+                        return false;
+                     }
                     if (result.length == 24) {
                         check_limit_sum = false;
                         alert("Sum of checked unit standards credits point should be greater than or equal to Minimum credits point !!")

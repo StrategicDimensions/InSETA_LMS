@@ -21,6 +21,20 @@ from dateutil.relativedelta import relativedelta
 import xlsxwriter
 from lxml import etree
 
+DEBUG = True
+
+if DEBUG:
+	import logging
+
+	logger = logging.getLogger(__name__)
+
+
+	def dbg(msg):
+		logger.info(msg)
+else:
+	def dbg(msg):
+		pass
+
 class sdf_register(models.Model):
     _name = 'sdf.register'
     _inherit = 'mail.thread'
@@ -835,8 +849,14 @@ class res_partner(models.Model):
     ## This function is written to provide validations on fields.
     @api.multi
     def write(self, vals):
+        dbg("EMPLOYERMAN"+str(vals))
+        dbg("EMPLOYERMAN:"+str(self._context))
+        # vals['context']=self._context
         user_obj = self.env['res.users']
         employer_user = user_obj.search([('partner_id','=',self.id)])
+        # checks if the vals passed are wrapped in a list. this is mainly for the updated.provider approval process
+        if type(vals) == list:
+            vals = vals[0]
         ## Checking for Employer Domain
         if vals.get('npo_ngo'):
             vals.update({'empl_status':'NPO / NGO'})

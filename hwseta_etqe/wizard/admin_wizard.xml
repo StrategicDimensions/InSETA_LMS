@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="seta_admin_wizard_view" model="ir.ui.view">
+            <field name="name">SETA admin Wizard</field>
+            <field name="model">assessor.moderator.wizard</field>
+            <field name="arch" type="xml">
+                <form string="seta.admin.wizard">
+                    <group>
+                        <group>
+<!--                            <field name="ticket_num" required="1"/>-->
+                        </group>
+
+                    </group>
+
+                    <footer>
+                        <button name="create_historical_wsp_status" string="create_historical_wsp_status" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+		<record id="action_seta_admin_wiz" model="ir.actions.act_window">
+            <field name="name">SETA link.stakeholder</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">seta.admin.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seta_admin_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem id="menu_action_seta_admin_wiz"
+				  name="ADMIN"
+				  action="action_seta_admin_wiz"
+				  groups="hwseta_etqe.group_seta_administrator"
+				  sequence="5"/>
+    </data>
+</openerp>

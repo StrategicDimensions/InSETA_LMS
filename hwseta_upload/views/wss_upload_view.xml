@@ -460,6 +460,12 @@
 
 		<!-- Menus -->
 		<menuitem id="menu_draft_wss" name="WSS" action="action_wss_draft_submission"
-			sequence="2" />
+			sequence="25" />
+		<menuitem parent="hwseta_etqe.portal_provider_transaction"
+				  action="hwseta_sdp.action_sdf_register"
+				  id="menu_sdf_register"
+				  name="SDF Registration"
+				  sequence="1"
+				  groups="base.group_portal" />
 	</data>
 </openerp>

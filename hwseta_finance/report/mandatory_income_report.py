@@ -1,5 +1,5 @@
 from openerp.osv import osv, fields
-#import mx.Datetime
+# import mx.DateTime
 from openerp.report import report_sxw
 from datetime import datetime,date, timedelta
 from openerp.tools.translate import _

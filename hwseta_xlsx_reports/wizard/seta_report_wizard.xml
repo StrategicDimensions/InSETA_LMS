@@ -9,6 +9,8 @@
             <field name="arch" type="xml">
                 <form string="Custom Reports">
                     <group>
+                        <field name="raise_info"/>
+                        <field name="raise_errors"/>
                         <field name="name"/>
                         <field name="report_type"/>
                         <field name="from_date"/>
@@ -25,8 +27,10 @@
                     <group attrs="{'invisible':[('report_type','not in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}">
                         <field name="register_assessor_or_moderator" attrs="{'required':[('report_type','in',['_register_approval_analysis','_mod_ass_register_8week_analysis'])]}"/>
                     </group>
+
                     <footer>
                         <button name="extract" string="Extract" type="object" default_focus="1" class="btn-primary"/>
+                        <button name="pull_qap" string="Pull QAP" type="object" default_focus="1" class="btn-primary" groups="hwseta_etqe.group_seta_administrator"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>

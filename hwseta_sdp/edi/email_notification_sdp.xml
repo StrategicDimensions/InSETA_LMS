@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data noupdate="1">
+    <data>
         <!-- Request for Extension Notification to Bronwen -->
         <record id="email_template_wsp_request_for_extension_bronwen" model="email.template">
-            <field name="name">WSP Request for extension(Bronwen)</field>
+            <field name="name">WSP Request for extension</field>
             <field name="subject"> WSPATR ${object.fiscal_year.name} Extension ${object.employer_id.name}:${object.employer_id.employer_sdl_no} Request</field>
-            <field name="email_to">bronwend@hwseta.org.za</field>
+            <field name="email_to">motsidishim@hwseta.org.za</field>
             <field name="email_from">no-reply@hwseta.org.za</field>
             <field name="model_id" ref="hwseta_sdp.model_wsp_plan"/>
             <field name="auto_delete" eval="False"/>
@@ -21,25 +21,25 @@
                 </tr>
                 </tbody></table>
                 
-                <p>A request has been made to the HWSETA to extend the WSPATR 2018 2019 Submission deadline to the 31st of May 2018 for the following organisation: ${object.employer_id.name}-${object.sdl_no}. </p>
+		<p>A request has been made to the HWSETA to extend the WSPATR ${object.fiscal_year.name} Submission deadline to the 31st of May 2021 for the following organisation: ${object.employer_id.name}-${object.sdl_no}. </p>
                 
                 <p>Please note that the HWSETA will assess your application and revert back to you. 
-                   Please contact us for any assistance in this regard.</p>
+                Please contact Ms. Motshidisi Marera at motshidisim@hwseta.org.za/ 011 607 7026  for any assistance in this regard.</p>
                 
                 
                 <table>
                 <tbody><tr><td>Warm Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Project Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody></table>
                 ]]></field>
         </record>  
         
         <!-- Request for Extension Notification to Luyanda -->
         <record id="email_template_wsp_request_for_extension_luyanda" model="email.template">
-            <field name="name">WSP Request for extension(Luyanda)</field>
+            <field name="name">WSP Request for extension</field>
             <field name="subject">WSPATR ${object.fiscal_year.name} Extension ${object.employer_id.name}:${object.employer_id.employer_sdl_no} Request</field>
-            <field name="email_to">luyandag@hwseta.org.za</field>
+            <field name="email_to">motshidisim@hwseta.org.za</field>
             <field name="email_from">no-reply@hwseta.org.za</field>
             <field name="model_id" ref="hwseta_sdp.model_wsp_plan"/>
             <field name="auto_delete" eval="False"/>
@@ -55,16 +55,16 @@
                 </tr>
                 </tbody></table>
                 
-                <p>A request has been made to the HWSETA to extend the WSPATR 2018 2019 Submission deadline to the 31st of May 2018 for the following organisation: ${object.employer_id.name}-${object.sdl_no}. </p>
+		<p>A request has been made to the HWSETA to extend the WSPATR ${object.fiscal_year.name} Submission deadline to the 31st of May 2021 for the following organisation: ${object.employer_id.name}-${object.sdl_no}. </p>
                 
                 <p>Please note that the HWSETA will assess your application and revert back to you. 
-                   Please contact us for any assistance in this regard.</p>
+                Please contact Ms. Motshidisi Marera at motshidisim@hwseta.org.za/ 011 607 7026 for any assistance in this regard.</p>
                 
                 
                 <table>
                 <tbody><tr><td>Warm Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Projects Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody></table>
                 ]]></field>
         </record>   
@@ -89,25 +89,23 @@
                 </tr>
                 </tbody></table>
                 
-                <p>A request has been made to the HWSETA to extend the WSPATR 2018 2019 Submission deadline to the 31st of May 2018 for the following organisation: ${object.employer_id.name}-${object.sdl_no}. </p>
+		<p>A request has been made to the HWSETA to extend the WSPATR ${object.fiscal_year.name} Submission deadline to the 31st of May 2021 for the following organisation: ${object.employer_id.name}-${object.sdl_no}. </p>
                 
                 <p>Please note that the HWSETA will assess your application and revert back to you. 
-                   Please contact us for any assistance in this regard.</p>
-                
-                
+                <p>Please contact Ms. Daphney Mafolo at daphneym1@hwseta.org.za/ 011 607 7046 for any assistance in this regard.  </p>
                 <table>
                 <tbody><tr><td>Warm Regards</td></tr>
-                <tr><td>Bronwen du Plessis</td> </tr>
-                <tr><td>WSP Manager</td></tr>
+                <tr><td>Ms Motshidisi Marera</td> </tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody></table>
                 ]]></field>
         </record> 
                      
-        <!-- Approval for Extension Notification to Bronwen -->
+        <!-- Approval for Extension Notification to Daphney  -->
         <record id="email_template_wsp_approval_for_extension_bronwen" model="email.template">
-            <field name="name">WSP Approval for extension(Bronwen)</field>
+            <field name="name">WSP Approval for extension</field>
             <field name="subject"> WSPATR ${object.fiscal_year.name} Extension ${object.employer_id.name}:${object.employer_id.employer_sdl_no} Response - Granted</field>
-            <field name="email_to">bronwend@hwseta.org.za</field>
+            <field name="email_to">daphneym1@hwseta.org.za</field>
             <field name="email_from">no-reply@hwseta.org.za</field>
             <field name="model_id" ref="hwseta_sdp.model_wsp_plan"/>
             <field name="auto_delete" eval="False"/>
@@ -134,13 +132,13 @@
                 
                 <p>The reasons provided in your appeal for an extension are valid reasons for your Organisation to have missed the regulated deadline.  </p>
                 
-                <p>Your Organisation will be permitted to complete a submission electronically on our on line system until the 31st of May 2018. If the submission is completed in this timeframe and approved by the HSETA it will be granted an, “Accepted” status.</p>
-                <p>Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the 2019 Year. Please ensure that you are well prepared for next year’s submission and provide us with a new plan for 2018-2019 .That deadline is the 30th of April 2018</p>
-                <p>Please contact us for any further assistance or clarity you need. Ms Motshidisi Marera: motshidisim@hwseta.org / 011 607 7026</p>
+                <p>Your Organisation will be permitted to complete a submission electronically on our on line system until the 31st of May 2021. If the submission is completed in this timeframe and approved by the HWSETA it will be granted an, “Accepted” status.</p>
+		<p>Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the ${object.fiscal_year.name} Year. Please ensure that you are well prepared for next year’s submission and provide us with a new plan for ${object.fiscal_year.name} .That deadline is the 30th of April 2021</p>
+                <p>Please contact us for any further assistance or clarity you need. Ms Daphney Mafolo: daphneym1@hwseta.org.za / 011 607 7046</p>
                 <table>
                 <tbody><tr><td>Warm Regards</td></tr>
-                <tr><td>Patrick Samuels</td> </tr>
-                <tr><td>Executive Manager</td></tr>
+                <tr><td>Mlulamisi Mhlanga</td> </tr>
+                <tr><td>WSP Manager</td></tr>
                  <tr><td>HWSETA</td></tr>
                 </tbody></table>
                 ]]></field>
@@ -148,13 +146,13 @@
         
         <!-- Approval for Extension Notification to Luyanda -->
         <record id="email_template_wsp_approval_for_extension_luyanda" model="email.template">
-            <field name="name">WSP Approval for extension(Luyanda)</field>
+            <field name="name">WSP Approval for extension</field>
             <field name="subject">WSPATR ${object.fiscal_year.name} Extension ${object.employer_id.name}:${object.employer_id.employer_sdl_no} Request -Granted</field>
-            <field name="email_to">luyandag@hwseta.org.za</field>
+            <field name="email_to">daphneym1@hwseta.org.za</field>
             <field name="email_from">no-reply@hwseta.org.za</field>
             <field name="model_id" ref="hwseta_sdp.model_wsp_plan"/>
             <field name="auto_delete" eval="False"/>
-             <field name="lang">en_US</field> 
+            <field name="lang">en_US</field>
               <field name="body_html"><![CDATA[
                 <table>
                 <tbody><tr><td>Date :&nbsp;</td><td><b> ${object.name}</b></td></tr>
@@ -177,16 +175,17 @@
                 
                 <p>The reasons provided in your appeal for an extension are valid reasons for your Organisation to have missed the regulated deadline.  </p>
                 
-                <p>Your Organisation will be permitted to complete a submission electronically on our on line system until the 31st of May 2018. If the submission is completed in this timeframe and approved by the HSETA it will be granted an, “Accepted” status.</p>
-                <p>Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the 2019 Year. Please ensure that you are well prepared for next year’s submission and provide us with a new plan for 2018-2019 .That deadline is the 30th of April 2018</p>
-                <p>Please contact us for any further assistance or clarity you need. Ms Motshidisi Marera: motshidisim@hwseta.org / 011 607 7026</p>
+                <p>Your Organisation will be permitted to complete a submission electronically on our on line system until the 31st of May 2021. If the submission is completed in this timeframe and approved by the HWSETA it will be granted an, “Accepted” status.</p>
+		<p>Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the ${object.fiscal_year.name} Year. Please ensure that you are well prepared for next year’s submission and provide us with a new plan for ${object.fiscal_year.name} .That deadline is the 30th of April 2021</p>
+                <p>Please contact us for any further assistance or clarity you need. Ms Daphney Mafolo: daphneym1@hwseta.org.za / 011 607 7046</p>
                 <table>
                 <tbody><tr><td>Warm Regards</td></tr>
-                <tr><td>Patrick Samuels</td> </tr>
-                <tr><td>Executive Manager</td></tr>
+                <tr><td>Mlulamisi Mhlanga</td> </tr>
+                <tr><td>WSP Manager</td></tr>
                  <tr><td>HWSETA</td></tr>
                 </tbody></table>
                 ]]></field>
+
         </record>   
         
         <!-- Approval for Extension Notification to employer -->
@@ -197,7 +196,8 @@
             <field name="email_from">no-reply@hwseta.org.za</field>
             <field name="model_id" ref="hwseta_sdp.model_wsp_plan"/>
             <field name="auto_delete" eval="False"/>
-             <field name="lang">en_US</field> 
+            <field name="lang">en_US</field>
+
               <field name="body_html"><![CDATA[
                 <table>
                 <tbody><tr><td>Date :&nbsp;</td><td><b> ${object.name}</b></td></tr>
@@ -220,15 +220,16 @@
                 
                 <p>The reasons provided in your appeal for an extension are valid reasons for your Organisation to have missed the regulated deadline.  </p>
                 
-                <p>Your Organisation will be permitted to complete a submission electronically on our on line system until the 31st of May 2018. If the submission is completed in this timeframe and approved by the HSETA it will be granted an, “Accepted” status.</p>
-                <p>Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the 2019 Year. Please ensure that you are well prepared for next year’s submission and provide us with a new plan for 2018-2019 .That deadline is the 30th of April 2018</p>
+                <p>Your Organisation will be permitted to complete a submission electronically on our on line system until the 31st of May 2021. If the submission is completed in this timeframe and approved by the HWSETA it will be granted an, “Accepted” status.</p>
+		<p>Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the ${object.fiscal_year.name} Year. Please ensure that you are well prepared for next year’s submission and provide us with a new plan for ${object.fiscal_year.name} .That deadline is the 30th of April 2021</p>
                 <p>Please contact us for any further assistance or clarity you need. Ms Motshidisi Marera: motshidisim@hwseta.org / 011 607 7026</p>
                 <table>
                 <tbody><tr><td>Warm Regards</td></tr>
-                <tr><td>Patrick Samuels</td> </tr>
-                <tr><td>Executive Manager</td></tr>
-                 <tr><td>HWSETA</td></tr>
+                <tr><td>Mlulamisi Mhlanga</td> </tr>
+                <tr><td>WSP Manager</td></tr>
+                <tr><td>HWSETA</td></tr>
                 </tbody></table>
+
                 ]]></field>
         </record>  
     
@@ -295,10 +296,83 @@
                 <table>
                 <tbody><tr><td>Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Projects Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody></table>
                 ]]></field>
         </record>   
+
+
+        <record id="email_template_sdf_individual_register_submit_internal" model="email.template">
+            <field name="name">SDF Registration Submission (to SDF)</field>
+            <field name="subject">SDF Registration Submission</field>
+            <field name="email_to">${object.work_email}</field>
+            <field name="email_from">no-reply@hwseta.org.za</field>
+            <field name="model_id" ref="hwseta_sdp.model_sdf_register"/>
+            <field name="auto_delete" eval="False"/>
+             <field name="lang">en_US</field>
+              <field name="body_html"><![CDATA[
+                <table>
+                <tbody><tr><td>SDF Name :&nbsp;</td><td><b> ${object.name}</b></td></tr>
+                </tbody></table>
+                <br>
+
+                <table>
+                <tbody><tr><td><div>Name of Organisation :<b>
+                % for data in object.employer_ids:
+                    ${data.employer_id.name}
+                    <span>,</span>
+                % endfor
+                </b>
+                </div></td></tr>
+                </tbody></table>
+                <br>
+
+                <table>
+                <tbody><tr><td><div>SDL Number of Organisation :<b>
+                % for data in object.employer_ids:
+                    ${data.sdl_no}
+                    <span>,</span>
+                % endfor
+                </b>
+                </div></td></tr>
+                </tbody></table>
+                <br>
+
+                <table>
+                <tbody><tr><td>Application Unique Number :&nbsp;</td><td><b>${object.sdf_reference_no}</b></td> </tr>
+                </tbody></table>
+                <br>
+
+                <table>
+                <tbody><tr><td>Dear </td><td><b>&nbsp;${object.name}</b>,</td>
+                </tr>
+                </tbody></table>
+
+                <p><u>Application for Skills Development Facilitator Registration</u></p>
+
+                <p>This email is to confirm that you have made an application to be the Skills Development Facilitator for <b>
+                % for data in object.employer_ids:
+                    ${data.employer_id.name}
+                    <span>-</span>
+                    ${data.sdl_no}
+                    <span>,</span>
+                % endfor
+                </b> In order to finalise your application please send through a letter confirming your status as the SDF to <a href="">Tiyanin@hwseta.org.za </a><br><br>
+
+                If you should have any queries please contact Ms Motshidisi Marera on <a href="">motshidisim@hwseta.org </a> or 011 607 7026.</p>
+
+
+                <table>
+                <tbody><tr><td>Regards</td></tr>
+                <tr><td>Ms Motshidisi Marera</td> </tr>
+                <tr><td>Projects Officer</td></tr>
+                </tbody></table>
+                ]]></field>
+        </record>
+
+
+
+
 
         <record id="email_template_individual_sdf_register_approve" model="email.template">
             <field name="name">SDF Registration Approval (to Organisation)</field>
@@ -597,7 +671,7 @@
                 <table>
                 <tbody><tr><td>Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Projects Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody></table>
                 ]]>
             </field>
@@ -648,20 +722,20 @@
                 </tr>
                 </tbody></table>
                 
-                <p>Workplace Skills Plan and Annual Training Report 2018-2019 Submission ${object.sdl_no}.</br></br>
+		<p>Workplace Skills Plan and Annual Training Report ${object.fiscal_year.name} Submission ${object.sdl_no}.</br></br>
                 
                 Please be advised that the Workplace Skills Plan and Annual Training Report</br></br>
                 
-                2018-2019 has been submitted to the HWSETA. The Submission will be evaluated </br></br>
+		${object.fiscal_year.name} has been submitted to the HWSETA. The Submission will be evaluated </br></br>
                 
                 and the organisation notified if any further information is required.</br></br>
                 
-                <p>For Further information please contact Tiisetso Shidi – 011 6076962 – <u>tiisetsos@hwseta.org.za</u>.</br></br>
+                <p>For Further information please contact Ms Tiisetso Shidi – 011 6076962 – <u>tiisetsos@hwseta.org.za</u>.</br></br>
                 
                 <table>
                 <tbody><tr><td>Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Project Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody>
                 </table>
                 ]]>
@@ -785,7 +859,7 @@
         <!-- WSP Acceptance Email Notification  -->
         
         <record id="email_template_wsp_acceptance" model="email.template">
-            <field name="name">WSP Acceptance (to SDF)</field>
+            <field name="name">WSP Appeal Acceptance (to SDF)</field>
             <field name="subject">WSPATR ${object.fiscal_year.name} Appeal ${object.employer_id.name} - ${object.employer_id.employer_sdl_no} Response</field>
             <field name="email_to">${object.sdf_id.work_email}</field>
             <field name="email_from">no-reply@hwseta.org.za</field>
@@ -812,14 +886,14 @@
                 
                 <p>The reasons provided in your appeal are valid reasons for your Organisation to have missed the regulated deadline.</br></br>
                 
-                Your Organisation will, however, be permitted to complete a submission electronically on our on line system. Access to the system will be granted from the 1st to the 31th of May 2018 in order for you to complete your submission. If the submission is completed in this timeframe and approved by the HSETA it will be granted an, “Accepted” status.</br></br>
+                Your Organisation will, however, be permitted to complete a submission electronically on our on line system. Access to the system will be granted until the 31st of May 2021 in order for you to complete your submission. If the submission is completed in this timeframe and approved by the HWSETA it will be granted an, “Accepted” status.</br></br>
                 
-                Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the 2019 Year. Please contact us for any further assistance or clarity you need.</br></br>
+		Completing this submission will enable your Organisation to participate in the Mandatory and Discretionary Funding for the ${object.fiscal_year.name} Year. Please contact us for any further assistance or clarity you need.</br></br>
                 
 
                 <table>
                 <tr><td>Warm Regards</td></tr>
-                <tr><td>Executive Manager</td> </tr>
+                <tr><td>WSP Manager</td> </tr>
                 <tr><td>HWSETA</td></tr>
                 </table>
                 ]]>
@@ -862,13 +936,13 @@
                 <br>
                 <b>WORKPLACE SKILLS PLAN AND ANNUAL TRAINING REPORT ${object.fiscal_year.name} APPROVAL</b><br><br>
                 Please be advised that the Workplace Skills Plan and Annual Training Report <b>${object.fiscal_year.name}</b> submission for your organisation has been approved.<br><br>
-                For any further information please contact Tiisetso Shidi: <b>tiisetsos@hwseta.org.za</b><br><br>
+                For any further information please contact Ms Tiisetso Shidi: <b>tiisetsos@hwseta.org.za</b> / <b>011 607 6962</b><br>
                 Thank you for assisting us in <b>“Bridging the Skills Gap”</b>.<br><br><br><br>
                 
                 <table>
                 <tr><td><b>Yours faithfully</b></td></tr>
-                <tr><td>Mr. Sikhumbuzo Gcabashe</td> </tr>
-                <tr><td><b>Acting SDP Executive Manager</b></td></tr>
+                <tr><td>Mr. Mlulamisi Mhlanga</td> </tr>
+                <tr><td><b>WSP Manager</b></td></tr>
                 </table>
                 ]]>
             </field>
@@ -911,14 +985,14 @@
                 <b>WORKPLACE SKILLS PLAN AND ANNUAL TRAINING REPORT ${object.fiscal_year.name} Rejection – ${object.employer_id.employer_sdl_no}</b><br><br>
                 Please be advised that the Workplace Skills Plan and Annual Training Report <b>${object.fiscal_year.name}</b> as submitted by your organisation has been <b>Rejected</b>.<br><br>
                 Information has been requested but has not been supplied by the due date:<br><br>
-                For any further information please contact Tiisetso Shidi: <b>tiisetsos@hwseta.org.za</b><br><br>
+                For any further information please contact Ms. Tiisetso Shidi: <b>tiisetsos@hwseta.org.za</b> / <b>011 607 6962</b><br><br>
                 Thank you for assisting us in <b>“Bridging the Skills Gap”</b>.<br><br><br><br>
-                
                 <table>
                 <tr><td><b>Yours faithfully</b></td></tr>
-                <tr><td>Mr. Sikhumbuzo Gcabashe</td> </tr>
-                <tr><td><b>Acting SDP Executive Manager</b></td></tr>
+                <tr><td>Mr. Mlulamisi Mhlanga</td> </tr>
+                <tr><td><b>WSP Manager</b></td></tr>
                 </table>
+                
                 ]]>
             </field>
         </record>
@@ -969,20 +1043,20 @@
                 </tr>
                 </tbody></table>
                 
-                <p>Workplace Skills Plan and Annual Training Report 2018-2019 Submission ${object.sdl_no}.</br></br>
+		<p>Workplace Skills Plan and Annual Training Report ${object.fiscal_year.name} Submission ${object.sdl_no}.</br></br>
                 
                 Please be advised that the Workplace Skills Plan and Annual Training Report</br></br>
                 
-                2018-2019 has been submitted to the HWSETA. The Submission will be evaluated </br></br>
+		${object.fiscal_year.name} has been submitted to the HWSETA. The Submission will be evaluated </br></br>
                 
                 and the organisation notified if any further information is required.</br></br>
                 
-                <p>For Further information please contact Tiisetso Shidi – 011 6076962 – <u>tiisetsos@hwseta.org.za</u>.</br></br>
+                <p>For Further information please contact Ms Tiisetso Shidi – 011 6076962 – <u>tiisetsos@hwseta.org.za</u>.</br></br>
                 
                 <table>
                 <tbody><tr><td>Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Project Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody>
                 </table>
                 ]]>
@@ -1223,7 +1297,7 @@
                 <table>
                 <tbody><tr><td>Regards</td></tr>
                 <tr><td>Ms Motshidisi Marera</td> </tr>
-                <tr><td>Projects Officer</td></tr>
+                <tr><td>WSP Officer</td></tr>
                 </tbody></table>
                 ]]>
             </field>

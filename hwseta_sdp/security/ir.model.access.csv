@@ -586,3 +586,5 @@ access_employer_sdl_no_group_auditor_access,employer.sdl.no,hwseta_finance.model
 
 access_document_library_sdf,document.library,hwseta_sdp.model_document_library,hwseta_sdp.group_sdf_user,1,0,0,0
 access_document_library_sdp_manager,document.library,hwseta_sdp.model_document_library,hwseta_sdp.group_sdp_manager,1,1,1,1
+
+access_scheme_year_group_sdf_user,scheme.year,hwseta_finance.model_scheme_year,hwseta_sdp.group_sdf_user,1,0,0,0

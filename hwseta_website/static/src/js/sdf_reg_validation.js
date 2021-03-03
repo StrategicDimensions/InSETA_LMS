@@ -1249,6 +1249,24 @@ $('#cboPostalCountry option:contains("South Africa")').prop('selected',true).tri
     });	
 	
 	$("#id_number").change(function(){
+	    console.log("got here")
+	    console.log("bang")
+//	    var identification_no = $("#id_number").val()
+//            $.ajax({
+//                url: "/page/validate_identification_no_sdf",
+//                type: "post",
+//                dataType: "json",
+//                async: true,
+//                data: {
+//                    'identification_no': identification_no
+//                },
+//                success: function(result) {
+//                    console.log(result);
+//                    console.log(result['result']['message']);
+//                    console.log(typeof result['result']['message']);
+//                    alert(result['result']['message']);
+//                }
+//                });
 		$('#id_number').css("border-color","#cccccc");
 		var dateOfBirth = '';
 		if(!(/\D/.test($("#id_number").val()))){
@@ -1271,32 +1289,54 @@ $('#cboPostalCountry option:contains("South Africa")').prop('selected',true).tri
 		        dt = dateOfBirth
 		        $(document).ready(
 		            function (){
-		               var arr=dt.split("/");
-		               var i = 0;
-		               if(arr[1] > 12)
-		               {
-		                   sbm=1;
-		                   $('#id_number').val('');
-		                   alert("Enter Valid S.A Identification Number!!");
-		                   $('#id_number').focus();
-		               }
-		               if(arr[2] % 4 == 0)
-		               {
-		                   days[1] = 29;
-		               }
-		               for(i=0;i<12;i++)
-		               {
-		                   if(arr[1] == months[i])  
-		                   {
-		                           if(arr[0] > days[i])
-		                       {
-		                           sbm=1;
-		                           $('#id_number').val('');
-		                           alert("Enter Valid S.A Identification Number!!");
-		                           $('#id_number').focus();
-		                       }
-		                    }
-		               }
+		                var identification_no = $("#id_number").val()
+                        $.ajax({
+                            url: "/page/validate_identification_no_sdf",
+                            type: "post",
+                            dataType: "json",
+                            async: true,
+                            data: {
+                                'identification_no': identification_no
+                            },
+                            success: function(result) {
+                                console.log(result);
+                                console.log(result['result']['message']);
+                                console.log(typeof result['result']['message']);
+                                if (result['result']['title'].includes("Invalid")) {
+                                    console.log("found invalid title")
+                                    sbm=1;
+                                    $('#id_number').val('');
+                                    alert(result['result']['message']);
+                                    $('#id_number').focus();
+                                    };
+                                }
+                            });
+//		               var arr=dt.split("/");
+//		               var i = 0;
+//		               if(arr[1] > 12)
+//		               {
+//		                   sbm=1;
+//		                   $('#id_number').val('');
+//		                   alert("Enter Valid S.A Identification Number!!");
+//		                   $('#id_number').focus();
+//		               }
+//		               if(arr[2] % 4 == 0)
+//		               {
+//		                   days[1] = 29;
+//		               }
+//		               for(i=0;i<12;i++)
+//		               {
+//		                   if(arr[1] == months[i])
+//		                   {
+//		                           if(arr[0] > days[i])
+//		                       {
+//		                           sbm=1;
+//		                           $('#id_number').val('');
+//		                           alert("Enter Valid S.A Identification Number!!");
+//		                           $('#id_number').focus();
+//		                       }
+//		                    }
+//		               }
 		            });
 		            if(sbm == 0){
 		            	var identification_no=$("#id_number").val()
@@ -1346,53 +1386,70 @@ $('#cboPostalCountry option:contains("South Africa")').prop('selected',true).tri
     	});		
 	})	;	
 
-/*	$("#id_number").change(function(){
-		$('#id_number').css("border-color","#cccccc");
-		var dateOfBirth = '';
-		var southAfricanId = $("#id_number").val().toString();
-	    dateOfBirth = southAfricanId.substring(2,4)+'/'+southAfricanId.substring(4,6)+'/19'+southAfricanId.substring(0,2)
-        var dt;
-        var sbm=0;
-        var months = [1,2,3,4,5,6,7,8,9,10,11,12];
-        var days = [31,28,31,30,31,30,31,31,30,31,30,31];
-        dt = dateOfBirth
-        $(document).ready(
-            function (){
-               var arr=dt.split("/");
-               var i = 0;
-               if(arr[0] > 12)
-               {
-                   sbm=1;
-                   $('#id_number').val('');
-                   $('#id_number').focus();
-                   alert("Enter Valid S.A Identification Number!!");
-               }
-               if(arr[2] % 4 == 0)
-               {
-                   days[1] = 29;
-               }
-               for(i=0;i<12;i++)
-               {
-                   if(arr[0] == months[i])  
-                   {
-                           if(arr[1] > days[i])
-                       {
-                           sbm=1;
-                           $('#id_number').val('');
-                           $('#id_number').focus();
-                           alert("Enter Valid S.A Identification Number!!");
-                           
-                       }
-                       
-                    }
-               }
-            });
-            if(sbm == 0){
-				$('#datepicker_sdf').val(dt);		
-				$("#BirthDate").val(dt);
-            }
-                	 		
-	});*/	
+//	$("#id_number").change(function(){
+//	    console.log("bang")
+//	    var identification_no = $("#id_number").val()
+//            $.ajax({
+//                url: "/page/validate_identification_no_sdf",
+//                type: "post",
+//                dataType: "json",
+//                async: true,
+//                data: {
+//                    'identification_no': identification_no
+//                },
+//                success: function(result) {
+//                    console.log(result);
+//                    console.log(result['result']['message']);
+//                    console.log(typeof result['result']['message']);
+//                    alert(result['result']['message']);
+//                }
+//                });
+//		$('#id_number').css("border-color","#cccccc");
+//		var dateOfBirth = '';
+//		var southAfricanId = $("#id_number").val().toString();
+//	    dateOfBirth = southAfricanId.substring(2,4)+'/'+southAfricanId.substring(4,6)+'/19'+southAfricanId.substring(0,2)
+//        var dt;
+//        var sbm=0;
+//        var months = [1,2,3,4,5,6,7,8,9,10,11,12];
+//        var days = [31,28,31,30,31,30,31,31,30,31,30,31];
+//        dt = dateOfBirth
+//        $(document).ready(
+//            function (){
+//               var arr=dt.split("/");
+//               var i = 0;
+//               if(arr[0] > 12)
+//               {
+//                   sbm=1;
+////                   $('#id_number').val('');
+//                   $('#id_number').focus();
+//                   alert("Enter Valid S.A Identification Number!!");
+//               }
+//               if(arr[2] % 4 == 0)
+//               {
+//                   days[1] = 29;
+//               }
+//               for(i=0;i<12;i++)
+//               {
+//                   if(arr[0] == months[i])
+//                   {
+//                           if(arr[1] > days[i])
+//                       {
+//                           sbm=1;
+////                           $('#id_number').val('');
+//                           $('#id_number').focus();
+//                           alert("Enter Valid S.A Identification Number!!");
+//
+//                       }
+//
+//                    }
+//               }
+//            });
+//            if(sbm == 0){
+//				$('#datepicker_sdf').val(dt);
+//				$("#BirthDate").val(dt);
+//            }
+//
+//	});
 
 	
 //  added by vishwas for getting home address and postal address same

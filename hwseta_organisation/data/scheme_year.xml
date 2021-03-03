@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="scheme_year_1" model="scheme.year">
+      <field name="name">2000</field>
+      <field name="code">2000</field>
+    </record>
+    <record id="scheme_year_2" model="scheme.year">
+      <field name="name">2001</field>
+      <field name="code">2001</field>
+    </record>
+    <record id="scheme_year_3" model="scheme.year">
+      <field name="name">2002</field>
+      <field name="code">2002</field>
+    </record>
+    <record id="scheme_year_4" model="scheme.year">
+      <field name="name">2003</field>
+      <field name="code">2003</field>
+    </record>
+    <record id="scheme_year_5" model="scheme.year">
+      <field name="name">2004</field>
+      <field name="code">2004</field>
+    </record>
+    <record id="scheme_year_6" model="scheme.year">
+      <field name="name">2005</field>
+      <field name="code">2005</field>
+    </record>
+    <record id="scheme_year_7" model="scheme.year">
+      <field name="name">2006</field>
+      <field name="code">2006</field>
+    </record>
+    <record id="scheme_year_8" model="scheme.year">
+      <field name="name">2007</field>
+      <field name="code">2007</field>
+    </record>
+    <record id="scheme_year_9" model="scheme.year">
+      <field name="name">2008</field>
+      <field name="code">2008</field>
+    </record>
+    <record id="scheme_year_10" model="scheme.year">
+      <field name="name">2009</field>
+      <field name="code">2009</field>
+    </record>
+    <record id="scheme_year_11" model="scheme.year">
+      <field name="name">2010</field>
+      <field name="code">2010</field>
+    </record>
+    <record id="scheme_year_12" model="scheme.year">
+      <field name="name">2011</field>
+      <field name="code">2011</field>
+    </record>
+    <record id="scheme_year_13" model="scheme.year">
+      <field name="name">2012</field>
+      <field name="code">2012</field>
+    </record>
+    <record id="scheme_year_14" model="scheme.year">
+      <field name="name">2013</field>
+      <field name="code">2013</field>
+    </record>
+    <record id="scheme_year_15" model="scheme.year">
+      <field name="name">2014</field>
+      <field name="code">2014</field>
+    </record>
+    <record id="scheme_year_16" model="scheme.year">
+      <field name="name">2015</field>
+      <field name="code">2015</field>
+    </record>
+    <record id="scheme_year_17" model="scheme.year">
+      <field name="name">2016</field>
+      <field name="code">2016</field>
+    </record>
+    <record id="scheme_year_18" model="scheme.year">
+      <field name="name">2017</field>
+      <field name="code">2017</field>
+    </record>
+    <record id="scheme_year_19" model="scheme.year">
+      <field name="name">2018</field>
+      <field name="code">2018</field>
+    </record>
+    <record id="scheme_year_20" model="scheme.year">
+      <field name="name">2019</field>
+      <field name="code">2019</field>
+    </record>
+    <record id="scheme_year_21" model="scheme.year">
+      <field name="name">2020</field>
+      <field name="code">2020</field>
+    </record>
+    <record id="scheme_year_22" model="scheme.year">
+      <field name="name">2021</field>
+      <field name="code">2021</field>
+    </record>
+  </data>
+</openerp>

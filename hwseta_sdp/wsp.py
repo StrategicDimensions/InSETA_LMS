@@ -226,8 +226,41 @@ class wsp_plan(models.Model):
 
     @api.one
     def _get_request_extension_state(self):
+        dbg("_get_request_extension_state")
         admin_config_data = self.env['leavy.income.config'].search([])
         wsp_end_date = ''
+        wsp_ext_date = ''
+        if admin_config_data:
+            if len(admin_config_data) > 1:
+                wsp_end_date = admin_config_data[0].wsp_end_date
+                wsp_ext_date = admin_config_data[0].wsp_extension_date
+            else:
+                wsp_end_date = admin_config_data.wsp_end_date
+                wsp_ext_date = admin_config_data.wsp_extension_date
+            wsp_end_date = datetime.strptime(wsp_end_date, '%Y-%m-%d').date()
+            wsp_ext_date = datetime.strptime(wsp_ext_date, '%Y-%m-%d').date()
+        current_date = datetime.now().date()
+        dbg("ext:" + str(wsp_ext_date))
+        dbg("end:" + str(wsp_end_date))
+        dbg("current:" + str(current_date))
+        # this is where it should truly show because its beyond end date but before ext date
+        if wsp_end_date and (current_date > wsp_end_date) and (current_date < wsp_ext_date) and not self.allow_extension and not self.extension_allowed:
+            dbg("current date greater than end date but smaller than ext date")
+            self.request_extension = True
+        elif wsp_end_date and (current_date > wsp_end_date) and (current_date > wsp_ext_date) and not self.allow_extension and not self.extension_allowed:
+            dbg("current date greater than end date")
+            self.request_extension = False
+
+
+        else:
+            self.request_extension = False
+
+    @api.one
+    def _get_submittable_state(self):
+        dbg("_get_submittable_state")
+        admin_config_data = self.env['leavy.income.config'].search([])
+        wsp_end_date = ''
+        submittable = False
         if admin_config_data:
             if len(admin_config_data) > 1:
                 wsp_end_date = admin_config_data[0].wsp_end_date
@@ -235,10 +268,22 @@ class wsp_plan(models.Model):
                 wsp_end_date = admin_config_data.wsp_end_date
             wsp_end_date = datetime.strptime(wsp_end_date, '%Y-%m-%d').date()
         current_date = datetime.now().date()
+        # this is to hide submit
         if wsp_end_date and (current_date > wsp_end_date) and not self.allow_extension and not self.extension_allowed:
-            self.request_extension = True
+            submittable = False
+        # this is if its not been manually requested or allowed but date is good to show submit
+        elif wsp_end_date and (current_date <= wsp_end_date) and not self.allow_extension and not self.extension_allowed:
+            submittable = True
+        # date is good, dont care if the states have been set or not
+        elif wsp_end_date and (current_date <= wsp_end_date) and (self.allow_extension or self.extension_allowed):
+            submittable = True
+        # date is bad but ext has been allowed so override
+        elif wsp_end_date and (current_date > wsp_end_date) and self.extension_allowed:
+            submittable = True
         else:
-            self.request_extension = False
+            submittable = False
+        self.submittable = submittable
+
 
     @api.model
     def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
@@ -372,6 +417,7 @@ class wsp_plan(models.Model):
 
     @api.model
     def default_get(self, fields_list):
+        dbg('default_get')
         res = super(wsp_plan, self).default_get(fields_list=fields_list)
         inter_ids = [(0, 0, {'type_training': inter_data.id}) for inter_data in self.env[
             'training.intervention'].search([('pivotal', '=', False)])]
@@ -380,17 +426,47 @@ class wsp_plan(models.Model):
         res.update(
             {'variance_ids': inter_ids, 'variance_pivotal_ids': inter_pivotal_ids})
         # Checking for Extension.
+        # admin_config_data = self.env['leavy.income.config'].search([])
+        # wsp_end_date = ''
+        # if admin_config_data:
+        #     if len(admin_config_data) > 1:
+        #         wsp_end_date = admin_config_data[0].wsp_end_date
+        #     else:
+        #         wsp_end_date = admin_config_data.wsp_end_date
+        #     wsp_end_date = datetime.strptime(wsp_end_date, '%Y-%m-%d').date()
+        # current_date = datetime.now().date()
+        # if wsp_end_date and (current_date > wsp_end_date):
+        #     res.update({'request_extension': True})
         admin_config_data = self.env['leavy.income.config'].search([])
         wsp_end_date = ''
+        wsp_ext_date = ''
         if admin_config_data:
             if len(admin_config_data) > 1:
                 wsp_end_date = admin_config_data[0].wsp_end_date
+                wsp_ext_date = admin_config_data[0].wsp_extension_date
             else:
                 wsp_end_date = admin_config_data.wsp_end_date
+                wsp_ext_date = admin_config_data.wsp_extension_date
             wsp_end_date = datetime.strptime(wsp_end_date, '%Y-%m-%d').date()
+            wsp_ext_date = datetime.strptime(wsp_ext_date, '%Y-%m-%d').date()
         current_date = datetime.now().date()
-        if wsp_end_date and (current_date > wsp_end_date):
+        dbg("ext:" + str(wsp_ext_date))
+        dbg("end:" + str(wsp_end_date))
+        dbg("current:" + str(current_date))
+        if wsp_end_date and (current_date <= wsp_end_date) and not self.allow_extension and not self.extension_allowed:
+            dbg("current date less or eq than end date but  ext date")
+            res.update({'request_extension': False, 'submittable':True})
+        # this is where it should truly show because its beyond end date but before ext date
+        if wsp_end_date and (current_date > wsp_end_date) and (
+                current_date <= wsp_ext_date) and not self.allow_extension and not self.extension_allowed:
+            dbg("current date greater than end date but smaller than ext date")
             res.update({'request_extension': True})
+        elif wsp_end_date and (current_date > wsp_end_date) and (
+                current_date > wsp_ext_date) and not self.allow_extension and not self.extension_allowed:
+            dbg("current date greater than end date")
+            res.update({'request_extension': False})
+        else:
+            res.update({'request_extension': False})
         return res
         
         
@@ -1344,6 +1420,7 @@ class wsp_plan(models.Model):
     extension_date = fields.Date(string='WSP Extension Date')
     # Fields for extension
     request_extension = fields.Boolean(string='Request Extension', compute='_get_request_extension_state')
+    submittable = fields.Boolean(string='Can be submitted', compute='_get_submittable_state')
     #request_extension = fields.Boolean(string='Request Extension')
     allow_extension = fields.Boolean(string='Allow Extension')
     show_extension_date = fields.Boolean(string='Show Extension')
@@ -1793,8 +1870,25 @@ class wsp_plan(models.Model):
         if not self.training_planned_ids:
             raise Warning(_('Please enter Planned Training data!'))
         user = self.env['res.users'].browse(self._uid)
-        self.employer_id.write({'wsp_submission_ids': [(0, 0, {'name': self.name, 'fiscal_year': fiscal_year_data.id, 'status': 'submitted', 'employer_id':
+        year_env = self.env['scheme.year']
+        good_year = year_env.search([('code', '=', fiscal_year_data.scheme_year_id.name)])
+        self.employer_id.write({'wsp_submission_ids': [(0, 0, {'name': self.name,'org_year':good_year.id ,'fiscal_year': fiscal_year_data.id, 'status': 'submitted', 'employer_id':
                                                                self.employer_id.id, 'last_user_evaluated_updated': user.name, 'wsp_date_submitted': datetime.today().date(), 'date_created': self.create_date})]})
+        wsp_submission_data = self.env['wsp.submission.track'].search(
+            [('employer_id', '=', self.employer_id.id), ('fiscal_year', '=', self.fiscal_year.id),
+             ('name', '=', self.name)])
+        wsp_sub_dat = wsp_submission_data.read()
+        if wsp_sub_dat:
+            # raise Warning(wsp_sub_dat)
+            for field in wsp_sub_dat[0].keys():
+                if type(wsp_sub_dat[0].get(field)) == tuple:
+                    wsp_sub_dat[0].update({field: wsp_sub_dat[0].get(field)[0]})
+            for child in self.employer_id.child_employer_ids:
+                child_partner = child.employer_id
+                dbg(child_partner)
+                wsp_sub_dat[0].update({'employer_id': child_partner.id})
+                wsp_submission_data = self.env['wsp.submission.track'].create(wsp_sub_dat[0])
+                dbg(wsp_submission_data)
         ##
         # Validating Planned WSP Detail Type Sections.
         if self.wsp_details_type == 'planned':
@@ -1897,8 +1991,26 @@ class wsp_plan(models.Model):
         # Putting entry under Employer master.
         wsp_submission_data = self.env['wsp.submission.track'].search(
             [('employer_id', '=', self.employer_id.id), ('fiscal_year', '=', self.fiscal_year.id), ('name', '=', self.name)])
+        wsp_sub_dat = False
         if wsp_submission_data:
             wsp_submission_data.write({'status': 'evaluated'})
+            wsp_sub_dat = wsp_submission_data.read()
+            # todo: write the chile status loop
+        if wsp_sub_dat:
+            # raise Warning(wsp_sub_dat)
+            for field in wsp_sub_dat[0].keys():
+                if type(wsp_sub_dat[0].get(field)) == tuple:
+                    wsp_sub_dat[0].update({field: wsp_sub_dat[0].get(field)[0]})
+            for child in self.employer_id.child_employer_ids:
+                child_partner = child.employer_id
+                child_wsp_submission_data = self.env['wsp.submission.track'].search(
+                    [('employer_id', '=', child_partner.id), ('fiscal_year', '=', self.fiscal_year.id),
+                     ('name', '=', self.name)])
+
+                dbg(child_partner)
+                wsp_sub_dat[0].update({'employer_id':child_partner.id})
+                child_wsp_submission_data.write(wsp_sub_dat[0])
+                dbg(wsp_submission_data)
         self = self.with_context({'from_wsp_evaluated': True})
         self.employer_id.write({'wsp_submitted': True})
         self.write({'approved_by': self._uid})
@@ -1927,8 +2039,26 @@ class wsp_plan(models.Model):
         # Putting entry under Employer master.
         wsp_submission_data = self.env['wsp.submission.track'].search(
             [('employer_id', '=', self.employer_id.id), ('fiscal_year', '=', self.fiscal_year.id), ('name', '=', self.name)])
+        wsp_sub_dat = False
         if wsp_submission_data:
             wsp_submission_data.write({'status': 'evaluated'})
+            wsp_sub_dat = wsp_submission_data.read()
+            # todo: add the child write loop
+        if wsp_sub_dat:
+            # raise Warning(wsp_sub_dat)
+            for field in wsp_sub_dat[0].keys():
+                if type(wsp_sub_dat[0].get(field)) == tuple:
+                    wsp_sub_dat[0].update({field: wsp_sub_dat[0].get(field)[0]})
+            for child in self.employer_id.child_employer_ids:
+                child_partner = child.employer_id
+                child_wsp_submission_data = self.env['wsp.submission.track'].search(
+                    [('employer_id', '=', child_partner.id), ('fiscal_year', '=', self.fiscal_year.id),
+                     ('name', '=', self.name)])
+
+                dbg(child_partner)
+                wsp_sub_dat[0].update({'employer_id':child_partner.id})
+                child_wsp_submission_data.write(wsp_sub_dat[0])
+                dbg(wsp_submission_data)
         self = self.with_context({'from_wsp_evaluated': True})
         self.employer_id.write({'wsp_submitted': True})
         self.write({'approved_by': self._uid})
@@ -1979,6 +2109,7 @@ class wsp_plan(models.Model):
     @api.multi
     def action_wsp_approve(self):
         self.write({'state': 'approved'})
+        user = self.env['res.users'].browse(self._uid)
         res = {
             'evaluator': self._uid,
             'date_evaluation': datetime.now(),
@@ -1989,12 +2120,29 @@ class wsp_plan(models.Model):
         }
         self.write(
             {'wsp_submission_status_ids': [(0, 0, res)], 'comments': ''})
+
         wsp_submission_data = self.env['wsp.submission.track'].search(
             [('employer_id', '=', self.employer_id.id), ('fiscal_year', '=', self.fiscal_year.id), ('name', '=', self.name)])
+        wsp_sub_dat = False
         if wsp_submission_data:
-            user = self.env['res.users'].browse(self._uid)
             wsp_submission_data.write(
                 {'status': 'accepted', 'approved_by': user.name, 'approved_date': datetime.now(), })
+            wsp_sub_dat = wsp_submission_data.read()
+        if wsp_sub_dat:
+            # raise Warning(wsp_sub_dat)
+            for field in wsp_sub_dat[0].keys():
+                if type(wsp_sub_dat[0].get(field)) == tuple:
+                    wsp_sub_dat[0].update({field: wsp_sub_dat[0].get(field)[0]})
+            for child in self.employer_id.child_employer_ids:
+                child_partner = child.employer_id
+                child_wsp_submission_data = self.env['wsp.submission.track'].search(
+                    [('employer_id', '=', child_partner.id), ('fiscal_year', '=', self.fiscal_year.id),
+                     ('name', '=', self.name)])
+
+                dbg(child_partner)
+                wsp_sub_dat[0].update({'employer_id':child_partner.id})
+                child_wsp_submission_data.write(wsp_sub_dat[0])
+                dbg(wsp_submission_data)
         # Sending Email Notification.
         self.write({'approval_date': datetime.today().date()})
         ir_model_data_obj = self.env['ir.model.data']
@@ -2020,10 +2168,27 @@ class wsp_plan(models.Model):
             {'wsp_submission_status_ids': [(0, 0, res)], 'comments': ''})
         wsp_submission_data = self.env['wsp.submission.track'].search(
             [('employer_id', '=', self.employer_id.id), ('fiscal_year', '=', self.fiscal_year.id), ('name', '=', self.name)])
+        wsp_sub_dat = False
         if wsp_submission_data:
             user = self.env['res.users'].browse(self._uid)
             wsp_submission_data.write(
                 {'status': 'rejected', 'rejected_by': user.name, 'rejected_date': datetime.now(), })
+            wsp_sub_dat = wsp_submission_data.read()
+        if wsp_sub_dat:
+            # raise Warning(wsp_sub_dat)
+            for field in wsp_sub_dat[0].keys():
+                if type(wsp_sub_dat[0].get(field)) == tuple:
+                    wsp_sub_dat[0].update({field: wsp_sub_dat[0].get(field)[0]})
+            for child in self.employer_id.child_employer_ids:
+                child_partner = child.employer_id
+                child_wsp_submission_data = self.env['wsp.submission.track'].search(
+                    [('employer_id', '=', child_partner.id), ('fiscal_year', '=', self.fiscal_year.id),
+                     ('name', '=', self.name)])
+
+                dbg(child_partner)
+                wsp_sub_dat[0].update({'employer_id': child_partner.id})
+                child_wsp_submission_data.write(wsp_sub_dat[0])
+                dbg(child_wsp_submission_data)
         # Sending Email Notification.
         self.write({'rejection_date': datetime.today().date()})
         ir_model_data_obj = self.env['ir.model.data']

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record model="ir.rule" id="own_assessor_links_rule">
+            <field name="name">Own assessor Links Rule</field>
+            <field name="model_id" ref="hwseta_etqe.model_etqe_assessors_provider_rel"/>
+            <field name="groups" eval="[(4, ref('hwseta_etqe.group_assessors'))]" />
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('assessors_id.user_id', '=', user.id)]</field>
+        </record>
+        <record model="ir.rule" id="own_moderator_links_rule">
+            <field name="name">Own moderator Links Rule</field>
+            <field name="model_id" ref="hwseta_etqe.model_etqe_moderators_provider_rel"/>
+            <field name="groups" eval="[(4, ref('hwseta_etqe.group_moderators'))]" />
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('moderators_id.user_id', '=', user.id)]</field>
+        </record>
+        <record model="ir.rule" id="own_provider_assessor_links_rule">
+            <field name="name">Own provider assessor Links Rule</field>
+            <field name="model_id" ref="hwseta_etqe.model_etqe_assessors_provider_rel"/>
+            <field name="groups" eval="[(4, ref('hwseta_etqe.group_providers'))]" />
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('provider_id.user_id', '=', user.id)]</field>
+        </record>
+        <record model="ir.rule" id="own_provider_moderator_links_rule">
+            <field name="name">Own provider moderator Links Rule</field>
+            <field name="model_id" ref="hwseta_etqe.model_etqe_moderators_provider_rel"/>
+            <field name="groups" eval="[(4, ref('hwseta_etqe.group_providers'))]" />
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('provider_id.user_id', '=', user.id)]</field>
+        </record>
+    </data>
+</openerp>

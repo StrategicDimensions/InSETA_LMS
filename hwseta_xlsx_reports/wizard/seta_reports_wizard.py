@@ -30,6 +30,53 @@ def get_transaction_type(this):
 class SETAReport(models.TransientModel):
     _name = 'seta.reports'
 
+    @api.multi
+    def pull_qap(self):
+        count = 0
+        msg = 'SDP/PROVIDER NAME, contact person, physical address, Tel, Cell, e-mail,Accreditation End Date,Province,QUALIFICATION/S,Number of learners enrolled\n'
+        learner_provs = [lnr.provider_id.id for lnr in self.env['learner.registration.qualification'].search([
+            ('approval_date', '>=', self.from_date),
+            ('approval_date', '<=', self.to_date),
+        ])]
+        for provider in self.env['res.partner'].search(
+                [('provider', '=', True),
+                 ('parent_id', '=', None),
+                 ('active', '=', True),
+                 ('id', 'in', learner_provs),
+                 # ('provider_end_date', '>=', self.from_date),
+                 # ('provider_end_date', '<=', self.to_date),
+                 ]):
+
+            person_name = ''
+            count += 1
+            dbg(provider)
+            for person in provider.provider_master_contact_ids:
+                try:
+                    person_name = str(person.name).encode('utf8')
+                except UnicodeEncodeError:
+                    person_name = ''
+            address = str(provider.physical_address_1) + ' ' + str(provider.physical_address_2) + ' ' + str(
+                provider.physical_address_3) + ' ' + str(provider.provider_physical_suburb.name) + ' ' + str(
+                provider.city_physical.name)
+            msg += str(provider.name) + ',' + str(person_name) + ',' + str(address) + ',' + str(
+                provider.phone) + ',' + str(provider.mobile) + ',' + str(provider.email) + ',' + str(
+                provider.provider_end_date) + ',' + str(provider.province_code_physical.name) + '\n'
+            for qual in provider.qualification_ids:
+                count += 1
+                learners = self.env['learner.registration.qualification'].search([
+                    ('provider_id', '=', provider.id),
+                    ('learner_qualification_parent_id', '=', qual.qualification_id.id),
+                    ('approval_date', '>=', self.from_date),
+                    ('approval_date', '<=', self.to_date),
+                ])
+                dbg(learners)
+                learner_count = len(learners)
+                qual_name = str(qual.qualification_id.name).replace(',', ' ')
+                msg += ',,,,,,,,[' + str(qual.saqa_qual_id) + ']' + qual_name + ',' + str(
+                    learner_count) + '\n'
+            dbg(count)
+        raise Warning(msg)
+
     # def last_day_of_month(self, date):
     #     dbg('last_day_of_month')
     #     if date.month == 12:
@@ -53,6 +100,8 @@ class SETAReport(models.TransientModel):
     name = fields.Char("Report Title", required=True)
     from_date = fields.Date("From", required=True)
     to_date = fields.Date("To", required=True)
+    raise_info = fields.Boolean()
+    raise_errors = fields.Boolean()
     provider_date = fields.Date("provider date")
     report_type = fields.Selection([('_accreditation_analysis', 'Accreditation Analysis'),
                                     ('_assessment_analysis', 'Assessment Analysis'),
@@ -147,15 +196,40 @@ class SETAReport(models.TransientModel):
 
     def _register_approval_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
-        domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
+        # domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
         ass_mod = ''
         if self.register_assessor_or_moderator:
-            domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
+            # domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
             if self.register_assessor_or_moderator == 'moderator':
                 ass_mod = 'Moderator'
             elif self.register_assessor_or_moderator == 'assessor':
                 ass_mod = 'Assessor'
-        registrations = self.env['assessors.moderators.register'].search(domain)
+        # registrations = self.env['assessors.moderators.register'].search(domain)
+        """"
+        build up a dict of unique assessments based on statuses , keeping the first submitted status as the val and the assessment as the key 
+        """
+        reg_dict = {}
+        stats = self.env['assessors.moderators.status'].search(
+            [('am_status', '=', 'Submitted'),
+             ('am_updation_date', '>=', self.from_date),
+             ('am_updation_date', '<=', self.to_date),
+             ('assessors_moderators_status_mo_id.assessor_moderator','=',self.register_assessor_or_moderator)]
+        )
+        for stat in stats:
+            if stat not in reg_dict.keys():
+                reg_dict.update({stat.assessors_moderators_status_mo_id: stat})
+            else:
+                if reg_dict.get(stat.assessors_moderators_status_mo_id) < stat.assessors_moderators_status_mo_id:
+                    reg_dict.update({stat.assessors_moderators_status_mo_id: stat})
+        if self.raise_info:
+            msg = 'id,ref,province,Assessor/Moderator Application Date,final state,qualifying line state,line date\n'
+            for reg in reg_dict:
+                msg += str(reg.id) + ',' + str(reg.assessors_moderators_ref) + ',' \
+                       + str(reg.work_province.name) + ',' + reg.assessor_moderator_register_date + ','\
+                       + str(reg.final_state) + ',' + str(reg_dict.get(reg).am_status) + ','\
+                       + str(reg_dict.get(reg).am_updation_date) + '\n'
+            raise Warning(_(msg))
+        registrations = reg_dict.keys()
         # vals = []
         headers = [_('Province'),
                    _('Number of applications submitted to Provincial Office'),
@@ -249,8 +323,29 @@ class SETAReport(models.TransientModel):
 
     def _accreditation_etqa_approval_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
-        accreds = self.env['provider.accreditation'].search(
-            [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        # accreds = self.env['provider.accreditation'].search(
+        #     [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        """
+                build up a list of unique accreds with the statuses to ensure ommission of non valid accreds and precision of date filters
+                """
+        accred_dict = {}
+        statuses = self.env['provider.accreditation.status'].search(
+            [('pa_date', '>=', self.from_date), ('pa_date', '<=', self.to_date), ('pa_status', '=', 'Recommended')])
+            # [('pa_date', '>=', self.from_date), ('pa_date', '<=', self.to_date), ('pa_status', '=', 'Submitted')])
+        # first time add to dict, all times after, compare the min(id) and add lowest stat
+        for stat in statuses:
+            if stat.pro_acc_status_ids not in accred_dict.keys():
+                accred_dict.update({stat.pro_acc_status_ids: stat})
+            else:
+                if stat < accred_dict.get(stat.pro_acc_status_ids):
+                    accred_dict.update({stat.pro_acc_status_ids: stat})
+        if self.raise_info:
+            msg = 'id,ref,province,final state,qualifying line state,line date\n'
+            for accred in accred_dict:
+                msg += str(accred.id) + ',' + str(accred.provider_accreditation_ref) + ',' + str(accred.state_id.name) + ','\
+                       + str(accred.final_state) + ',' + str(accred_dict.get(accred).pa_status) \
+                       + ',' + str(accred_dict.get(accred).pa_date) + '\n'
+            raise Warning(_(msg))
         # vals = []
         headers = [_('Province'),
                    _('Number of Provider Accreditation applications recommended to ETQA '),
@@ -269,7 +364,7 @@ class SETAReport(models.TransientModel):
                                      'denied_perc': 0, 'total': 0, 'new': 0, 'new_prog_approval': 0,
                                      'reaccred': 0, 'extension': 0 }
 
-        for accred in accreds:
+        for accred in accred_dict.keys():
             dbg(accred.state)
             # if a new prov is found add a key with 0 values on ints
             if accred.state_id.id not in provinces.keys():
@@ -359,15 +454,30 @@ class SETAReport(models.TransientModel):
 
     def _mod_ass_register_8week_analysis(self):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
-        domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
+        # domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('final_state','!=','Draft')]
         ass_mod = ''
         if self.register_assessor_or_moderator:
-            domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
+            # domain.append(('assessor_moderator', '=', self.register_assessor_or_moderator))
             if self.register_assessor_or_moderator == 'moderator':
                 ass_mod = 'Moderator'
             elif self.register_assessor_or_moderator == 'assessor':
                 ass_mod = 'Assessor'
-        registrations = self.env['assessors.moderators.register'].search(domain)
+        # registrations = self.env['assessors.moderators.register'].search(domain)
+        reg_dict = {}
+        stats = self.env['assessors.moderators.status'].search(
+            [('am_status', '=', 'Submitted'),
+             ('am_date', '>=', self.from_date),
+             ('am_date', '<=', self.to_date),
+             ('assessors_moderators_status_mo_id.assessor_moderator', '=', self.register_assessor_or_moderator)]
+        )
+        for stat in stats:
+            if stat not in reg_dict.keys():
+                reg_dict.update({stat.assessors_moderators_status_mo_id: stat})
+            else:
+                if reg_dict.get(stat.assessors_moderators_status_mo_id) < stat.assessors_moderators_status_mo_id:
+                    reg_dict.update({stat.assessors_moderators_status_mo_id: stat})
+
+        registrations = reg_dict.keys()
         # vals = []
         headers = [_('%s ID No' % ass_mod),
                    _('%s Name' % ass_mod),
@@ -380,67 +490,119 @@ class SETAReport(models.TransientModel):
                    _('In Progress'),
                    _('Transaction_type'),
                    ]
-        broken_regs = []
+        broken_regs = {}
         for reg in registrations:
+            dbg(reg)
             stat_dict = {}
             if reg.final_state in ['Recommended', 'Submitted', 'Approved', 'Evaluated', 'Recommended2', 'Validated', 'Rejected']:
-                if len(reg.assessors_moderators_status_ids) > 2:
+                if len(reg.assessors_moderators_status_ids) >= 2:
                     for stat in reg.assessors_moderators_status_ids:
                         if stat.am_status == 'Recommended':
                             stat_dict.update({stat.id: {'stat': stat.am_status, 'date_updated': stat.am_date}})
                         if stat.am_status == 'Rejected':
                             stat_dict.update({stat.id: {'stat': stat.am_status, 'date_updated': stat.am_date}})
-
+                        if stat.am_status == 'Approved':
+                            stat_dict.update({stat.id: {'stat': stat.am_status, 'date_updated': stat.am_date}})
                     # todo: uncomment below and deal with dirty data
+                    # dbg(stat_dict)
                     if not stat_dict:
-                        raise Warning(_('missing statuses from assessment: ' + reg.provider_accreditation_ref))
+                        dbg({reg.assessors_moderators_ref:str(reg.identification_id) + ',' + "had no relevant statuses"})
+                        dbg(stat_dict)
+                        broken_regs.update({reg.assessors_moderators_ref:str(reg.identification_id) + ',' + "had no relevant statuses"})
+                        # raise Warning(_('missing statuses from assessment: ' + reg.provider_accreditation_ref))
+                    elif len(stat_dict) < 2:
+                        dbg({reg.assessors_moderators_ref:str(reg.identification_id) + ',' + 'too few statuses to choose from'})
+                        dbg(stat_dict)
+                        broken_regs.update({reg.assessors_moderators_ref:str(reg.identification_id) + ',' + 'too few statuses to choose from'})
                     elif len(stat_dict) == 2:
+                        dbg(stat_dict)
+                        dbg("deleting :" + str(stat_dict[max(stat_dict)]) + ',' + str(reg.assessors_moderators_ref) + ',' + str(reg.identification_id))
                         del stat_dict[max(stat_dict)]
+                    # elif len(stat_dict) == 3:
+                    #     del stat_dict[max(stat_dict)]
+                    #     del stat_dict[max(stat_dict)]
                     else:
-                        broken_regs.append(reg.assessors_moderators_ref)
+                        dbg({reg.assessors_moderators_ref:str(reg.identification_id) + ',' + 'too many statuses to choose from'})
+                        dbg(stat_dict)
+                        broken_regs.update({reg.assessors_moderators_ref:str(reg.identification_id) + ',' + 'too many statuses to choose from'})
                     # if len(stat_dict) > 1:
                     #     raise Warning(_('there are issues in the statuses of accreditation:' + accred.provider_accreditation_ref))
-                    created = datetime.strptime(reg.create_date, '%Y-%m-%d %H:%M:%S').date()
-                    recommend_date = stat_dict[min(stat_dict)]['date_updated']
-                    recommended = datetime.strptime(recommend_date, '%Y-%m-%d %H:%M:%S').date()
+                    if not reg.assessors_moderators_ref in broken_regs:
+                        created = datetime.strptime(reg.create_date, '%Y-%m-%d %H:%M:%S').date()
+                        recommend_date = stat_dict[min(stat_dict)]['date_updated']
+                        recommended = datetime.strptime(recommend_date, '%Y-%m-%d %H:%M:%S').date()
 
-                    delta = recommended - created
-                    in_process = False
-                    if reg.final_state not in ['Approved', 'Rejected']:
-                        in_process = True
+                        delta = recommended - created
+                        in_process = False
+                        if reg.final_state not in ['Approved', 'Rejected']:
+                            in_process = True
 
-                    regs = {'mod_id_no': reg.identification_id,
-                            'mod_name':reg.name,
-                            'mod_surname':reg.person_last_name,
-                            'province':reg.work_province.id,
-                            'application_date':reg.create_date,
-                            'update_date':recommend_date,
-                            'days_to_update':delta.days,
-                            'final_state':reg.final_state,
-                            'in_process': in_process,
-                            'transaction_type': get_transaction_type(reg),
-                            'report_id':self.id
-                            }
-                    self.env['seta.reports.8week.register'].create(regs)
-                    dbg(regs)
+                        regs = {'mod_id_no': reg.identification_id,
+                                'mod_name':reg.name,
+                                'mod_surname':reg.person_last_name,
+                                'province':reg.work_province.id,
+                                'application_date':reg.create_date,
+                                'update_date':recommend_date,
+                                'days_to_update':delta.days,
+                                'final_state':reg.final_state,
+                                'in_process': in_process,
+                                'transaction_type': get_transaction_type(reg),
+                                'report_id':self.id
+                                }
+                        self.env['seta.reports.8week.register'].create(regs)
                 else:
-                    broken_regs.append(reg.assessors_moderators_ref)
+                    # dbg({reg.assessors_moderators_ref:'too few statuses'})
+                    broken_regs.update({str(reg.assessors_moderators_ref): ',' + str(reg.identification_id) + 'too few statuses'})
+        if self.raise_info:
+            msg = 'id,ref,identification_id,province,Assessor/Moderator Application Date,final state,qualifying line state,line date\n'
+            for reg in reg_dict:
+                if not reg.assessors_moderators_ref in broken_regs:
+                    msg += str(reg.id) + ',' + str(reg.assessors_moderators_ref) + ',' + str(reg.identification_id) + ',' \
+                           + str(reg.work_province.name) + ',' + reg.assessor_moderator_register_date + ','\
+                           + str(reg.final_state) + ',' + str(reg_dict.get(reg).am_status) + ','\
+                           + str(reg_dict.get(reg).am_date) + '\n'
+            raise Warning(_(msg))
+        msg = '\n'
+        if self.raise_errors:
+            dbg("raise")
+            for brk in broken_regs:
+                msg += str(brk) + ':' + str(broken_regs[brk]) + '\n'
+            raise Warning(_(msg))
         self.headers = pprint.saferepr(headers)
         return "/report_export/mod_ass_register_8week_analysis/%s"
 
     def _accreditation_analysis(self):
-        accreds = self.env['provider.accreditation'].search(
-            [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
-        # vals = []
+        """
+        build up a list of unique accreds with the statuses to ensure ommission of non valid accreds and precision of date filters
+        """
+        accred_dict = {}
+        statuses = self.env['provider.accreditation.status'].search(
+            [('pa_date', '>=', self.from_date), ('pa_date', '<=', self.to_date), ('pa_status', '=', 'Recommended')])
+            # [('pa_date', '>=', self.from_date), ('pa_date', '<=', self.to_date), ('pa_status', '=', 'Submitted')])
+        # first time add to dict, all times after, compare the min(id) and add lowest stat
+        for stat in statuses:
+            if stat.pro_acc_status_ids not in accred_dict.keys():
+                accred_dict.update({stat.pro_acc_status_ids:stat})
+            else:
+                if stat < accred_dict.get(stat.pro_acc_status_ids):
+                    accred_dict.update({stat.pro_acc_status_ids:stat})
+        if self.raise_info:
+            msg = 'id,ref,province,final state,qualifying line state,line date\n'
+            for accred in accred_dict:
+                msg += str(accred.id) + ',' + str(accred.state_id.name) + ','\
+                       + str(accred.final_state) + ',' + str(accred_dict.get(accred).pa_status) \
+                       + ',' + str(accred_dict.get(accred).pa_date) + '\n'
+            raise Warning(_(msg))
         headers = [_('REF'), _('NAME'), _('phone'), _('email'), _('reg dt'), _('approve dt'), _('extension'), _('exist'), _('final state')]
 
-        for accred in accreds:
+        for accred in accred_dict.keys():
             val = {
                 'provider_accreditation_ref': accred.provider_accreditation_ref,
                 'name':accred.name,
                 'phone':accred.phone,
                 'email':accred.email,
-                'provider_register_date':accred.provider_register_date,
+                # 'provider_register_date':accred.provider_register_date,
+                'provider_register_date':accred_dict.get(accred).pa_date,
                 'provider_approval_date':accred.provider_approval_date,
                 'is_extension_of_scope':accred.is_extension_of_scope,
                 'is_existing_provider':accred.is_existing_provider,
@@ -454,8 +616,52 @@ class SETAReport(models.TransientModel):
         return "/report_export/accreditation_analysis/%s"
 
     def _late_assessment_accreditation_analysis(self):
-        accreds = self.env['provider.accreditation'].search(
-            [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        # accreds = self.env['provider.accreditation'].search(
+        #     [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)])
+        """
+                build up a list of unique accreds with the statuses to ensure ommission of non valid accreds and precision of date filters
+                """
+        accred_dict = {}
+        broken_accreds = {}
+        statuses = self.env['provider.accreditation.status'].search(
+            [('pa_date', '>=', self.from_date), ('pa_date', '<=', self.to_date), ('pa_status', '=', 'Recommended')])
+            # [('pa_date', '>=', self.from_date), ('pa_date', '<=', self.to_date), ('pa_status', '=', 'Submitted')])
+        # first time add to dict, all times after, compare the min(id) and add lowest stat
+        for stat in statuses:
+            dbg(stat)
+            dbg(stat.pro_acc_status_ids)
+            min_found = []
+            # checks if attched to an accred rec
+            if stat.pro_acc_status_ids:
+                # checks if accred is in dict yet
+                if stat.pro_acc_status_ids not in accred_dict.keys():
+                    # loops through all stats in the attached accred and adds all recommended ones to the min list
+                    for stat_line in stat.pro_acc_status_ids.provider_accreditation_status_ids:
+                        if stat_line.pa_status == 'Recommended':
+                            min_found.append(stat_line)
+                    # checks if the min stat found is in the date range and adds if true
+                    if min(min_found).pa_date >= self.from_date and min(min_found).pa_date <= self.to_date:
+                        accred_dict.update({stat.pro_acc_status_ids: min(min_found)})
+                        dbg("not in the stat, adding new")
+                        dbg(stat.read())
+                    else:
+                        dbg("not adding, the min stat thats recommended isnt in the date range:" + str(min(min_found).pa_date))
+                # found in dict already so it checks for min and adds
+                else:
+                    dbg("else:")
+                    # finds out if the id is lower and if its in the range. adds if true
+                    if stat < accred_dict.get(stat.pro_acc_status_ids) and stat.pa_date >= self.from_date and stat.pa_date <= self.to_date:
+                        accred_dict.update({stat.pro_acc_status_ids: stat})
+                        dbg("in the stat but lower id found")
+            else:
+                broken_accreds.update({stat:"this stat line is an orphan. no accred linked to it"})
+        if self.raise_info:
+            msg = 'id,ref,province,final state,qualifying line state,line date\n'
+            for accred in accred_dict:
+                msg += str(accred.id) + ',' + str(accred.provider_accreditation_ref) + ',' + str(accred.state_id.name) + ','\
+                       + str(accred.final_state) + ',' + str(accred_dict.get(accred).pa_status) \
+                       + ',' + str(accred_dict.get(accred).pa_date) + '\n'
+            raise Warning(_(msg))
         # vals = []
         headers = [_('Provider Name'),
                    _('Provider Ref No '),
@@ -469,69 +675,103 @@ class SETAReport(models.TransientModel):
                    _('In Progress'),
                    _('Transaction type')]
 
-        broken_accreds = []
-        for accred in accreds:
+        # for accred in accreds:
+        for accred in accred_dict.keys():
             stat_dict = {}
+            sub = {}
             if accred.final_state in ['Recommended','Submitted','Approved','Evaluated','Recommended2','Validated','Rejected']:
                 dbg(len(accred.provider_accreditation_status_ids))
                 if len(accred.provider_accreditation_status_ids) > 2:
                     dbg(accred.provider_accreditation_ref)
                     for stat in accred.provider_accreditation_status_ids:
+                        if stat.pa_status == 'Submitted':
+                            sub.update({'date_updated':stat.pa_date})
                         if stat.pa_status == 'Recommended':
                             stat_dict.update({stat.id:{'stat':stat.pa_status,'date_updated':stat.pa_date}})
                         if stat.pa_status == 'Rejected':
                             stat_dict.update({stat.id: {'stat': stat.pa_status, 'date_updated': stat.pa_date}})
 
+                    dbg(sub)
                     # todo: uncomment below and deal with dirty data
+                    if not sub:
+                        broken_accreds.update({accred.provider_accreditation_ref:"didnt have a submission line item"})
                     if not stat_dict:
-                        raise Warning(_('missing statuses from accreditation: ' + accred.provider_accreditation_ref))
+                        broken_accreds.update({accred.provider_accreditation_ref:"had no relevant statuses"})
+                        # raise Warning(_('missing statuses from accreditation: ' + accred.provider_accreditation_ref))
                     elif len(stat_dict) == 2:
                         del stat_dict[max(stat_dict)]
+                    elif len(stat_dict) == 3:
+                        del stat_dict[max(stat_dict)]
+                        del stat_dict[max(stat_dict)]
                     else:
-                        broken_accreds.append(accred.provider_accreditation_ref)
+                        dbg("toooooooooooo many " + str(stat_dict))
+                        broken_accreds.update({accred.provider_accreditation_ref:"found too many statuses to choose from"})
                     # if len(stat_dict) > 1:
                     #     raise Warning(_('there are issues in the statuses of accreditation:' + accred.provider_accreditation_ref))
-                    created = datetime.strptime(accred.create_date, '%Y-%m-%d %H:%M:%S').date()
-                    recommend_date = stat_dict[min(stat_dict)]['date_updated']
-                    recommended = datetime.strptime(recommend_date, '%Y-%m-%d %H:%M:%S').date()
+                    if not accred.provider_accreditation_ref in broken_accreds:
+                        created = datetime.strptime(sub['date_updated'], '%Y-%m-%d %H:%M:%S').date()
+                        recommend_date = stat_dict[min(stat_dict)]['date_updated']
+                        recommended = datetime.strptime(recommend_date, '%Y-%m-%d %H:%M:%S').date()
+                        delta = recommended - created
+                        # raise Warning(_(delta.days))
+                        in_process = False
+                        if accred.final_state not in ['Approved', 'Rejected']:
+                            in_process = True
 
-                    delta = recommended - created
-                    # raise Warning(_(delta.days))
-                    in_process = False
-                    if accred.final_state not in ['Approved', 'Rejected']:
-                        in_process = True
+                        val = {
+                            'provider_name': accred.name,
+                            'provider_accreditation_ref': accred.provider_accreditation_ref,
+                            'sdl':accred.sequence_num,
+                            'alt_sdl':accred.alternate_acc_number,
+                            'state_id': accred.state_id.id,
+                            # 'application_date':accred.create_date,
+                            'application_date':created,
+                            'update_date':recommend_date,
+                            'days_to_assess':delta.days,
+                            'final_state':accred.final_state,
+                            'in_process': in_process,
+                            'transaction_status': accred.transaction_type,
+                            'report_id':self.id
+                        }
 
-                    val = {
-                        'provider_name': accred.name,
-                        'provider_accreditation_ref': accred.provider_accreditation_ref,
-                        'sdl':accred.sequence_num,
-                        'alt_sdl':accred.alternate_acc_number,
-                        'state_id': accred.state_id.id,
-                        'application_date':accred.create_date,
-                        'update_date':recommend_date,
-                        'days_to_assess':delta.days,
-                        'final_state':accred.final_state,
-                        'in_process': in_process,
-                        'transaction_status': accred.transaction_type,
-                        'report_id':self.id
-                    }
-
-                    self.env['seta.reports.late.accreditations'].create(val)
+                        self.env['seta.reports.late.accreditations'].create(val)
                 else:
-                    broken_accreds.append(accred.provider_accreditation_ref)
-        dbg(broken_accreds)
+                    broken_accreds.update({accred.provider_accreditation_ref:"not enough statuses to work"})
+        msg = '\n'
+        if self.raise_errors:
+            for brk in broken_accreds:
+                msg += str(brk) + ':' + str(broken_accreds[brk]) + '\n'
+            raise Warning(_(msg))
         self.headers = pprint.saferepr(headers)
 
         return "/report_export/late_accreditation_analysis/%s"
 
     def _assessment_analysis(self):
-        domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date)]
+        domain = [('s_date', '>=', self.from_date), ('s_date', '<=', self.to_date)]
         if self.qual_skill_assessment:
-            domain.append(('qual_skill_assessment','=',self.qual_skill_assessment))
+            domain.append(('pro_id.qual_skill_assessment','=',self.qual_skill_assessment))
         if self.assessment_state:
             domain.append(('state','=',self.assessment_state))
         dbg(domain)
-        assessments = self.env['provider.assessment'].search(domain)
+        assess_dict = {}
+        # stats = self.env['assessment.status'].search([('')])
+        stats = self.env['assessment.status'].search(domain)
+        dbg(stats)
+        for stat in stats:
+            if stat.pro_id not in assess_dict.keys():
+                assess_dict.update({stat.pro_id: stat})
+            else:
+                if stat < assess_dict.get(stat.pro_id):
+                    assess_dict.update({stat.pro_id: stat})
+        if self.raise_info:
+            msg = 'id,ref,province,state,qualifying line state,line date\n'
+            for assess in assess_dict:
+                msg += str(assess.id) + ','+ str(assess.name) + ',' + str(assess.provider_province.name) + ',' \
+                       + str(assess.state) + ',' + str(assess_dict.get(assess).state) \
+                       + ',' + str(assess_dict.get(assess).s_date) + '\n'
+            raise Warning(_(msg))
+
+        # todo: uncomment stats and fill the dict
         # vals = []
         if self.qual_skill_assessment == 'qual':
             headers = [_('NAME'), _('provider'), _('type'), _('batch'),
@@ -554,7 +794,7 @@ class SETAReport(models.TransientModel):
                        _('first name'),_('last name'),_('employed'),_('rpl'),
                        _('achieved'), _('qualification'), _('qualification id'),
                        _('learning programme id'), _('skills programme id') ]
-        for assessment in assessments:
+        for assessment in assess_dict.keys():
             val = {
                 'assessment':assessment.id,
                 'name':assessment.name,
@@ -577,6 +817,22 @@ class SETAReport(models.TransientModel):
         undefined_prov = self.env.ref('hwseta_xlsx_reports.state_UNDEFINED').id
         domain = [('create_date', '>=', self.from_date), ('create_date', '<=', self.to_date),('state','!=','Draft')]
         assessments = self.env['provider.assessment'].search(domain)
+        assess_dict = {}
+        stats = self.env['assessment.status'].search([('s_date', '>=', self.from_date), ('s_date', '<=', self.to_date),('state','=','evaluate')])
+        dbg(stats)
+        for stat in stats:
+            if stat.pro_id not in assess_dict.keys():
+                assess_dict.update({stat.pro_id:stat})
+            else:
+                if stat < assess_dict.get(stat.pro_id):
+                    assess_dict.update({stat.pro_id:stat})
+        if self.raise_info:
+            msg = 'id,ref,province,state,qualifying line state,line date\n'
+            for assess in assess_dict:
+                msg += str(assess.id) + ',' + str(assess.name) + ',' + str(assess.provider_province.name) + ',' \
+                       + str(assess.state) + ',' + str(assess_dict.get(assess).state) \
+                       + ',' + str(assess_dict.get(assess).s_date) + '\n'
+            raise Warning(_(msg))
         # vals = []
         headers = [_('Province'),
                    _('Number of Learner applications recommended to ETQA'),
@@ -589,7 +845,7 @@ class SETAReport(models.TransientModel):
         provinces = {}
         provinces[undefined_prov] = {'approved_count': 0, 'denied_count': 0, 'approved_perc': 0,
                                      'denied_perc': 0, 'total': 0}
-        for assessment in assessments:
+        for assessment in assess_dict.keys():
             dbg(assessment.state)
             if assessment.provider_province.id not in provinces.keys():
                 # raise Warning(_('no prvince selected in ' + str(reg)))
